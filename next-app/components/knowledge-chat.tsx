@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, BookOpen, Loader2 } from "lucide-react";
+import { Send, BookOpen } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "assistant";
@@ -9,13 +10,78 @@ interface Message {
   sources?: Array<{ title: string; slug: string }>;
 }
 
-const STARTER_QUESTIONS = [
-  "What PPP models are most relevant for humanitarian resilience in Asia?",
-  "How does climate change affect sexual and reproductive health in Asia?",
-  "What financing mechanisms exist in Singapore for resilience initiatives?",
-  "What does community resilience mean operationally, and how is it built?",
-  "What is UNFPA's mandate and how does it relate to climate and humanitarian response?",
+const STARTER_PROMPTS: { label: string; icon: string; prompt: string }[] = [
+  {
+    label: "Ask a research question",
+    icon: "🔍",
+    prompt: "What PPP models are most relevant for humanitarian resilience in Asia?",
+  },
+  {
+    label: "Summarise an issue",
+    icon: "📋",
+    prompt: "Summarise the key evidence on how climate change affects sexual and reproductive health in Asia.",
+  },
+  {
+    label: "Draft meeting notes",
+    icon: "📝",
+    prompt: "Draft a set of discussion questions and key points for a meeting with Singapore family office representatives about funding resilience programmes.",
+  },
+  {
+    label: "Generate a briefing",
+    icon: "📄",
+    prompt: "Write a one-page briefing on Singapore's financial ecosystem for resilience initiatives, suitable for a senior UNFPA official.",
+  },
+  {
+    label: "Compare options",
+    icon: "⚖️",
+    prompt: "Compare blended finance vehicles and development impact bonds as mechanisms for funding community resilience in the Pacific.",
+  },
+  {
+    label: "Explore UNFPA's mandate",
+    icon: "🌐",
+    prompt: "How does UNFPA's mandate on SRHR relate to climate and humanitarian response in Asia?",
+  },
 ];
+
+const LOADING_WORDS = [
+  "resilience", "partnerships", "SRHR", "climate", "blended finance",
+  "community", "UNFPA", "Asia-Pacific", "humanitarian", "co-design",
+  "maternal health", "PPP", "Singapore", "solidarity", "evidence",
+  "financing", "advocacy", "policy", "family offices", "vulnerability",
+  "adaptation", "GBV", "health systems", "impact", "coordination",
+];
+
+function LoadingPulse() {
+  const [wordIndex, setWordIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const cycle = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setWordIndex((i) => (i + 1) % LOADING_WORDS.length);
+        setVisible(true);
+      }, 200);
+    }, 1200);
+    return () => clearInterval(cycle);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-lg">
+      <div className="flex gap-1">
+        <span className="h-1.5 w-1.5 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: "0ms" }} />
+        <span className="h-1.5 w-1.5 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: "150ms" }} />
+        <span className="h-1.5 w-1.5 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: "300ms" }} />
+      </div>
+      <span
+        className="text-xs font-medium transition-opacity duration-200"
+        style={{ color: "#009EDB", opacity: visible ? 1 : 0 }}
+      >
+        {LOADING_WORDS[wordIndex]}
+      </span>
+    </div>
+  );
+}
 
 export function KnowledgeChat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -26,7 +92,7 @@ export function KnowledgeChat() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, isLoading]);
 
   const sendMessage = async (text?: string) => {
     const userMessage = (text ?? input).trim();
@@ -105,16 +171,22 @@ export function KnowledgeChat() {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-slate-50">
         {messages.length === 0 && (
-          <div className="text-center mt-6">
-            <p className="text-sm text-slate-500 mb-4">Start with a question, or try one of these:</p>
-            <div className="space-y-2">
-              {STARTER_QUESTIONS.map((q) => (
+          <div className="mt-2">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">
+              What would you like to do?
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {STARTER_PROMPTS.map((p) => (
                 <button
-                  key={q}
-                  onClick={() => sendMessage(q)}
-                  className="block w-full text-left px-4 py-2.5 text-sm border border-slate-200 bg-white text-slate-600 hover:border-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-colors rounded"
+                  key={p.prompt}
+                  onClick={() => sendMessage(p.prompt)}
+                  className="flex items-start gap-3 text-left px-4 py-3 border border-slate-200 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50 transition-colors rounded-lg group"
                 >
-                  {q}
+                  <span className="text-base leading-none mt-0.5 flex-shrink-0">{p.icon}</span>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-800 group-hover:text-slate-900">{p.label}</p>
+                    <p className="text-xs text-slate-400 mt-0.5 leading-snug line-clamp-2">{p.prompt}</p>
+                  </div>
                 </button>
               ))}
             </div>
@@ -129,12 +201,18 @@ export function KnowledgeChat() {
             <div
               className={`max-w-[85%] rounded-lg ${
                 message.role === "user"
-                  ? "px-4 py-3 text-white"
+                  ? "px-4 py-3 text-white text-sm"
                   : "bg-white border border-slate-200 text-slate-900 px-4 py-3"
               }`}
               style={message.role === "user" ? { backgroundColor: "#003366" } : {}}
             >
-              <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
+              {message.role === "assistant" ? (
+                <div className="prose max-w-none">
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
+                </div>
+              ) : (
+                <p className="text-sm leading-relaxed">{message.content}</p>
+              )}
 
               {message.sources && message.sources.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-slate-200">
@@ -149,7 +227,9 @@ export function KnowledgeChat() {
                           className="mt-1.5 h-1 w-1 rounded-full flex-shrink-0"
                           style={{ backgroundColor: "#009EDB" }}
                         />
-                        {source.title}
+                        <a href={`/knowledge/${source.slug}`} className="hover:underline hover:text-blue-600">
+                          {source.title}
+                        </a>
                       </li>
                     ))}
                   </ul>
@@ -161,9 +241,7 @@ export function KnowledgeChat() {
 
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-white border border-slate-200 px-4 py-3 rounded-lg">
-              <Loader2 className="h-4 w-4 text-slate-400 animate-spin" />
-            </div>
+            <LoadingPulse />
           </div>
         )}
 
@@ -178,7 +256,7 @@ export function KnowledgeChat() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about PPP models, climate resilience, Singapore finance, community co-design…"
+            placeholder="Ask a question, request a briefing, draft meeting notes…"
             className="flex-1 resize-none border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:border-blue-600"
             style={{ "--tw-ring-color": "#009EDB" } as React.CSSProperties}
             rows={2}
