@@ -8,7 +8,10 @@ A knowledge base and AI chat interface built to support the **Lee Kuan Yew Schoo
 
 ## About this project
 
-This is a consulting project run through **Professor Mancini's Policy Innovation Lab** course at the Lee Kuan Yew School of Public Policy, National University of Singapore. The client is **UNFPA** (United Nations Population Fund).
+This is a consulting project run through **Professor Mancini's Policy Innovation Lab** course at the Lee Kuan Yew School of Public Policy, National University of Singapore.
+
+- **Client:** UNFPA (United Nations Population Fund)
+- **Challenge:** Project B — PPP for Climate and Humanitarian Resilience
 
 The student group is conducting policy research across UNFPA's mandate, programme areas, evidence base, and contested topics. This repository contains their working knowledge base and the AI-assisted research interface built to support the group.
 
