@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UNFPA PDF Downloader</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background: #f5f5f5; }
+    h1 { color: #e35205; }
+    #status { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #e35205; }
+    #log { background: #222; color: #0f0; padding: 16px; border-radius: 8px; height: 300px; overflow-y: auto; font-family: monospace; font-size: 13px; }
+    button { background: #e35205; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; margin: 8px; }
+    button:disabled { background: #aaa; cursor: not-allowed; }
+    button.secondary { background: #555; }
+    progress { width: 100%; height: 24px; margin: 12px 0; }
+    .stat { display: inline-block; margin: 8px 16px 8px 0; }
+    .stat span { font-size: 24px; font-weight: bold; color: #e35205; }
+  </style>
+</head>
+<body>
+  <h1>🟠 UNFPA PDF Downloader</h1>
+  <p>This tool fetches all UNFPA publication pages, finds the PDF links, and downloads them one by one to your Downloads folder.</p>
+
+  <div id="status">
+    <div class="stat">Publications found: <span id="totalCount">0</span></div>
+    <div class="stat">PDFs found: <span id="pdfCount">0</span></div>
+    <div class="stat">Downloaded: <span id="doneCount">0</span></div>
+    <div class="stat">Skipped (no PDF): <span id="skipCount">0</span></div>
+    <progress id="progress" value="0" max="100"></progress>
+  </div>
+
+  <button id="btnStart" onclick="start()">▶ Start Downloading All PDFs</button>
+  <button class="secondary" onclick="pause()" id="btnPause" disabled>⏸ Pause</button>
+  <button class="secondary" onclick="resume()" id="btnResume" disabled>▶ Resume</button>
+  <button class="secondary" onclick="savePDFList()">💾 Save PDF URL List</button>
+
+  <div id="log"></div>
+
+  <script>
+    const TOTAL_LISTING_PAGES = 58;
+    const BATCH_SIZE = 15;
+    const DELAY_MS = 800; // delay between downloads (ms) to avoid rate limiting
+
+    let pubUrls = [];
+    let pdfUrls = [];
+    let doneCount = 0;
+    let skipCount = 0;
+    let paused = false;
+    let running = false;
+
+    const log = (msg, color) => {
+      const el = document.getElementById('log');
+      const line = document.createElement('div');
+      line.style.color = color || '#0f0';
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      el.appendChild(line);
+      el.scrollTop = el.scrollHeight;
+    };
+
+    const updateStats = () => {
+      document.getElementById('totalCount').textContent = pubUrls.length;
+      document.getElementById('pdfCount').textContent = pdfUrls.length;
+      document.getElementById('doneCount').textContent = doneCount;
+      document.getElementById('skipCount').textContent = skipCount;
+      const total = pubUrls.length || 1;
+      document.getElementById('progress').value = Math.round((doneCount + skipCount) / total * 100);
+    };
+
+    // Step 1: Collect all publication page URLs from listing pages
+    async function collectPubUrls() {
+      log('Collecting publication URLs from 58 listing pages...');
+      const fetchPage = async (n) => {
+        try {
+          const r = await fetch(`https://www.unfpa.org/publications?page=${n}`);
+          const html = await r.text();
+          const matches = [...html.matchAll(/href="(\/publications\/[a-z][^"?#]+)"/g)];
+          return [...new Set(matches.map(m => 'https://www.unfpa.org' + m[1]))];
+        } catch { return []; }
+      };
+
+      const batchFetch = async (start, end) => {
+        const nums = Array.from({length: end - start}, (_, i) => start + i);
+        const results = await Promise.all(nums.map(fetchPage));
+        return results.flat();
+      };
+
+      // Fetch in batches of 10 listing pages at a time
+      for (let i = 0; i < TOTAL_LISTING_PAGES; i += 10) {
+        const batch = await batchFetch(i, Math.min(i + 10, TOTAL_LISTING_PAGES));
+        const newLinks = batch.filter(u => !pubUrls.includes(u));
+        pubUrls.push(...newLinks);
+        log(`Listing pages ${i}–${Math.min(i+9, 57)}: found ${newLinks.length} new pubs. Total: ${pubUrls.length}`);
+        updateStats();
+      }
+      log(`✅ Done! Found ${pubUrls.length} publication pages.`, '#0ff');
+    }
+
+    // Step 2: For each pub URL, fetch the page and extract the PDF link
+    async function extractAndDownload() {
+      log('Starting PDF extraction and download...');
+      const delay = ms => new Promise(r => setTimeout(r, ms));
+
+      for (let i = 0; i < pubUrls.length; i++) {
+        while (paused) await delay(500);
+        if (!running) break;
+
+        const pubUrl = pubUrls[i];
+        const slug = pubUrl.split('/').pop();
+
+        try {
+          const r = await fetch(pubUrl);
+          const html = await r.text();
+          const m = html.match(/href="(\/sites\/default\/files\/pub-pdf\/[^"]+\.pdf)"/);
+
+          if (m) {
+            const pdfUrl = 'https://www.unfpa.org' + m[1];
+            pdfUrls.push(pdfUrl);
+
+            // Trigger download
+            const a = document.createElement('a');
+            a.href = pdfUrl;
+            a.download = decodeURIComponent(pdfUrl.split('/').pop());
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            doneCount++;
+            log(`[${i+1}/${pubUrls.length}] ✅ ${slug}`);
+          } else {
+            skipCount++;
+            log(`[${i+1}/${pubUrls.length}] ⚠️ No PDF: ${slug}`, '#ff0');
+          }
+        } catch(e) {
+          skipCount++;
+          log(`[${i+1}/${pubUrls.length}] ❌ Error: ${slug} — ${e.message}`, '#f55');
+        }
+
+        updateStats();
+        await delay(DELAY_MS);
+      }
+
+      log(`🎉 Done! Downloaded ${doneCount} PDFs. Skipped ${skipCount}.`, '#0ff');
+      running = false;
+      document.getElementById('btnStart').disabled = false;
+      document.getElementById('btnPause').disabled = true;
+    }
+
+    async function start() {
+      document.getElementById('btnStart').disabled = true;
+      document.getElementById('btnPause').disabled = false;
+      running = true;
+      paused = false;
+
+      if (pubUrls.length === 0) {
+        await collectPubUrls();
+      } else {
+        log(`Using ${pubUrls.length} already-collected publication URLs.`);
+      }
+
+      await extractAndDownload();
+    }
+
+    function pause() {
+      paused = true;
+      document.getElementById('btnPause').disabled = true;
+      document.getElementById('btnResume').disabled = false;
+      log('⏸ Paused.', '#ff0');
+    }
+
+    function resume() {
+      paused = false;
+      document.getElementById('btnPause').disabled = false;
+      document.getElementById('btnResume').disabled = true;
+      log('▶ Resumed.', '#0f0');
+    }
+
+    function savePDFList() {
+      const text = pdfUrls.join('\n');
+      const blob = new Blob([text], {type: 'text/plain'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'unfpa_pdf_urls.txt';
+      a.click();
+      log(`Saved ${pdfUrls.length} PDF URLs to unfpa_pdf_urls.txt`);
+    }
+
+    log('Ready. Click "Start Downloading All PDFs" to begin.');
+    log('Note: Your browser may ask you to allow multiple downloads — click Allow.', '#ff0');
+  </script>
+</body>
+</html>

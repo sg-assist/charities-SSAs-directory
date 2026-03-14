@@ -1,0 +1,48 @@
+// Prisma Schema for UNFPA Knowledge Chat
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions", "driverAdapters"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [pgvector(map: "vector", schema: "public")]
+}
+
+/// Deep research documents — the UNFPA institutional knowledge base.
+model KnowledgeDocument {
+  id        String   @id @default(cuid())
+  vertical  String                           // e.g., 'UNFPA'
+  title     String
+  slug      String   @unique                 // e.g., 'unfpa-o-01-unfpa-in-plain-language'
+  content   String   @db.Text               // Full markdown content
+  summary   String?  @db.Text
+  wordCount Int      @map("word_count")
+  metadata  Json?                            // { topics, documentId, sourceFile, block, code, audience, tier }
+  version   Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  chunks    KnowledgeChunk[]
+
+  @@index([vertical])
+  @@map("knowledge_documents")
+}
+
+/// Chunked segments for vector search (~800-1200 words each).
+model KnowledgeChunk {
+  id         String   @id @default(cuid())
+  documentId String   @map("document_id")
+  chunkIndex Int      @map("chunk_index")
+  content    String   @db.Text
+  tokenCount Int      @map("token_count")
+  embedding  Unsupported("vector(1536)")?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  document   KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, chunkIndex])
+  @@index([documentId])
+  @@map("knowledge_chunks")
+}

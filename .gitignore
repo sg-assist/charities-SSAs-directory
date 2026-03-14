@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Environment files — NEVER commit real keys
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Prisma generated client
+next-app/node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test coverage
+coverage/
+
+# Vercel
+.vercel
+
+# PDF source files — large binaries, not suitable for git
+docs/**/*.pdf
+
+# Claude Code internal settings
+.claude/
+
+# Catch any already-staged PDFs (belt and braces)
+*.pdf
