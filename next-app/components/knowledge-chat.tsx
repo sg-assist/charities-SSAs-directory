@@ -10,11 +10,11 @@ interface Message {
 }
 
 const STARTER_QUESTIONS = [
-  "What are UNFPA's three transformative results and how are they measured?",
-  "What does the evidence say about UNFPA's impact on maternal mortality?",
-  "How does UNFPA's China programme work and why is it controversial?",
-  "What is the difference between UNFPA and PMNCH?",
-  "How has US defunding affected UNFPA's programmes?",
+  "What PPP models are most relevant for humanitarian resilience in Asia?",
+  "How does climate change affect sexual and reproductive health in Asia?",
+  "What financing mechanisms exist in Singapore for resilience initiatives?",
+  "What does community resilience mean operationally, and how is it built?",
+  "What is UNFPA's mandate and how does it relate to climate and humanitarian response?",
 ];
 
 export function KnowledgeChat() {
@@ -98,7 +98,7 @@ export function KnowledgeChat() {
           UNFPA Knowledge Assistant
         </h2>
         <p className="text-xs mt-0.5" style={{ color: "#a8c8e8" }}>
-          Ask questions grounded in the UNFPA &amp; PMNCH knowledge base
+          Grounded in research on PPP models, climate resilience, SRHR, and Singapore&apos;s finance ecosystem
         </p>
       </div>
 
@@ -178,7 +178,7 @@ export function KnowledgeChat() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about UNFPA programmes, maternal health, family planning, funding…"
+            placeholder="Ask about PPP models, climate resilience, Singapore finance, community co-design…"
             className="flex-1 resize-none border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:border-blue-600"
             style={{ "--tw-ring-color": "#009EDB" } as React.CSSProperties}
             rows={2}
