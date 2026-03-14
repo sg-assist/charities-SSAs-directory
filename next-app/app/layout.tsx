@@ -3,8 +3,8 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "UNFPA Knowledge Base",
-  description: "Chat interface and browsable documents covering UNFPA's programmes, mandate, evidence base, and contested areas.",
+  title: "UNFPA PPP Challenge — LKYSPP Policy Innovation Lab",
+  description: "Research assistant for the LKYSPP consulting team working on UNFPA's PPP for Climate and Humanitarian Resilience challenge.",
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
                 UN
               </div>
               <span className="font-semibold text-slate-900 text-sm leading-tight">
-                UNFPA Knowledge Base
+                UNFPA Research Assistant
               </span>
             </Link>
 
@@ -45,14 +45,9 @@ export default function RootLayout({
               >
                 Knowledge Base
               </Link>
-              <a
-                href="https://ontheground.agency"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ml-2 px-3 py-1.5 text-xs text-slate-400 hover:text-slate-600 transition-colors"
-              >
-                By On The Ground
-              </a>
+              <span className="ml-2 px-3 py-1.5 text-xs text-slate-400">
+                LKYSPP Policy Innovation Lab · UNFPA Project B
+              </span>
             </nav>
           </div>
         </header>

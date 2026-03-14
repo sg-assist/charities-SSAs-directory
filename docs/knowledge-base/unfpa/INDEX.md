@@ -72,6 +72,17 @@
 
 ---
 
+## Block R — Resilience & Partnerships (LKYSPP–UNFPA Challenge B)
+
+| Code | Title | Audience | Status |
+|---|---|---|---|
+| UNFPA-R-01 | PPP Models for Humanitarian & Development Settings | Both | Complete |
+| UNFPA-R-02 | Climate Change and SRHR in Asia | Both | Complete |
+| UNFPA-R-03 | Singapore's Financial Ecosystem for Resilience | Both | Complete |
+| UNFPA-R-04 | Community Resilience, Co-Design, and Intergenerational Models | Both | Complete |
+
+---
+
 ## Layer 1 Trigger
 
 Layer 1 (PDF ingestion) is now appropriate. Phase 1 and Phase 2 documents are complete and queryable.

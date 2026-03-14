@@ -3,10 +3,10 @@ import { getAllDocs, BLOCK_LABELS, type DocSummary } from '@/lib/docs';
 
 export const metadata = {
   title: 'Knowledge Base — UNFPA & PMNCH',
-  description: 'Browse 32 deep-research documents covering UNFPA\'s mandate, programmes, data, and contested areas.',
+  description: 'Research documents for the LKYSPP–UNFPA Policy Innovation Lab. Covers UNFPA\'s mandate, humanitarian response, PPP models, climate resilience, and Singapore\'s finance ecosystem.',
 };
 
-const BLOCK_ORDER = ['O', 'W', 'D', 'C'];
+const BLOCK_ORDER = ['O', 'W', 'D', 'C', 'R'];
 
 const BLOCK_COLORS: Record<string, { bg: string; text: string; border: string; badge: string }> = {
   O:     { bg: 'bg-blue-50',   text: 'text-blue-900',  border: 'border-blue-200',  badge: 'bg-blue-100 text-blue-800' },
@@ -14,6 +14,7 @@ const BLOCK_COLORS: Record<string, { bg: string; text: string; border: string; b
   D:     { bg: 'bg-purple-50', text: 'text-purple-900',border: 'border-purple-200',badge: 'bg-purple-100 text-purple-800' },
   C:     { bg: 'bg-amber-50',  text: 'text-amber-900', border: 'border-amber-200', badge: 'bg-amber-100 text-amber-800' },
   PMNCH: { bg: 'bg-teal-50',   text: 'text-teal-900',  border: 'border-teal-200',  badge: 'bg-teal-100 text-teal-800' },
+  R:     { bg: 'bg-rose-50',  text: 'text-rose-900',  border: 'border-rose-200',  badge: 'bg-rose-100 text-rose-800' },
 };
 
 function DocCard({ doc }: { doc: DocSummary }) {
@@ -54,14 +55,14 @@ export default function KnowledgePage() {
   const docs = getAllDocs();
 
   // Group by block: UNFPA docs go into O/W/D/C; PMNCH docs into their own group
-  const grouped: Record<string, DocSummary[]> = { O: [], W: [], D: [], C: [], PMNCH: [] };
+  const grouped: Record<string, DocSummary[]> = { O: [], W: [], D: [], C: [], R: [], PMNCH: [] };
   for (const doc of docs) {
     const key = doc.frontmatter.org === 'PMNCH' ? 'PMNCH' : doc.frontmatter.block;
     if (!grouped[key]) grouped[key] = [];
     grouped[key].push(doc);
   }
 
-  const sectionOrder = [...BLOCK_ORDER, 'PMNCH'];
+  const sectionOrder = [...BLOCK_ORDER.filter(k => k !== 'R'), 'PMNCH', 'R'];
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
@@ -69,12 +70,8 @@ export default function KnowledgePage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900 mb-2">Knowledge Base</h1>
         <p className="text-slate-600 max-w-2xl">
-          32 deep-research documents covering UNFPA&apos;s mandate, programmes, data systems, and contested areas —
-          plus a dedicated section on PMNCH. Each document was researched and written using{' '}
-          <strong>Anthropic Claude</strong> with structured deep research by{' '}
-          <a href="https://ontheground.agency" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-medium">
-            On The Ground
-          </a>.
+          Research documents for the LKYSPP–UNFPA Policy Innovation Lab. Covers UNFPA&apos;s mandate, humanitarian response,
+          PPP models, climate resilience, and Singapore&apos;s finance ecosystem.
         </p>
         <p className="text-sm text-slate-400 mt-3">
           Total: {docs.length} documents · {docs.reduce((sum, d) => sum + d.wordCount, 0).toLocaleString()} words

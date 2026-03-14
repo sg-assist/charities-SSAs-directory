@@ -146,4 +146,9 @@ export const BLOCK_LABELS: Record<string, { label: string; description: string; 
     description: 'The Partnership for Maternal, Newborn & Child Health — its mandate, work, and relationship to UNFPA.',
     color: 'teal',
   },
+  R: {
+    label: 'Resilience & Partnerships',
+    description: 'PPP models, climate–SRHR nexus, Singapore\'s finance ecosystem, and community resilience frameworks for the LKYSPP–UNFPA challenge.',
+    color: 'rose',
+  },
 };
