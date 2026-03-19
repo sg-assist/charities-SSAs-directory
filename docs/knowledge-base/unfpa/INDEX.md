@@ -1,6 +1,6 @@
 # UNFPA Research Intelligence System — Layer 2 Index
 
-**Status**: Phase 6 complete — 35 documents built (30 original + 5 Partnership Catalyst enrichment)
+**Status**: Phase 7 complete — 38 documents built (30 original + 8 Partnership Catalyst enrichment)
 **Last updated**: 2026-03-19
 
 ---
@@ -85,6 +85,9 @@
 | UNFPA-R-07 | Climate Finance for SRHR: The Untapped Opportunity | Both | Complete |
 | UNFPA-R-08 | Funder Profiles and Partnership Opportunities | Both | Complete |
 | UNFPA-R-09 | The Case for UNFPA — Pitch-Ready Evidence | Both | Complete |
+| UNFPA-R-10 | Country Partnership Briefs: Asia-Pacific Priority Geographies | Both | Complete |
+| UNFPA-R-11 | Corporate and Innovative Partnership Models | Both | Complete |
+| UNFPA-R-12 | Updated Evidence Base 2024–2026: Key Research | Both | Complete |
 
 ---
 
