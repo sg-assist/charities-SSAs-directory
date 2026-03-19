@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { getAllDocs, BLOCK_LABELS, type DocSummary } from '@/lib/docs';
 
 export const metadata = {
-  title: 'Knowledge Base — UNFPA & PMNCH',
-  description: 'Research documents for the LKYSPP–UNFPA Policy Innovation Lab. Covers UNFPA\'s mandate, humanitarian response, PPP models, climate resilience, and Singapore\'s finance ecosystem.',
+  title: 'Knowledge Base — UNFPA Partnership Catalyst',
+  description: 'Reference documents for UNFPA partnership development. Covers UNFPA\'s mandate, programmes, partnership models, climate-SRHR evidence, and Singapore\'s finance ecosystem.',
 };
 
 const BLOCK_ORDER = ['O', 'W', 'D', 'C', 'R'];
@@ -70,8 +70,8 @@ export default function KnowledgePage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900 mb-2">Knowledge Base</h1>
         <p className="text-slate-600 max-w-2xl">
-          Research documents for the LKYSPP–UNFPA Policy Innovation Lab. Covers UNFPA&apos;s mandate, humanitarian response,
-          PPP models, climate resilience, and Singapore&apos;s finance ecosystem.
+          Reference documents for UNFPA partnership development. Covers UNFPA&apos;s mandate, programmes, partnership models,
+          climate-SRHR evidence, and Singapore&apos;s finance ecosystem.
         </p>
         <p className="text-sm text-slate-400 mt-3">
           Total: {docs.length} documents · {docs.reduce((sum, d) => sum + d.wordCount, 0).toLocaleString()} words
