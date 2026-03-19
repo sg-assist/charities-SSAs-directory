@@ -12,34 +12,34 @@ interface Message {
 
 const STARTER_PROMPTS: { label: string; icon: string; prompt: string }[] = [
   {
-    label: "Ask a research question",
-    icon: "🔍",
-    prompt: "What PPP models are most relevant for humanitarian resilience in Asia?",
+    label: "Prepare a funder pitch",
+    icon: "🎯",
+    prompt: "Help me prepare a pitch for a Singapore-based family office interested in climate adaptation. How can I position UNFPA's maternal health and resilience work to match their investment thesis?",
   },
   {
-    label: "Summarise an issue",
-    icon: "📋",
-    prompt: "Summarise the key evidence on how climate change affects sexual and reproductive health in Asia.",
-  },
-  {
-    label: "Draft meeting notes",
-    icon: "📝",
-    prompt: "Draft a set of discussion questions and key points for a meeting with Singapore family office representatives about funding resilience programmes.",
-  },
-  {
-    label: "Generate a briefing",
+    label: "Draft a briefing note",
     icon: "📄",
-    prompt: "Write a one-page briefing on Singapore's financial ecosystem for resilience initiatives, suitable for a senior UNFPA official.",
+    prompt: "Draft a one-page briefing note on UNFPA's climate-SRHR work in Asia-Pacific, suitable for sharing with a potential philanthropic partner before a first meeting.",
   },
   {
-    label: "Compare options",
+    label: "Prepare meeting talking points",
+    icon: "📝",
+    prompt: "I have a meeting with a development finance institution interested in blended finance for health systems. Draft talking points that connect UNFPA's programmes to their priorities.",
+  },
+  {
+    label: "Match projects to funders",
+    icon: "🔗",
+    prompt: "A corporate foundation focused on gender equity and women's empowerment wants to fund programmes in Southeast Asia. Which UNFPA projects and programme areas would be the best match?",
+  },
+  {
+    label: "Frame for climate funding",
+    icon: "🌏",
+    prompt: "How can I frame UNFPA's SRHR mandate to access climate and humanitarian funding streams? What evidence links climate change to sexual and reproductive health outcomes in Asia?",
+  },
+  {
+    label: "Compare financing models",
     icon: "⚖️",
-    prompt: "Compare blended finance vehicles and development impact bonds as mechanisms for funding community resilience in the Pacific.",
-  },
-  {
-    label: "Explore UNFPA's mandate",
-    icon: "🌐",
-    prompt: "How does UNFPA's mandate on SRHR relate to climate and humanitarian response in Asia?",
+    prompt: "Compare blended finance vehicles, development impact bonds, and South-South cooperation as mechanisms for funding UNFPA's community resilience work. Which would appeal most to Singapore-based investors?",
   },
 ];
 
@@ -211,10 +211,10 @@ export function KnowledgeChat() {
         <div className="px-5 py-4 border-b border-slate-200" style={{ backgroundColor: "#003366" }}>
           <h2 className="font-semibold text-white flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
-            UNFPA Knowledge Assistant
+            UNFPA Partnership Catalyst
           </h2>
           <p className="text-xs mt-0.5" style={{ color: "#a8c8e8" }}>
-            Grounded in research on PPP models, climate resilience, SRHR, and Singapore&apos;s finance ecosystem
+            Prepare for funding conversations — pitch UNFPA programmes, draft briefings, and match projects to partners
           </p>
         </div>
 
@@ -223,7 +223,7 @@ export function KnowledgeChat() {
           {!hasConversation && (
             <div className="mt-2">
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">
-                What would you like to do?
+                How can I help you prepare?
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {STARTER_PROMPTS.map((p) => (
@@ -312,7 +312,7 @@ export function KnowledgeChat() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Ask a question, request a briefing, draft meeting notes…"
+                  placeholder="Prepare a pitch, draft a briefing, match projects to funders…"
                   className="flex-1 resize-none border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:border-blue-600"
                   style={{ "--tw-ring-color": "#009EDB" } as React.CSSProperties}
                   rows={2}

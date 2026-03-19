@@ -3,8 +3,8 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "UNFPA PPP Challenge — LKYSPP Policy Innovation Lab",
-  description: "Research assistant for the LKYSPP consulting team working on UNFPA's PPP for Climate and Humanitarian Resilience challenge.",
+  title: "UNFPA Partnership Catalyst — Asia-Pacific",
+  description: "AI-powered tool helping UNFPA Asia-Pacific prepare for funding conversations and partnership development.",
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
                 UN
               </div>
               <span className="font-semibold text-slate-900 text-sm leading-tight">
-                UNFPA Research Assistant
+                UNFPA Partnership Catalyst
               </span>
             </Link>
 
@@ -46,7 +46,7 @@ export default function RootLayout({
                 Knowledge Base
               </Link>
               <span className="ml-2 px-3 py-1.5 text-xs text-slate-400">
-                LKYSPP Policy Innovation Lab · UNFPA Project B
+                UNFPA Asia-Pacific
               </span>
             </nav>
           </div>
@@ -54,6 +54,34 @@ export default function RootLayout({
 
         {/* Page content */}
         {children}
+
+        {/* Attribution footer */}
+        <footer className="border-t border-slate-200 bg-white mt-auto">
+          <div className="max-w-5xl mx-auto px-4 py-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-slate-400">
+              <div>
+                <p className="font-medium text-slate-500 mb-1">Built by</p>
+                <p>
+                  LKYSPP Policy Innovation Team — Rani Opula Rajan, Prachi Sharma, Abhishek Tiwari, Preeti Patil
+                </p>
+                <p className="mt-0.5">
+                  Haojun See, Founder,{" "}
+                  <a href="https://ontheground.agency" className="text-blue-500 hover:underline">
+                    On The Ground
+                  </a>
+                </p>
+              </div>
+              <div className="text-right">
+                <p>
+                  Lee Kuan Yew School of Public Policy
+                </p>
+                <p className="mt-0.5">
+                  National University of Singapore
+                </p>
+              </div>
+            </div>
+          </div>
+        </footer>
       </body>
     </html>
   );
