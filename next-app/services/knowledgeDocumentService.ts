@@ -18,6 +18,7 @@ import type {
 } from '@/types/corpus';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as crypto from 'crypto';
 
 // ============================================
 // Ingestion
@@ -58,22 +59,17 @@ export async function ingestDirectory(
       const slug = deriveSlug(file);
       const existing = await prisma.knowledgeDocument.findUnique({ where: { slug } });
 
-      if (existing && !options?.force) {
-        console.log(`[KnowledgeIngestion] Skipping ${file} (already exists)`);
+      const docResult = await ingestDocument(filePath, vertical, { force: options?.force });
+      if (docResult.chunksCreated === 0 && docResult.embeddingsGenerated === 0) {
+        console.log(`[KnowledgeIngestion] Skipping ${file} (unchanged)`);
         continue;
       }
-
-      const docResult = await ingestDocument(filePath, vertical, { force: options?.force });
-      if (existing) {
-        result.documentsUpdated++;
-      } else {
-        result.documentsCreated++;
-      }
+      result.documentsCreated++;
       result.chunksCreated += docResult.chunksCreated;
       result.embeddingsGenerated += docResult.embeddingsGenerated;
 
       console.log(
-        `[KnowledgeIngestion] ${existing ? 'Updated' : 'Created'} ${file}: ` +
+        `[KnowledgeIngestion] Ingested ${file}: ` +
         `${docResult.chunksCreated} chunks, ${docResult.embeddingsGenerated} embeddings`
       );
     } catch (error) {
@@ -107,13 +103,23 @@ export async function ingestDocument(
   const wordCount = countWords(content);
   const metadata = extractMetadata(content, filename, frontmatter);
 
+  // Compute content hash for change detection
+  const contentHash = crypto.createHash('sha256').update(rawContent).digest('hex');
+  (metadata as Record<string, unknown>).contentHash = contentHash;
+
   const existing = await prisma.knowledgeDocument.findUnique({
     where: { slug },
     include: { chunks: true },
   });
 
+  // Skip if content hasn't changed (hash match) unless forced
   if (existing && !options?.force) {
-    return { document: existing as any, chunksCreated: 0, embeddingsGenerated: 0 };
+    const existingHash = (existing.metadata as Record<string, unknown>)?.contentHash;
+    if (existingHash === contentHash) {
+      return { document: existing as any, chunksCreated: 0, embeddingsGenerated: 0 };
+    }
+    // Content changed — auto-update
+    console.log(`[KnowledgeIngestion] Content changed for ${slug}, re-ingesting...`);
   }
 
   if (existing) {
