@@ -1,11 +1,11 @@
 # UNFPA Research Intelligence System — Layer 2 Index
 
-**Status**: Phase 5 complete — all 30 documents built
-**Last updated**: 2026-03-14
+**Status**: Phase 6 complete — 100 documents built (36 original + 64 expansion)
+**Last updated**: 2026-04-01
 
 ---
 
-## BLOCK A: ORIENTATION (Phase 1 — Build First)
+## BLOCK A: ORIENTATION (Phase 1)
 
 | Code | Title | Audience | Status |
 |---|---|---|---|
@@ -20,7 +20,7 @@
 
 ---
 
-## BLOCK B: CORE PROGRAMME AREAS (Phase 2: W-01 to W-05; Phase 5: W-06 to W-10)
+## BLOCK B: CORE PROGRAMME AREAS (Phases 2 & 5 original; Phase 6 expansion)
 
 | Code | Title | Audience | Status |
 |---|---|---|---|
@@ -34,10 +34,18 @@
 | UNFPA-W-08 | Adolescent SRH | Both | Complete |
 | UNFPA-W-09 | Midwifery | Both | Complete |
 | UNFPA-W-10 | Contraceptive Procurement | Both | Complete |
+| UNFPA-W-11 | Cervical Cancer Prevention | Both | Complete |
+| UNFPA-W-12 | Sexually Transmitted Infections | Practitioner | Complete |
+| UNFPA-W-13 | Maternal Death Surveillance and Response | Practitioner | Complete |
+| UNFPA-W-14 | Emergency Obstetric and Newborn Care | Practitioner | Complete |
+| UNFPA-W-15 | Post-Abortion Care | Both | Complete |
+| UNFPA-W-16 | Youth Participation and Leadership | Both | Complete |
+| UNFPA-W-17 | Gender Equality and Women's Empowerment | Both | Complete |
+| UNFPA-W-18 | Respectful Maternity Care | Practitioner | Complete |
 
 ---
 
-## BLOCK C: POPULATION DATA AND EVIDENCE (Phase 5)
+## BLOCK C: POPULATION DATA AND EVIDENCE (Phase 5 original; Phase 6 expansion)
 
 | Code | Title | Audience | Status |
 |---|---|---|---|
@@ -45,10 +53,14 @@
 | UNFPA-D-02 | Census and CRVS Support | Both | Complete |
 | UNFPA-D-03 | Demographic Dividend | Decision-maker | Complete |
 | UNFPA-D-04 | Results Reporting — What the Numbers Mean | Decision-maker | Complete |
+| UNFPA-D-05 | Geospatial and Gridded Population Data | Both | Complete |
+| UNFPA-D-06 | Maternal Mortality Estimation Methodology | Decision-maker | Complete |
+| UNFPA-D-07 | Contraceptive Prevalence and Unmet Need Measurement | Decision-maker | Complete |
+| UNFPA-D-08 | Gender Data and SDG Indicators | Both | Complete |
 
 ---
 
-## BLOCK D: PMNCH (Phase 3)
+## BLOCK D: PMNCH (Phase 3 original; Phase 6 expansion)
 
 | Code | Title | Audience | Status |
 |---|---|---|---|
@@ -57,10 +69,14 @@
 | PMNCH-W-01 | PMNCH's Research and Evidence Work | Both | Complete |
 | PMNCH-W-02 | PMNCH's Accountability Framework | Decision-maker | Complete |
 | PMNCH-W-03 | PMNCH and UNFPA: Overlaps and Divergence | Both | Complete |
+| PMNCH-W-04 | Every Woman Every Child Movement | Both | Complete |
+| PMNCH-W-05 | Global Strategy for Women's, Children's and Adolescents' Health | Both | Complete |
+| PMNCH-W-06 | PMNCH Constituency Structure and Membership | Both | Complete |
+| PMNCH-W-07 | PMNCH Campaigns and Advocacy Tools | Practitioner | Complete |
 
 ---
 
-## BLOCK E: CONTESTED GROUND (Phase 4)
+## BLOCK E: CONTESTED GROUND (Phase 4 original; Phase 6 expansion)
 
 | Code | Title | Audience | Status |
 |---|---|---|---|
@@ -69,10 +85,96 @@
 | UNFPA-C-03 | Comprehensive Sexuality Education | Both | Complete |
 | UNFPA-C-04 | Where UNFPA's Results Are Disputed | Decision-maker | Complete |
 | UNFPA-C-05 | The China Programme | Both | Complete |
+| UNFPA-C-06 | Population Policies and Demographic Targets: Ethical Tensions | Both | Complete |
+| UNFPA-C-07 | Religious Institutions and SRHR Programming | Both | Complete |
 
 ---
 
-## Block R — Resilience & Partnerships (LKYSPP–UNFPA Challenge B)
+## Block F — Financing & Governance (Phase 6)
+
+| Code | Title | Audience | Status |
+|---|---|---|---|
+| UNFPA-F-01 | UNFPA's Funding Model: Revenue, Donors, Trends | Both | Complete |
+| UNFPA-F-02 | Core vs Non-Core Funding | Decision-maker | Complete |
+| UNFPA-F-03 | UNFPA's Executive Board: Governance and Accountability | Decision-maker | Complete |
+| UNFPA-F-04 | UN Development System Reform and UNFPA | Both | Complete |
+| UNFPA-F-05 | Results-Based Management and the IRRF | Decision-maker | Complete |
+| UNFPA-F-06 | UNFPA Strategic Plans: Evolution from Cairo to 2030 | Both | Complete |
+| UNFPA-F-07 | South-South and Triangular Cooperation | Both | Complete |
+| UNFPA-F-08 | UNFPA and the Sustainable Development Goals | Both | Complete |
+
+---
+
+## Block G — Regional Deep Dives (Phase 6)
+
+| Code | Title | Audience | Status |
+|---|---|---|---|
+| UNFPA-G-01 | UNFPA in Sub-Saharan Africa | Both | Complete |
+| UNFPA-G-02 | UNFPA in Asia and the Pacific | Both | Complete |
+| UNFPA-G-03 | UNFPA in the Arab States | Both | Complete |
+| UNFPA-G-04 | UNFPA in Latin America and the Caribbean | Both | Complete |
+| UNFPA-G-05 | UNFPA in Eastern Europe and Central Asia | Both | Complete |
+| UNFPA-G-06 | UNFPA in Small Island Developing States | Both | Complete |
+| UNFPA-G-07 | UNFPA in Least Developed Countries | Both | Complete |
+| UNFPA-G-08 | UNFPA in Fragile and Conflict-Affected States | Both | Complete |
+
+---
+
+## Block H — Human Rights & Legal Frameworks (Phase 6)
+
+| Code | Title | Audience | Status |
+|---|---|---|---|
+| UNFPA-H-01 | The ICPD Programme of Action: Complete Analysis | Both | Complete |
+| UNFPA-H-02 | CEDAW and Reproductive Rights | Both | Complete |
+| UNFPA-H-03 | SDG 3 and SDG 5: Health and Gender Equality | Both | Complete |
+| UNFPA-H-04 | Universal Health Coverage and SRHR | Both | Complete |
+| UNFPA-H-05 | Disability-Inclusive SRHR: Rights and Gaps | Both | Complete |
+| UNFPA-H-06 | Indigenous Peoples and SRHR | Both | Complete |
+
+---
+
+## Block T — Technology & Innovation (Phase 6)
+
+| Code | Title | Audience | Status |
+|---|---|---|---|
+| UNFPA-T-01 | Digital Health in UNFPA Programming | Both | Complete |
+| UNFPA-T-02 | Mobile Health (mHealth) for SRHR | Practitioner | Complete |
+| UNFPA-T-03 | Geospatial Data and Population Mapping | Both | Complete |
+| UNFPA-T-04 | Supply Chain Innovation: Last-Mile Delivery | Practitioner | Complete |
+| UNFPA-T-05 | AI and Machine Learning in Population Health | Both | Complete |
+| UNFPA-T-06 | Telemedicine and Remote SRHR Service Delivery | Practitioner | Complete |
+
+---
+
+## Block S — Special Populations & Cross-Cutting Issues (Phase 6)
+
+| Code | Title | Audience | Status |
+|---|---|---|---|
+| UNFPA-S-01 | Persons with Disabilities and SRHR: Programming | Practitioner | Complete |
+| UNFPA-S-02 | Population Ageing and UNFPA's Evolving Mandate | Both | Complete |
+| UNFPA-S-03 | Migration, Displacement, and SRHR | Both | Complete |
+| UNFPA-S-04 | Sexual Orientation, Gender Identity, and SRHR | Both | Complete |
+| UNFPA-S-05 | Engaging Men and Boys in SRHR | Both | Complete |
+| UNFPA-S-06 | Menstrual Health and Hygiene | Both | Complete |
+| UNFPA-S-07 | HIV/AIDS and SRHR Integration | Both | Complete |
+| UNFPA-S-08 | Mental Health and SRHR | Both | Complete |
+
+---
+
+## Block E — Evidence & Evaluation (Phase 6)
+
+| Code | Title | Audience | Status |
+|---|---|---|---|
+| UNFPA-E-01 | UNFPA's Evaluation Office | Decision-maker | Complete |
+| UNFPA-E-02 | Cost-Effectiveness Evidence in SRHR | Decision-maker | Complete |
+| UNFPA-E-03 | M&E Frameworks: Indicators and Measurement | Practitioner | Complete |
+| UNFPA-E-04 | The Lancet Series on SRHR | Both | Complete |
+| UNFPA-E-05 | The Guttmacher-Lancet Commission on SRHR | Both | Complete |
+| UNFPA-E-06 | Adding It Up: The Investment Case for SRHR | Decision-maker | Complete |
+
+---
+
+## Block R — Resilience & Partnerships (Phase 5 original; Phase 6 expansion)
 
 | Code | Title | Audience | Status |
 |---|---|---|---|
@@ -80,6 +182,30 @@
 | UNFPA-R-02 | Climate Change and SRHR in Asia | Both | Complete |
 | UNFPA-R-03 | Singapore's Financial Ecosystem for Resilience | Both | Complete |
 | UNFPA-R-04 | Community Resilience, Co-Design, and Intergenerational Models | Both | Complete |
+| UNFPA-R-05 | Disaster Risk Reduction and SRHR | Practitioner | Complete |
+| UNFPA-R-06 | Pandemic Preparedness and SRHR Service Continuity | Both | Complete |
+| UNFPA-R-07 | Urban Resilience and SRHR in Asian Megacities | Both | Complete |
+| UNFPA-R-08 | Food Security, Nutrition, and Reproductive Health | Both | Complete |
+
+---
+
+## Summary Statistics
+
+| Block | Documents | Phase |
+|---|---|---|
+| Orientation (O) | 8 | Phase 1 |
+| Programme Work (W) | 18 | Phases 2, 5, 6 |
+| Data & Evidence (D) | 8 | Phases 5, 6 |
+| PMNCH | 9 | Phases 3, 6 |
+| Contested Ground (C) | 7 | Phases 4, 6 |
+| Financing & Governance (F) | 8 | Phase 6 |
+| Regional Deep Dives (G) | 8 | Phase 6 |
+| Human Rights & Legal (H) | 6 | Phase 6 |
+| Technology & Innovation (T) | 6 | Phase 6 |
+| Special Populations (S) | 8 | Phase 6 |
+| Evidence & Evaluation (E) | 6 | Phase 6 |
+| Resilience & Partnerships (R) | 8 | Phases 5, 6 |
+| **TOTAL** | **100** | |
 
 ---
 
