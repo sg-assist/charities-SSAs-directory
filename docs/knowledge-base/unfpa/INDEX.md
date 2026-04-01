@@ -1,7 +1,7 @@
 # UNFPA Research Intelligence System — Layer 2 Index
 
-**Status**: Phase 6 complete — 100 documents built (36 original + 64 expansion)
-**Last updated**: 2026-04-01
+**Status**: Phase 7 complete — 38 documents built (30 original + 8 Partnership Catalyst enrichment)
+**Last updated**: 2026-03-19
 
 ---
 
@@ -182,30 +182,14 @@
 | UNFPA-R-02 | Climate Change and SRHR in Asia | Both | Complete |
 | UNFPA-R-03 | Singapore's Financial Ecosystem for Resilience | Both | Complete |
 | UNFPA-R-04 | Community Resilience, Co-Design, and Intergenerational Models | Both | Complete |
-| UNFPA-R-05 | Disaster Risk Reduction and SRHR | Practitioner | Complete |
-| UNFPA-R-06 | Pandemic Preparedness and SRHR Service Continuity | Both | Complete |
-| UNFPA-R-07 | Urban Resilience and SRHR in Asian Megacities | Both | Complete |
-| UNFPA-R-08 | Food Security, Nutrition, and Reproductive Health | Both | Complete |
-
----
-
-## Summary Statistics
-
-| Block | Documents | Phase |
-|---|---|---|
-| Orientation (O) | 8 | Phase 1 |
-| Programme Work (W) | 18 | Phases 2, 5, 6 |
-| Data & Evidence (D) | 8 | Phases 5, 6 |
-| PMNCH | 9 | Phases 3, 6 |
-| Contested Ground (C) | 7 | Phases 4, 6 |
-| Financing & Governance (F) | 8 | Phase 6 |
-| Regional Deep Dives (G) | 8 | Phase 6 |
-| Human Rights & Legal (H) | 6 | Phase 6 |
-| Technology & Innovation (T) | 6 | Phase 6 |
-| Special Populations (S) | 8 | Phase 6 |
-| Evidence & Evaluation (E) | 6 | Phase 6 |
-| Resilience & Partnerships (R) | 8 | Phases 5, 6 |
-| **TOTAL** | **100** | |
+| UNFPA-R-05 | The Global Funding Landscape for SRHR 2025–2026 | Both | Complete |
+| UNFPA-R-06 | Singapore's Finance Ecosystem 2025–2026 Update | Both | Complete |
+| UNFPA-R-07 | Climate Finance for SRHR: The Untapped Opportunity | Both | Complete |
+| UNFPA-R-08 | Funder Profiles and Partnership Opportunities | Both | Complete |
+| UNFPA-R-09 | The Case for UNFPA — Pitch-Ready Evidence | Both | Complete |
+| UNFPA-R-10 | Country Partnership Briefs: Asia-Pacific Priority Geographies | Both | Complete |
+| UNFPA-R-11 | Corporate and Innovative Partnership Models | Both | Complete |
+| UNFPA-R-12 | Updated Evidence Base 2024–2026: Key Research | Both | Complete |
 
 ---
 
