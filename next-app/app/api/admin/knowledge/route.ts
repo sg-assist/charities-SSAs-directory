@@ -24,6 +24,14 @@ export async function GET(request: NextRequest) {
 /**
  * POST /api/admin/knowledge
  * Trigger ingestion. Body: { vertical: string, directory?: string, force?: boolean }
+ *
+ * Change-detection behaviour (default):
+ *   Without --force the ingestion computes a SHA-256 hash of every markdown file
+ *   and compares it with the hash stored in the document's metadata.contentHash.
+ *   Only changed (or new) files are re-chunked and re-embedded.
+ *
+ * Force mode:
+ *   With force: true all documents are re-ingested regardless of hash match.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -40,7 +48,7 @@ export async function POST(request: NextRequest) {
     const pathModule = await import('path');
     const resolvedDir = pathModule.resolve(process.cwd(), '..', dirPath);
 
-    console.log(`[Admin Knowledge] Ingesting from ${resolvedDir} for vertical ${vertical}`);
+    console.log(`[Admin Knowledge] Ingesting from ${resolvedDir} for vertical ${vertical} (force=${!!force})`);
 
     const result = await ingestDirectory(resolvedDir, vertical, { force });
 
