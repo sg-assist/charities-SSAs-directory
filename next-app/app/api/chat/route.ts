@@ -268,7 +268,7 @@ export async function POST(request: NextRequest) {
                   method: 'POST',
                   headers: {
                     'x-api-key': apiKey!,
-                    'anthropic-version': '2024-10-22',
+                    'anthropic-version': '2023-06-01',
                     'anthropic-beta': 'interleaved-thinking-2025-05-14,web-search-2025-03-05',
                     'content-type': 'application/json',
                   },
