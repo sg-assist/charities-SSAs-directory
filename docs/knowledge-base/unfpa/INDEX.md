@@ -1,6 +1,6 @@
 # UNFPA Research Intelligence System — Layer 2 Index
 
-**Status**: Phase 5 complete — all 30 documents built
+**Status**: Phase 5 complete — 31 documents built (30 original + R-05 supplement)
 **Last updated**: 2026-03-14
 
 ---
@@ -80,6 +80,7 @@
 | UNFPA-R-02 | Climate Change and SRHR in Asia | Both | Complete |
 | UNFPA-R-03 | Singapore's Financial Ecosystem for Resilience | Both | Complete |
 | UNFPA-R-04 | Community Resilience, Co-Design, and Intergenerational Models | Both | Complete |
+| UNFPA-R-05 | Singapore-Based Foundations and Charities Directory for Maternal, Reproductive, and Children's Health | Both | Complete |
 
 ---
 
