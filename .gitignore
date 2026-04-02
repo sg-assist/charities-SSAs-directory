@@ -41,8 +41,12 @@ coverage/
 # PDF source files — large binaries, not suitable for git
 docs/**/*.pdf
 
+# Allow deliverables PDFs
+!docs/deliverables/*.pdf
+
 # Claude Code internal settings
 .claude/
 
 # Catch any already-staged PDFs (belt and braces)
 *.pdf
+!docs/deliverables/*.pdf
