@@ -26,8 +26,10 @@ The most immediately relevant development for the LKYSPP team is the May 2025 la
 - **PAA Health for Human Potential Community**: US$100 million target by 2030 for MNCHN and infectious diseases in Southeast Asia (launched May 2025)
 - **DBS Foundation commitment**: S$102.6 million committed in 2024; S$1 billion over the next decade; launched KidSTART Pregnant Mum & Baby Nutrition Programme (September 2025)
 - **KKH centenary**: KK Women's and Children's Hospital mobilised S$30 million+ in philanthropic funding for 15 new population health programmes (October 2024)
-- **Family offices**: ~1,400 single-family offices registered under MAS 13O/13U schemes (2023); estimated 10–20% have genuine impact investing appetite
+- **Family offices**: Over 2,000 single-family offices registered under MAS 13O/13U schemes (end-2024, up from ~1,400 in 2023); managing S$90 billion+ in assets; estimated 10–20% have genuine impact investing appetite
 - **Lee Foundation**: S$13.6 billion in total assets — by far the largest foundation in Singapore; disbursed S$33.2 million in 2024
+- **Khoo Teck Puat Foundation**: Over S$345 million donated to healthcare since founder's death; S$135 million to SingHealth in January 2026 — the largest single gift to a Singapore public healthcare institution; S$50 million to NUH Children's Medical Institute
+- **UBS Optimus Foundation Singapore**: Disbursed S$17.1 million in Singapore (ranked in top 10 givers); global fund raised record USD 366 million in 2024; focus on children's health, education, protection
 
 ---
 
@@ -39,7 +41,7 @@ The key incentive structure for health philanthropy is the Institution of a Publ
 
 A significant policy development for UNFPA's international mandate is the Overseas Humanitarian Assistance Tax Deduction Scheme, piloted from January 2025 to December 2028, which extends 100% tax deduction to overseas cash donations made through designated charities for emergency humanitarian needs. While the scheme is limited to designated charities and emergency contexts, it signals growing government interest in facilitating Singapore-based international philanthropy.
 
-The Philanthropy Tax Incentive Scheme (2023) allows single-family offices to receive 100% tax deduction for overseas donations — directly incentivising the ~1,400 SFOs to use Singapore as a base for international giving.
+The Philanthropy Tax Incentive Scheme (2023) allows single-family offices to receive 100% tax deduction for overseas donations — directly incentivising the over 2,000 SFOs to use Singapore as a base for international giving.
 
 ---
 
@@ -103,6 +105,24 @@ Teochew clan-based philanthropic organisation established in 1845. Disbursed S$4
 
 **UNFPA alignment**: Low. The Kongsi's Teochew community mandate and education-first orientation make it an unlikely partner for international SRHR programming, despite its capacity for very large health investments.
 
+### Khoo Teck Puat Foundation (Estate of Khoo Teck Puat)
+
+The most significant health-focused philanthropic estate in Singapore. Over S$345 million donated to healthcare, medical research, and education since founder's death (2004). Landmark donations: S$125 million for Khoo Teck Puat Hospital (795-bed facility), S$80 million to Duke-NUS Medical School, **S$50 million for the Khoo Teck Puat — National University Children's Medical Institute at NUH**, and S$10 million for Project MigrantWell (primary care for migrant workers). In **January 2026**, the estate donated **S$135 million to SingHealth** — the largest single gift to a public healthcare institution in Singapore, explicitly targeting **maternal and child health**, cardiovascular sciences, cancer research, and population health. Family fortune: S$9.2 billion. Trustee: Ms Mavis Khoo.
+
+**UNFPA alignment**: Strong. The January 2026 SingHealth gift specifically names maternal and child health as a research priority. Access through SingHealth Duke-NUS network.
+
+### UBS Optimus Foundation (Singapore)
+
+Global philanthropic foundation with significant Singapore operation. Disbursed S$17.1 million in Singapore (Soristic top 10, FY2024). Globally raised record **USD 366 million** in 2024, committed **USD 310 million in grants** reaching 7 million+ people. Focus: children's health (including paediatric oncology), education, protection. Transform Health Fund (USD 100 million) scales innovative healthcare for low-income patients in Africa. SDG Outcomes Fund: USD 100 million (2025 close).
+
+**UNFPA alignment**: Moderate to strong. Children's health focus and global development orientation create natural alignment. Singapore operation channels UBS private client philanthropy. Access through UBS private banking relationships.
+
+### FairPrice Foundation
+
+Corporate foundation (FairPrice Group). Disbursed S$12.7 million in FY2024. Launched **Start Strong, Stay Strong** with KKH as nutrition knowledge partner — Singapore's first preschool nutrition programme (1,000 children in 2024; 20,000 in 2025). Commissioned Full Plate study (2024) and Stay Strong study (2025) on nutrition gaps. Protein Pledge: S$1 million for nutritionally vulnerable Singaporeans.
+
+**UNFPA alignment**: Low to moderate. Nutrition focus and KKH partnership create marginal touchpoint but mandate is domestic food security, not international SRHR.
+
 ---
 
 ## TIER 3: ECOSYSTEM ENABLERS AND INTERMEDIARIES
@@ -159,6 +179,9 @@ Established 1952. Reached 20,187 children, youth, and families in 2024. Designat
 - **KidSTART Singapore**: Government-linked (MSF) early childhood development programme for low-income families. Partners with DBS Foundation on the Pregnant Mum & Baby Nutrition Programme. Model for government-philanthropic partnership in early life intervention.
 - **Ishk Tolaram Foundation**: Singapore-registered CLG (est. 2017). Funded by Tolaram Family Trust (25% beneficiary). Funds healthcare in Nigeria (1,250+ cataract surgeries) and Indonesia. Both operating and grantmaking. Demonstrates model of Singapore-registered foundations funding healthcare in developing countries.
 - **Octava Foundation**: Established within last decade. Focus on equitable quality education and early mental well-being promotion. Singapore (primary) and Southeast Asia (supporting). Mental well-being focus intersects with maternal mental health — a growing priority in Singapore (KKH's EMPOWER2 targets postnatal depression).
+- **Babes Pregnancy Crisis Support**: Singapore charity providing 24-hour crisis support (hotline: 6206 6641; WhatsApp: 3235 1351) for individuals aged 21 and below with unplanned pregnancies. Offers casework, counselling, and parenting skills support without judgement. Directly relevant to adolescent SRHR — a core UNFPA programme area.
+- **Mount Alvernia Hospital (Outreach Team)**: Singapore's only not-for-profit private hospital (~380 beds, ~5,000 deliveries/year). The Outreach Team provides maternity care for financially vulnerable transnational spouses who do not qualify for government subsidies, including prenatal care and childbirth services. Partner with WAH Foundation for Cambodia midwife training since 2017. Founded by FMDM Sisters (1961); 75th anniversary of Sisters' arrival in Singapore celebrated in 2024.
+- **Tsao Foundation**: Established 1993 by the Tsao family. Dedicated to improving quality of life for older persons. Operates Community for Successful Ageing (ComSA) centres. Partners with Duke-NUS CARE for long-term care research. Dr Mary Ann Tsao recognised by the UN as one of 50 inspirational leaders globally for ageing. The Tsao Family Office funds the Foundation's work through impact investing. Not a direct SRHR funder, but its life-course approach and Duke-NUS research partnerships create potential connectors for intergenerational health programming.
 
 ---
 
@@ -215,6 +238,10 @@ The LKYSPP team will inevitably encounter these organisations in Singapore's phi
 | Lee Foundation | Major health grant | S$5–20M | SingHealth connection; formal proposal |
 | KKH | Clinical / research partner | N/A (in-kind) | SingHealth Duke-NUS network |
 | WAH Foundation | Implementation model | N/A (knowledge) | Direct approach |
+| Khoo Teck Puat Foundation | Major health grant / research | S$10–50M | SingHealth Duke-NUS; Ms Mavis Khoo |
+| UBS Optimus Foundation SG | Co-funder / UHNW connector | S$5–15M | UBS private banking |
+| Babes Pregnancy Crisis | Adolescent SRHR partner | N/A (in-kind) | Direct approach |
+| Mount Alvernia Hospital | Maternal health / midwifery partner | N/A (in-kind) | Direct; WAH Foundation connection |
 
 ---
 
@@ -248,6 +275,13 @@ The LKYSPP team will inevitably encounter these organisations in Singapore's phi
 - MAS: "Singapore Asset Management Survey 2022"; Family office registration data
 - Charities Aid Foundation: World Giving Index 2024
 - Singapore Budget 2025: Overseas Humanitarian Assistance Tax Deduction Scheme; SG Gives Matching Grant
+- Estate of Khoo Teck Puat / SingHealth: "SingHealth gets $135m donation from Khoo Teck Puat estate" (January 2026); Givepedia profile
+- UBS Optimus Foundation: 2024 Annual Review; OECD Development Co-operation Profile
+- FairPrice Foundation: Annual Report 2024; "Start Strong, Stay Strong" programme launch (September 2024)
+- Mount Alvernia Hospital: Year in Review 2024; Outreach Team programme descriptions
+- Babes Pregnancy Crisis Support: SupportGoWhere listing; MOH Parliamentary reply on support for vulnerable pregnant women
+- Tsao Foundation: Official website; Duke-NUS CARE partnership; ILC Singapore
+- MAS: Speech by Deputy Chairman Chee Hong Tat at Global-Asia Family Office Summit (September 2024; September 2025) — confirmed 2,000+ SFOs by end-2024
 
 **Evidence quality rating**: Strong on foundation-level data (annual reports, audited financial data via Soristic, official programme announcements). Moderate on family office impact investment appetite (survey-based estimates). Weak on whether Singapore-based philanthropy has been successfully mobilised at scale for international SRHR programming — the PAA HHP Community (May 2025) is the first major attempt, and outcomes data does not yet exist.
 

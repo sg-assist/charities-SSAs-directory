@@ -143,7 +143,7 @@ Within the health sub-sector, maternal and reproductive health receives a fracti
 
 ### Wealth and Family Offices
 
-Singapore's wealth management sector — S$5.4 trillion in assets under management (MAS, 2022) — is the financial backdrop to its philanthropy. An estimated 1,100–1,400 single-family offices (SFOs) are registered under MAS 13O/13U tax incentive schemes. These schemes require qualifying FOs to invest in Singapore-domiciled assets and increasingly encourage local philanthropic activity.
+Singapore's wealth management sector — S$5.4 trillion in assets under management (MAS, 2022) — is the financial backdrop to its philanthropy. An estimated over 2,000 single-family offices (up from ~1,400 in 2023) (SFOs) are registered under MAS 13O/13U tax incentive schemes. These schemes require qualifying FOs to invest in Singapore-domiciled assets and increasingly encourage local philanthropic activity.
 
 Industry surveys (Campden Wealth, UBS/PwC) suggest 10–20% of Singapore FOs have genuine impact investing appetite — defined as willingness to accept below-market returns for social/environmental outcomes. Climate is the most common impact theme; health/SRHR is much less common. Accessing family offices requires intermediaries: AVPN, CFS, private bank philanthropy advisory teams (DBS Private Bank, UOB, OCBC), or the Philanthropy Asia Alliance.
 
@@ -751,7 +751,7 @@ The concentration of aligned foundations in the "Southeast Asia + broader Asia" 
 
 ### Scale and Structure
 
-Singapore hosts an estimated 1,100–1,400 single-family offices (SFOs) registered under MAS Section 13O/13U tax incentive schemes, with total AUM estimated at USD 200–400 billion (precise figures not publicly disclosed). The sector grew from approximately 400 SFOs in 2020, driven by geopolitical diversification from Hong Kong and wealth migration from China, Indonesia, and India.
+Singapore hosts an estimated over 2,000 single-family offices (up from ~1,400 in 2023) (SFOs) registered under MAS Section 13O/13U tax incentive schemes, with total AUM estimated at USD 200–400 billion (precise figures not publicly disclosed). The sector grew from approximately 400 SFOs in 2020, driven by geopolitical diversification from Hong Kong and wealth migration from China, Indonesia, and India.
 
 MAS incentive schemes require qualifying FOs to:
 - Invest a minimum percentage in Singapore-domiciled assets
@@ -1033,6 +1033,12 @@ The foundations profiled in this report — from Temasek Foundation's S$100 mill
 | 19 | KidSTART | Govt-linked | 4 | N/A | Early childhood | Mod (partner) | MSF |
 | 20 | Ishk Tolaram Fdn | Family | 4 | N/A | Healthcare (Nigeria/ID) | Low-Mod | AVPN |
 | 21 | Octava Foundation | Family | 4 | N/A | Mental well-being | Low | Direct |
+| 22 | Khoo Teck Puat Foundation | Estate | 2 | S$135M (2026) | S$345M+ to healthcare; MCH research at SingHealth | Strong | SingHealth |
+| 23 | UBS Optimus Foundation SG | Global fdn | 2 | S$17.1M | Children's health; USD 366M global | Mod-Strong | UBS PB |
+| 24 | FairPrice Foundation | Corporate | 2 | S$12.7M | Nutrition; KKH partnership | Low-Mod | Direct |
+| 25 | Babes Pregnancy Crisis | VWO | 4 | N/A | Adolescent pregnancy support | Mod (partner) | Direct |
+| 26 | Mount Alvernia Hospital | Nonprofit hospital | 4 | N/A | Maternity for vulnerable women | Mod (partner) | Direct |
+| 27 | Tsao Foundation | Family | 4 | N/A | Ageing; Duke-NUS research | Low (connector) | Direct |
 
 ---
 
