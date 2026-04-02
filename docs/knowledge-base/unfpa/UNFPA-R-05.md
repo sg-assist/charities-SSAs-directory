@@ -185,6 +185,39 @@ Established 1952. Reached 20,187 children, youth, and families in 2024. Designat
 
 ---
 
+## FAMILY OFFICES WITH HEALTH/PHILANTHROPY RELEVANCE
+
+Singapore hosts over 2,000 single-family offices (end-2024, up from 200 in 2019). MAS does not publish a public SFO registry; the following are publicly known through media reporting and philanthropic filings. The complete directory is in the Annex Report (UNFPA-R-05-ANNEX, Chapter 8).
+
+### Directly Health-Relevant Family Offices/Foundations
+
+| Principal | Entity | Net Worth | Health Relevance |
+|---|---|---|---|
+| **Khoo Teck Puat (estate)** | Khoo Teck Puat Foundation | S$9.2B | S$345M+ to healthcare; S$135M SingHealth (2026); MCH research |
+| **Bill Gates** | Gates Foundation SG office | US$108B | Opened May 2025; co-leads PAA HHP (US$100M for SE Asia health) |
+| **Sukanto Tanoto** | Tanoto Foundation | US$4B+ | MRF S$5M/yr; CHaMP Centre; PAA HHP co-lead |
+| **Ray Dalio** | Dalio Foundation SG | US$15B | Registered SG charity June 2023; Dalio Centre for Health (global) |
+| **Eduardo Saverin** | Saverin Foundation | US$43B | Registered Sept 2023; grants to healthcare and education |
+| **Laurence Moh (estate)** | Moh Family Foundation | Not disclosed | S$22.4M (75.1% to health) |
+| **Tsao family** | Tsao Family Office | Not disclosed | Impact investing; Tsao Foundation for ageing; Duke-NUS |
+
+### Emerging Opportunities
+
+- **AJ Capital Singapore** (Abhinav Jhunjhunwala): Reportedly launching a **US$100 million fund for healthcare and education in Asia** — potentially relevant to UNFPA
+- **Widjaja family** (Sinar Mas): MAS-licensed SFO; conglomerate with healthcare interests in Indonesia
+- **Wee family** (UOB): Singapore's largest SFO (US$5–7B); UOB Foundation launching 2026
+
+### Access Strategy
+
+Family offices are private entities. Engagement requires intermediaries:
+- **AVPN**: Network access to 700+ members including FOs
+- **CFS**: DAF structuring for FO philanthropy
+- **PAA**: High-level convening (Gates, Tanoto, Temasek in HHP Community)
+- **UBS / DBS / OCBC Private Banks**: Philanthropy advisory for FO clients
+- **PTIS uptake is slow** (only 9 applications by Aug 2024) — opportunity to help FOs structure overseas health giving
+
+---
+
 ## NEGATIVE LIST: PROMINENT SINGAPORE FOUNDATIONS NOT RECOMMENDED FOR UNFPA ENGAGEMENT
 
 The following foundations are significant players in Singapore's philanthropic landscape but are **not recommended for UNFPA SRHR engagement** due to mandate misalignment, domestic-only focus, or structural incompatibility.

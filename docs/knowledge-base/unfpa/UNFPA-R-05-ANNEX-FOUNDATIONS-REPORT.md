@@ -767,6 +767,69 @@ Qualitative evidence from industry surveys (Campden Wealth, UBS/PwC) suggests:
 - An estimated 10–20% of Singapore FOs have genuine impact investing appetite
 - **Climate** is the dominant impact theme; **health/SRHR is uncommon**
 - A small but growing number of FOs have dedicated philanthropy teams or philanthropic mandates
+- Healthcare/life sciences is a growing allocation sector, driven by Asian ageing demographics and biotech opportunities
+- The next generation is reshaping priorities — pushing for greater ESG and impact investing engagement
+
+### Named Family Offices and Foundations with Potential Health Relevance
+
+MAS does not publish a public registry of SFOs. The following are publicly known Singapore-based family offices and foundations identified through media reporting, corporate filings, and philanthropic announcements. This is not exhaustive — most of the 2,000+ SFOs operate privately.
+
+#### Tier A: Directly Health-Relevant or Already Philanthropically Active in Health
+
+| Family/Principal | Entity | Wealth Source | Est. Net Worth | Health/Philanthropy Relevance |
+|---|---|---|---|---|
+| **Khoo Teck Puat (estate)** | Khoo Teck Puat Foundation | Banking (OCBC/Maybank), hotels | S$9.2B (estate) | S$345M+ to healthcare; S$135M to SingHealth (2026); S$50M NUH Children's Medical Institute |
+| **Sukanto Tanoto** | Tanoto Foundation | RGE (palm oil, pulp, energy) | US$4B+ | MRF (S$5M/yr); CHaMP Centre; PAA HHP co-lead |
+| **Low Tuck Kwong** | Low Tuck Kwong Foundation | PT Bayan Resources (coal) | US$4.2B | S$127.6M disbursed (2023); hospitals |
+| **Laurence Moh (estate)** | Moh Family Foundation | Furniture industry | Not disclosed | S$22.4M (75.1% to health) |
+| **Ray Dalio** | Dalio Foundation (SG) | Bridgewater Associates | US$15B | Registered SG charity June 2023; Dalio Centre for Health (global); US$1.4M SG grants (2023) |
+| **Bill Gates** | Gates Foundation (SG office) | Microsoft, investments | US$108B | SG office opened May 2025; co-leads PAA HHP (US$100M target); "strengthen global health partnerships across Southeast Asia" |
+| **Eduardo Saverin** | Elaine & Eduardo Saverin Foundation | Facebook co-founder | US$43B | Registered Sept 2023; grants to education and healthcare initiatives |
+| **Tsao family** | Tsao Family Office / Tsao Foundation | Shipping (IMC Group) | Not disclosed | Impact investing in health/education/climate; Tsao Foundation for ageing; Duke-NUS partnerships |
+
+#### Tier B: Significant Wealth in Singapore with Broader Philanthropic Activity
+
+| Family/Principal | Entity | Wealth Source | Est. Net Worth | Known Philanthropy |
+|---|---|---|---|---|
+| **Wee family** | Wee Investments Pte Ltd | UOB (banking) | US$5–7B | Singapore's largest SFO by AUM; UOB Foundation (arts, children, education) |
+| **Kwee family** | Kwee Investment Office | Pontiac Land Group (real estate) | US$3B+ | Real estate and hospitality; limited public health philanthropy |
+| **Goh Cheng Liang** | Wuthelam Holdings | Nippon Paint (majority owner) | US$20B+ | Significant wealth but low public philanthropic profile |
+| **Sergey Brin** | Bayshore Global Management | Google/Alphabet co-founder | US$258B | SG office since 2020; AUM US$30.1B; limited public SG philanthropy |
+| **James Dyson** | Dyson family office | Dyson (technology) | US$11.9B | SG-based since 2019; engineering/technology focus |
+| **Widjaja family** | Sinar Mas family office | Sinar Mas Group (Indonesia) | US$10B+ | MAS-licensed SFO since 2021; conglomerate with healthcare interests in Indonesia |
+| **Jimmy Budiarto** | Rao Family Foundation | Gold mining (Indonesia) | Not disclosed | Registered SG charity 2023; causes not fully disclosed |
+| **Bachtiar Karim** | Karim Family Foundation | Musim Mas (palm oil, Indonesia) | Not disclosed | Registered SG charity; causes not fully disclosed |
+| **Mohamed Salleh Marican** | Salleh Marican Foundation | Second Chance Properties | Not disclosed | Registered June 2022; community focus |
+
+#### Tier C: Known SFOs Without Public Health/Philanthropy Mandates
+
+| Family/Principal | Entity | Wealth Source |
+|---|---|---|
+| Apricot Capital | David Teo family office | Instant coffee |
+| AT Capital Group | Arvind Tiku family office | Trading/investments |
+| AJ Capital Singapore | Abhinav Jhunjhunwala | Commodities (launching $100M healthcare/education fund) |
+| Rumah Group | Steve Melhuish | PropertyGuru; climate impact investing |
+| Liang Xinjun | SG family office | Fosun Group co-founder (China) |
+| Shu Ping | SG family office | Haidilao International (hotpot) |
+| Mukesh Ambani | SG family office | Reliance Industries (India) |
+
+**Key insight**: AJ Capital Singapore is notable — it is reportedly launching a **US$100 million fund for healthcare and education investments in Asia**, which could be directly relevant to UNFPA's agenda if the fund accepts development-oriented deal flow.
+
+### Regulatory Framework for FO Philanthropy
+
+**Philanthropy Tax Incentive Scheme (PTIS, 2024)**:
+- 100% tax deduction for overseas donations from approved SFOs
+- Capped at 40% of donor's statutory income or S$50 million (whichever is lower)
+- Five-year scheme
+- **Uptake has been slow**: Only 9 applications and expressions of interest received by MAS as of August 2024
+
+**Grantmaker Scheme**:
+- The Commissioner of Charities reported approximately 5 new charities per year registered under the Grantmaker Scheme over the past three years
+- This scheme relaxes certain regulatory requirements to encourage philanthropy
+
+**13O/13U Conditions**:
+- SFOs under tax incentive schemes must declare AUM, local expenditure, and investment professional headcount to MAS and IRAS annually
+- MAS is tightening oversight: ~3% of 1,300 applications flagged; 2 SFO funds linked to sanctioned individuals had incentives ceased
 
 ### Access Pathways
 
