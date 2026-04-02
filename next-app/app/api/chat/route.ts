@@ -4,8 +4,8 @@ import { Redis } from '@upstash/redis';
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const DAILY_LIMIT = 20;
-const MAX_TOOL_ROUNDS = 6;      // safety cap on agentic tool-use loops
-const MAX_CONTINUATION_WAVES = 4; // max waves of continued generation on max_tokens cutoff
+const MAX_TOOL_ROUNDS = 3;      // safety cap on agentic tool-use loops
+const MAX_CONTINUATION_WAVES = 2; // max waves of continued generation on max_tokens cutoff
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 180; // allow up to 3 minutes for agentic + wave responses
