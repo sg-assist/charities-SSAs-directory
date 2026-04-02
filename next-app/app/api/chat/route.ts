@@ -258,23 +258,52 @@ export async function POST(request: NextRequest) {
               body.tools = TOOLS;
             }
 
-            const res = await fetch(ANTHROPIC_API_URL, {
-              method: 'POST',
-              headers: {
-                'x-api-key': apiKey!,
-                'anthropic-version': '2025-04-15',
-                'content-type': 'application/json',
-              },
-              body: JSON.stringify(body),
-            });
+            const MAX_RETRIES = 2;
+            let lastError = '';
+            let lastStatus = 0;
 
-            if (!res.ok) {
-              const errorText = await res.text();
-              console.error('[Chat API] Claude error:', res.status, errorText);
-              return null;
+            for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+              try {
+                const res = await fetch(ANTHROPIC_API_URL, {
+                  method: 'POST',
+                  headers: {
+                    'x-api-key': apiKey!,
+                    'anthropic-version': '2025-04-15',
+                    'content-type': 'application/json',
+                  },
+                  body: JSON.stringify(body),
+                });
+
+                if (res.ok) {
+                  return res.json();
+                }
+
+                lastStatus = res.status;
+                lastError = await res.text();
+                console.error(`[Chat API] Claude error (attempt ${attempt + 1}):`, res.status, lastError);
+
+                // Don't retry on client errors (4xx) except 429 (rate limit)
+                if (res.status < 500 && res.status !== 429) {
+                  break;
+                }
+
+                // Wait before retrying (exponential backoff)
+                if (attempt < MAX_RETRIES) {
+                  await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
+                }
+              } catch (fetchError) {
+                lastError = fetchError instanceof Error ? fetchError.message : 'Network error';
+                lastStatus = 0;
+                console.error(`[Chat API] Fetch error (attempt ${attempt + 1}):`, lastError);
+
+                if (attempt < MAX_RETRIES) {
+                  await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
+                }
+              }
             }
 
-            return res.json();
+            // Return error details instead of null so we can surface a meaningful message
+            return { _error: true, status: lastStatus, detail: lastError };
           }
 
           // Helper: extract text and tool_use blocks from content
@@ -324,8 +353,20 @@ export async function POST(request: NextRequest) {
             });
 
             const claudeData = await callClaude(messages, true);
-            if (!claudeData) {
-              send('error', { message: 'AI service error' });
+            if (!claudeData || claudeData._error) {
+              const status = claudeData?.status || 0;
+              let userMessage = 'AI service error. Please try again.';
+              if (status === 401 || status === 403) {
+                userMessage = 'AI service authentication error. Please contact the administrator.';
+              } else if (status === 429) {
+                userMessage = 'AI service is temporarily overloaded. Please wait a moment and try again.';
+              } else if (status >= 500) {
+                userMessage = 'AI service is temporarily unavailable. Please try again in a few moments.';
+              } else if (status === 0) {
+                userMessage = 'Unable to reach AI service. Please check your connection and try again.';
+              }
+              console.error('[Chat API] Final error - status:', status, 'detail:', claudeData?.detail);
+              send('error', { message: userMessage });
               break;
             }
 
@@ -431,7 +472,7 @@ export async function POST(request: NextRequest) {
             ];
 
             const waveData = await callClaude(continuationMessages, false);
-            if (!waveData) break;
+            if (!waveData || waveData._error) break;
 
             const waveBlocks = waveData.content || [];
             lastStopReason = waveData.stop_reason || '';
