@@ -58,7 +58,7 @@ These concerns have not disappeared. A 2021 systematic review of private sector 
 - UNFPA's status as the world's largest multilateral procurer of contraceptives and reproductive health commodities is essentially a sustained commodity PPP. UNFPA negotiates with manufacturers (Bayer, Pfizer, Medicines360, local generic producers) on behalf of governments.
 - The Reproductive Health Supplies Coalition (RHSC) is a platform PPP that brings together donors, governments, manufacturers, and NGOs to coordinate supply chains.
 
-**Evidence**: Strong evidence of cost reduction (20–40% below private market rates for contraceptives in some analyses). Limited evidence on whether the partnerships actually strengthen in-country supply chain resilience vs. creating import dependency.
+**Evidence**: Strong evidence of cost reduction through pooled procurement. UNFPA's Supplies Partnership generates an estimated $8.40 in direct health and economic benefits per $1 invested (2024 data). Country-level examples show dramatic savings (e.g., Bolivia: UNFPA-procured oral contraceptives at $0.21/cycle vs. ~$1.68 private pharmacy). The broader "20–40% below market" claim appears in some analyses but is not verified in UNFPA's own published procurement statistics — the documented aggregate saving is $28 million over 2017–2021. Limited evidence on whether the partnerships actually strengthen in-country supply chain resilience vs. creating import dependency.
 
 **Relevant to the challenge**: A resilience-oriented version of this model could include: contracts with regional manufacturers (India, Bangladesh) that build local capacity alongside supply; incentive structures for manufacturers to invest in climate-resilient cold chain logistics in Asia.
 

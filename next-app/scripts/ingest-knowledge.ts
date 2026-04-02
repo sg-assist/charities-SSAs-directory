@@ -24,6 +24,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import * as crypto from 'crypto';
 import { PrismaClient } from '@prisma/client';
 import { chunkDocument, countWords } from '../services/chunkingService';
 import { isEmbeddingAvailable, generateEmbeddingBatch } from '../services/embeddingService';
@@ -169,11 +170,18 @@ async function ingestFile(
     return { created: true, updated: false, skipped: false, chunks: chunks.length, embeddings: 0, words: wordCount };
   }
 
+  // Compute content hash for change detection
+  const contentHash = crypto.createHash('sha256').update(rawContent).digest('hex');
+
   const existing = await getPrisma().knowledgeDocument.findUnique({ where: { slug } });
 
   if (existing && !options.force) {
-    console.log(`  [SKIP] ${filename} — already exists`);
-    return { created: false, updated: false, skipped: true, chunks: 0, embeddings: 0, words: 0 };
+    const existingHash = (existing.metadata as Record<string, unknown>)?.contentHash;
+    if (existingHash === contentHash) {
+      console.log(`  [SKIP] ${filename} — unchanged (hash match)`);
+      return { created: false, updated: false, skipped: true, chunks: 0, embeddings: 0, words: 0 };
+    }
+    console.log(`  [CHANGE] ${filename} — content changed, re-ingesting...`);
   }
 
   if (existing) {
@@ -191,6 +199,7 @@ async function ingestFile(
     audience: frontmatter.AUDIENCE || undefined,
     tier: frontmatter.TIER || undefined,
     topics: h2Matches.map((m) => m[1].trim()),
+    contentHash,
   };
 
   const document = await getPrisma().knowledgeDocument.upsert({

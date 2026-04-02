@@ -1,13 +1,18 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Send, BookOpen } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Send, BookOpen, Globe, Search, Brain, Pencil, Download, FileText, FileDown, Presentation, ChevronDown, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
   sources?: Array<{ title: string; slug: string }>;
+}
+
+interface StatusUpdate {
+  phase: "thinking" | "researching" | "searching" | "writing";
+  message: string;
 }
 
 const STARTER_PROMPTS: { label: string; icon: string; prompt: string }[] = [
@@ -43,44 +48,182 @@ const STARTER_PROMPTS: { label: string; icon: string; prompt: string }[] = [
   },
 ];
 
-const LOADING_WORDS = [
-  "resilience", "partnerships", "SRHR", "climate", "blended finance",
-  "community", "UNFPA", "Asia-Pacific", "humanitarian", "co-design",
-  "maternal health", "PPP", "Singapore", "solidarity", "evidence",
-  "financing", "advocacy", "policy", "family offices", "vulnerability",
-  "adaptation", "GBV", "health systems", "impact", "coordination",
-];
+const PHASE_ICONS: Record<string, typeof Brain> = {
+  thinking: Brain,
+  researching: Globe,
+  searching: Search,
+  writing: Pencil,
+};
 
 const DAILY_LIMIT = 20;
 
-function LoadingPulse() {
-  const [wordIndex, setWordIndex] = useState(0);
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    const cycle = setInterval(() => {
-      setVisible(false);
-      setTimeout(() => {
-        setWordIndex((i) => (i + 1) % LOADING_WORDS.length);
-        setVisible(true);
-      }, 200);
-    }, 1200);
-    return () => clearInterval(cycle);
-  }, []);
-
+function StatusIndicator({ status }: { status: StatusUpdate }) {
+  const Icon = PHASE_ICONS[status.phase] || Brain;
   return (
     <div className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-lg">
-      <div className="flex gap-1">
-        <span className="h-1.5 w-1.5 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: "0ms" }} />
-        <span className="h-1.5 w-1.5 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: "150ms" }} />
-        <span className="h-1.5 w-1.5 rounded-full bg-slate-300 animate-bounce" style={{ animationDelay: "300ms" }} />
+      <div className="flex items-center gap-2">
+        <Icon className="h-3.5 w-3.5 animate-pulse" style={{ color: "#009EDB" }} />
+        <span className="text-xs font-medium" style={{ color: "#009EDB" }}>
+          {status.message}
+        </span>
       </div>
-      <span
-        className="text-xs font-medium transition-opacity duration-200"
-        style={{ color: "#009EDB", opacity: visible ? 1 : 0 }}
+    </div>
+  );
+}
+
+type ExportFormat = "docx" | "pdf" | "pptx";
+
+const EXPORT_OPTIONS: { format: ExportFormat; label: string; icon: typeof FileText; description: string }[] = [
+  { format: "docx", label: "Word Document", icon: FileText, description: "Editable .docx report" },
+  { format: "pdf", label: "PDF Document", icon: FileDown, description: "Print-ready .pdf report" },
+  { format: "pptx", label: "PowerPoint Slides", icon: Presentation, description: "Slide deck .pptx" },
+];
+
+function ExportDropdown({
+  messages,
+  disabled,
+}: {
+  messages: Message[];
+  disabled: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const [exporting, setExporting] = useState<ExportFormat | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [open]);
+
+  const handleExport = async (format: ExportFormat) => {
+    setExporting(format);
+    setOpen(false);
+
+    try {
+      const response = await fetch("/api/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: messages.map((m) => ({
+            role: m.role,
+            content: m.content,
+            sources: m.sources,
+          })),
+          format,
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        alert(err.error || "Export failed. Please try again.");
+        return;
+      }
+
+      // ── Client-side integrity verification ──
+      const blob = await response.blob();
+      const contentLength = response.headers.get("Content-Length");
+      const integrity = response.headers.get("X-File-Integrity");
+
+      // 1. Check server confirmed integrity
+      if (integrity !== "verified") {
+        alert("Export file did not pass server integrity check. Please try again.");
+        return;
+      }
+
+      // 2. Verify received size matches declared Content-Length
+      if (contentLength && blob.size !== Number(contentLength)) {
+        alert(
+          `Download incomplete: received ${blob.size} bytes but expected ${contentLength}. ` +
+          "The file may be corrupted. Please try again."
+        );
+        return;
+      }
+
+      // 3. Verify minimum size (catch empty/stub responses)
+      const MIN_SIZES: Record<string, number> = { docx: 1024, pdf: 256, pptx: 2048 };
+      if (blob.size < (MIN_SIZES[format] || 256)) {
+        alert("Export file appears too small and may be incomplete. Please try again.");
+        return;
+      }
+
+      // 4. Verify magic bytes on the client
+      const header = new Uint8Array(await blob.slice(0, 4).arrayBuffer());
+      const MAGIC: Record<string, number[]> = {
+        docx: [0x50, 0x4b, 0x03, 0x04],
+        pdf: [0x25, 0x50, 0x44, 0x46],
+        pptx: [0x50, 0x4b, 0x03, 0x04],
+      };
+      const expected = MAGIC[format];
+      if (expected && !expected.every((b, i) => header[i] === b)) {
+        alert("Downloaded file has an invalid header and may be corrupted. Please try again.");
+        return;
+      }
+
+      // All checks passed — trigger download
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const timestamp = new Date().toISOString().split("T")[0];
+      a.download = `unfpa-report-${timestamp}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      alert("Export failed. Please check your connection and try again.");
+    } finally {
+      setExporting(null);
+    }
+  };
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setOpen(!open)}
+        disabled={disabled || exporting !== null}
+        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded border transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        style={{
+          color: "#FFFFFF",
+          borderColor: "rgba(255,255,255,0.4)",
+          backgroundColor: open ? "rgba(255,255,255,0.15)" : "transparent",
+        }}
+        title="Export conversation as report"
       >
-        {LOADING_WORDS[wordIndex]}
-      </span>
+        {exporting ? (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        ) : (
+          <Download className="h-3.5 w-3.5" />
+        )}
+        {exporting ? "Exporting…" : "Export"}
+        <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1">
+          {EXPORT_OPTIONS.map((opt) => {
+            const Icon = opt.icon;
+            return (
+              <button
+                key={opt.format}
+                onClick={() => handleExport(opt.format)}
+                className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-slate-50 transition-colors"
+              >
+                <Icon className="h-4 w-4 flex-shrink-0" style={{ color: "#009EDB" }} />
+                <div>
+                  <p className="text-xs font-medium text-slate-800">{opt.label}</p>
+                  <p className="text-[10px] text-slate-400">{opt.description}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -90,8 +233,11 @@ export function KnowledgeChat() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [remaining, setRemaining] = useState<number>(DAILY_LIMIT);
+  const [currentStatus, setCurrentStatus] = useState<StatusUpdate | null>(null);
+  const [streamingText, setStreamingText] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const hasConversation = messages.length > 0;
 
@@ -105,7 +251,7 @@ export function KnowledgeChat() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
+  }, [messages, isLoading, streamingText]);
 
   // Focus textarea when a starter prompt populates the input
   useEffect(() => {
@@ -116,71 +262,152 @@ export function KnowledgeChat() {
 
   const isAtLimit = remaining <= 0;
 
-  const sendMessage = async (text?: string) => {
-    const userMessage = (text ?? input).trim();
-    if (!userMessage || isLoading || isAtLimit) return;
+  const sendMessage = useCallback(
+    async (text?: string) => {
+      const userMessage = (text ?? input).trim();
+      if (!userMessage || isLoading || isAtLimit) return;
 
-    setInput("");
-    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
-    setIsLoading(true);
+      setInput("");
+      setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
+      setIsLoading(true);
+      setStreamingText("");
+      setCurrentStatus({ phase: "thinking", message: "Analyzing your question..." });
 
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: userMessage,
-          conversationHistory: messages.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
-        }),
-      });
+      // Abort any previous request
+      abortControllerRef.current?.abort();
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
 
-      const data = await response.json();
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: userMessage,
+            conversationHistory: messages.map((m) => ({
+              role: m.role,
+              content: m.content,
+            })),
+          }),
+          signal: controller.signal,
+        });
 
-      // Update remaining count from server response
-      if (typeof data.remaining === "number") setRemaining(data.remaining);
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          if (response.status === 429) {
+            setRemaining(0);
+            setMessages((prev) => [
+              ...prev,
+              {
+                role: "assistant",
+                content:
+                  data.error ||
+                  `Daily limit of ${DAILY_LIMIT} queries reached. Resets at midnight UTC.`,
+              },
+            ]);
+          } else {
+            setMessages((prev) => [
+              ...prev,
+              {
+                role: "assistant",
+                content: data.error || "Sorry, something went wrong. Please try again.",
+              },
+            ]);
+          }
+          return;
+        }
 
-      if (response.ok) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content: data.response,
-            sources: data.sources?.length ? data.sources : undefined,
-          },
-        ]);
-      } else if (response.status === 429) {
-        setRemaining(0);
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content: data.error || `Daily limit of ${DAILY_LIMIT} queries reached. Resets at midnight UTC.`,
-          },
-        ]);
-      } else {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content: data.error || "Sorry, something went wrong. Please try again.",
-          },
-        ]);
+        // Process SSE stream
+        const reader = response.body?.getReader();
+        if (!reader) throw new Error("No response body");
+
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let accumulatedText = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+
+          // Parse SSE events from buffer
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || ""; // keep incomplete line in buffer
+
+          let currentEvent = "";
+          for (const line of lines) {
+            if (line.startsWith("event: ")) {
+              currentEvent = line.slice(7).trim();
+            } else if (line.startsWith("data: ") && currentEvent) {
+              try {
+                const data = JSON.parse(line.slice(6));
+
+                switch (currentEvent) {
+                  case "status":
+                    setCurrentStatus(data as StatusUpdate);
+                    break;
+
+                  case "text_delta":
+                    accumulatedText += data.text;
+                    setStreamingText(accumulatedText);
+                    setCurrentStatus(null); // hide status once text starts flowing
+                    break;
+
+                  case "done": {
+                    const { sources, remaining: rem, fullText } = data;
+                    // Use fullText if available for accuracy
+                    const finalContent = fullText || accumulatedText;
+                    setMessages((prev) => [
+                      ...prev,
+                      {
+                        role: "assistant",
+                        content: finalContent,
+                        sources: sources?.length ? sources : undefined,
+                      },
+                    ]);
+                    setStreamingText("");
+                    if (typeof rem === "number") setRemaining(rem);
+                    break;
+                  }
+
+                  case "error":
+                    setMessages((prev) => [
+                      ...prev,
+                      {
+                        role: "assistant",
+                        content: data.message || "An error occurred. Please try again.",
+                      },
+                    ]);
+                    setStreamingText("");
+                    break;
+                }
+              } catch {
+                // ignore malformed JSON
+              }
+              currentEvent = "";
+            }
+          }
+        }
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: "Could not reach the server. Please check your connection and try again.",
+            },
+          ]);
+        }
+      } finally {
+        setIsLoading(false);
+        setCurrentStatus(null);
+        setStreamingText("");
+        abortControllerRef.current = null;
       }
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Could not reach the server. Please check your connection and try again.",
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [input, isLoading, isAtLimit, messages]
+  );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -194,7 +421,6 @@ export function KnowledgeChat() {
     setInput(prompt);
     setTimeout(() => {
       textareaRef.current?.focus();
-      // Move cursor to end
       const ta = textareaRef.current;
       if (ta) ta.setSelectionRange(ta.value.length, ta.value.length);
     }, 0);
@@ -209,13 +435,20 @@ export function KnowledgeChat() {
       <div className="flex flex-col h-[calc(100vh-200px)] min-h-[500px] border border-slate-200 rounded-lg overflow-hidden shadow-sm">
         {/* Header */}
         <div className="px-5 py-4 border-b border-slate-200" style={{ backgroundColor: "#003366" }}>
-          <h2 className="font-semibold text-white flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
-            UNFPA Partnership Catalyst
-          </h2>
-          <p className="text-xs mt-0.5" style={{ color: "#a8c8e8" }}>
-            Prepare for funding conversations — pitch UNFPA programmes, draft briefings, and match projects to partners
-          </p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h2 className="font-semibold text-white flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                UNFPA Partnership Catalyst
+              </h2>
+              <p className="text-xs mt-0.5" style={{ color: "#a8c8e8" }}>
+                Prepare for funding conversations — pitch UNFPA programmes, draft briefings, and match projects to partners
+              </p>
+            </div>
+            {hasConversation && !isLoading && (
+              <ExportDropdown messages={messages} disabled={messages.length === 0} />
+            )}
+          </div>
         </div>
 
         {/* Messages */}
@@ -257,7 +490,7 @@ export function KnowledgeChat() {
                 style={message.role === "user" ? { backgroundColor: "#003366" } : {}}
               >
                 {message.role === "assistant" ? (
-                  <div className="prose max-w-none">
+                  <div className="prose prose-slate max-w-none prose-table:border-collapse prose-th:border prose-th:border-slate-300 prose-th:bg-slate-50 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:text-xs prose-th:font-semibold prose-td:border prose-td:border-slate-200 prose-td:px-3 prose-td:py-2 prose-td:text-sm">
                     <ReactMarkdown>{message.content}</ReactMarkdown>
                   </div>
                 ) : (
@@ -289,9 +522,25 @@ export function KnowledgeChat() {
             </div>
           ))}
 
-          {isLoading && (
+          {/* Streaming text (assistant response being built) */}
+          {streamingText && (
             <div className="flex justify-start">
-              <LoadingPulse />
+              <div className="max-w-[85%] rounded-lg bg-white border border-slate-200 text-slate-900 px-4 py-3">
+                <div className="prose prose-slate max-w-none prose-table:border-collapse prose-th:border prose-th:border-slate-300 prose-th:bg-slate-50 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:text-xs prose-th:font-semibold prose-td:border prose-td:border-slate-200 prose-td:px-3 prose-td:py-2 prose-td:text-sm">
+                  <ReactMarkdown>{streamingText}</ReactMarkdown>
+                </div>
+                <div className="mt-2 flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
+                  <span className="text-[10px] text-slate-400">Writing...</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Status indicator (thinking/searching phases) */}
+          {isLoading && currentStatus && !streamingText && (
+            <div className="flex justify-start">
+              <StatusIndicator status={currentStatus} />
             </div>
           )}
 
@@ -333,7 +582,7 @@ export function KnowledgeChat() {
                 </p>
                 <p className="text-xs text-slate-400">
                   {isLoading
-                    ? "⏳ Searching knowledge base — this takes ~20–30 seconds"
+                    ? "Searching knowledge base & web — comprehensive answers may take up to a minute"
                     : `${remaining} of ${DAILY_LIMIT} queries remaining today`}
                 </p>
               </div>
