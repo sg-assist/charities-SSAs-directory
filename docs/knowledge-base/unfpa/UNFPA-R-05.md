@@ -73,17 +73,35 @@ DBS Foundation committed S$102.6 million in 2024 (top giver in Soristic 2025) an
 
 ## TIER 2: SIGNIFICANT HEALTH GIVERS WITH POTENTIAL ALIGNMENT
 
-| Foundation | FY2024 Disbursement | Total Assets | Health Relevance |
-|---|---|---|---|
-| **Lee Foundation** | S$33.2M | S$13.6B | S$50M to SingHealth Duke-NUS; medical bursaries; broad health giving |
-| **Moh Family Foundation** | S$22.4M | Not disclosed | 75.1% of grants to health sector; incorporated 2021 |
-| **Low Tuck Kwong Foundation** | S$23.2M | Not disclosed | Hospitals in Singapore and region; S$127.6M in 2023 (exceptional) |
-| **Shaw Foundation** | ~S$5M | Not disclosed | Largest recipient is NKF; paediatric research funding; est. 1957 |
-| **Ngee Ann Kongsi** | S$40.6M | Not disclosed | S$40M to SingHealth; S$12.5M TCM at NTU; medical education |
+### Lee Foundation
 
-These foundations are significant health funders but do not currently have specific maternal/reproductive health programmes. The **Moh Family Foundation** is particularly noteworthy — with 75.1% of its S$22.4 million going to health, it is the most health-concentrated major funder in Singapore.
+Singapore's largest foundation by total assets (S$13.6 billion), established in 1952 by Lee Kong Chian (founder of OCBC Bank). Disbursed S$33.2 million in FY2024. Lee Foundation's health philanthropy includes a landmark S$50 million gift to SingHealth Duke-NUS Academic Medical Centre — the single largest private gift to a Singapore medical institution — and the Lee Foundation Overseas Medical Bursary providing bond-free financial aid to Singaporeans studying medicine overseas. The Foundation is a generalist funder (education, healthcare, arts, community) and famously private — it does not maintain a public website or open application process. Engagement requires warm introductions through institutional channels (SingHealth, NUS, LKYSPP).
 
-**Engagement approach**: These foundations would likely respond to well-structured proposals framed around health system strengthening, medical research, or hospital capacity — areas where UNFPA's work intersects with their existing priorities.
+**UNFPA alignment**: Moderate but high-potential given asset base. Proposals must be structured around institutional partnerships (e.g., named research programme at SingHealth Duke-NUS) rather than direct UNFPA funding.
+
+### Moh Family Foundation
+
+Incorporated in 2021 by the family of the late furniture tycoon Laurence Moh. Disbursed S$22.4 million in FY2024. The most health-concentrated major funder in Singapore: **75.1% of grants go to health**, 14.2% to community well-being, 8.7% to social welfare. Supports causes internationally. Specific grant recipients are not publicly disclosed in detail, and the Foundation does not maintain a public website.
+
+**UNFPA alignment**: Moderate to strong — the most under-explored opportunity in this directory. A foundation incorporated in 2021 with 75.1% health allocation may be actively defining its strategic priorities. The key question is whether its health giving extends to international SRHR. Approach through CFS, AVPN, or private bank advisory.
+
+### Low Tuck Kwong Foundation
+
+Established December 2022 by Low Tuck Kwong (founder and chairman of PT Bayan Resources, Indonesia-based coal mining). Disbursed S$23.2 million in FY2024; an exceptional S$127.6 million in FY2023 (~30% of all Singapore philanthropy that year, largely due to a S$101 million gift to LKYSPP for Asian public officer scholarships). Healthcare recipients include hospitals in Singapore and the region.
+
+**UNFPA alignment**: Low to moderate. The LKYSPP connection is a touchpoint, but fossil fuel wealth origins require reputational due diligence for UNFPA partnership. Health giving is hospital-directed rather than programmatic.
+
+### Shaw Foundation
+
+Established 1957 by the Shaw brothers (Run Run Shaw and Runme Shaw). Over US$150 million in lifetime giving. Funded by investments and prime properties (including Shaw Centre). Largest share of funding to the National Kidney Foundation. Also funds paediatric medical research (through Turf Club proceeds), hospitals, and associations for the disabled. Annual disbursement approximately S$5 million.
+
+**UNFPA alignment**: Low to moderate. Paediatric research funding creates marginal alignment, but established giving patterns and modest annual disbursement make this a supplementary rather than anchor funder.
+
+### The Ngee Ann Kongsi
+
+Teochew clan-based philanthropic organisation established in 1845. Disbursed S$40.6 million in FY2024. Major health giving includes S$40 million to SingHealth (via subsidiary Ngee Ann Development) for the Ngee Ann Kongsi Discovery Tower and medical research, and S$12.5 million to NTU for Traditional Chinese Medicine education (October 2024). Giving is directed at Singapore-based medical education and infrastructure.
+
+**UNFPA alignment**: Low. The Kongsi's Teochew community mandate and education-first orientation make it an unlikely partner for international SRHR programming, despite its capacity for very large health investments.
 
 ---
 
@@ -111,14 +129,75 @@ Temasek Trust-linked platform launched at the inaugural Philanthropy Asia Summit
 
 These organisations are potential implementing partners, knowledge partners, or advocacy allies rather than funders:
 
-- **AWARE Singapore**: Leading gender equality advocacy organisation. Core reproductive rights focus. Research capability on women's health policy. Potential knowledge partner for SRHR advocacy framing.
-- **KK Women's and Children's Hospital (KKH)**: Singapore's largest public women's and children's hospital. Mobilised S$30 million+ in philanthropic funding at its October 2024 centenary. Kidz Horizon Appeal has raised S$17 million+ over 20 years. SingHealth Duke-NUS Maternal and Child Health Research Institute (MCHRI) launched 2021. Critical clinical and research partner.
-- **WAH Foundation**: Singapore-registered NGO that has trained 400+ midwives in Cambodia through a partnership with KKH and Mount Alvernia Hospital, achieving a 90% drop in maternal mortality in Kampong Chhnang province. A demonstrated model for Singapore-based cross-border maternal health programming.
-- **Singapore Children's Society**: Reached 20,187 children, youth, and families in 2024. KidSTART agency. Established 1952.
-- **Club Rainbow**: Supports children with chronic illnesses. Holistic care model.
-- **KidSTART Singapore**: Government-linked early childhood development programme for low-income families. Partners with DBS Foundation.
-- **Ishk Tolaram Foundation**: Singapore-registered CLG funding healthcare in Nigeria and Indonesia. Tolaram family trust-funded.
-- **Octava Foundation**: Mental well-being and education focus. Singapore and Southeast Asia. Established within last decade.
+### AWARE Singapore (Association of Women for Action and Research)
+
+Established 1985. Singapore's leading gender equality advocacy organisation. Operates the Sexual Assault Care Centre (SACC) — Singapore's first and only specialised care service for sexual violence survivors. Core advocacy on reproductive rights, the "motherhood penalty" in workplace advancement, and women's representation. In March 2025, AWARE publicly defended feminist advocacy as essential to equality, responding to PAP Women's Wing remarks. AWARE's research capability on women's health policy and reproductive rights makes it the strongest knowledge partner for SRHR advocacy framing in the Singapore context.
+
+**UNFPA role**: Knowledge partner for advocacy strategy; research partner on women's health policy; potential co-convenor for SRHR policy discussions.
+
+### KK Women's and Children's Hospital (KKH)
+
+Established 1924 (celebrated centenary October 2024). Singapore's largest public women's and children's hospital (830 beds). At its centenary celebration — graced by President Tharman Shanmugaratnam — KKH announced 15 new population health programmes backed by S$30 million+ in philanthropic funding, including the PELiCAN metabolic health network, Preterm Pregnancy Prevention Programme, and **EMPOWER2** community midwifery pilot (400 postnatal mothers in Kallang, Sengkang, Punggol, commencing early 2025). KKH also hosts the SingHealth Duke-NUS MCHRI (launched 2021), the Tanoto Foundation CHaMP Centre, the Temasek Foundation IMCWH, and the Kidz Horizon Appeal (S$17 million+ raised over 20 years). Partnership with WAH Foundation for midwife training in Cambodia since 2013.
+
+**UNFPA role**: Anchor clinical and research institution. Provides access to Lee Foundation, Tanoto, and Ngee Ann Kongsi philanthropic relationships via SingHealth network. EMPOWER2 model directly relevant to UNFPA's midwifery strengthening agenda.
+
+### WAH Foundation (Water and Healthcare Foundation)
+
+Established 2009. Singapore-registered nonprofit. Founded by Christopher Wilson. Partnered with KKH and Mount Alvernia Hospital Singapore since 2013 to train midwives and paediatric nurses in Kampong Chhnang province, Cambodia. Key outcomes: 400+ individuals trained in midwifery and emergency infant care; 200+ midwives trained across the province; **90% drop in maternal mortality** related to childbirth. Operates a train-the-trainer model with 10 Cambodian Core Trainers now delivering training in Khmer. Designed WAH Emergency Life Kits (2017) for isolated rural communities during childbirth.
+
+**UNFPA role**: Implementation model and proof-of-concept. Demonstrates that Singapore clinical expertise (via KKH) can reduce maternal mortality in developing Asia through train-the-trainer partnerships — exactly the cross-border SRHR-resilience model the LKYSPP team is designing.
+
+### Singapore Children's Society
+
+Established 1952. Reached 20,187 children, youth, and families in 2024. Designated KidSTART agency reaching children from low-income households from pregnancy onward with nutrition, developmental screening, and parent-child interaction support. Operates Sunbeam Place (residential care for children aged 2–21), counselling services, and the Flourishing Minds mental health literacy programme across multiple centres.
+
+**UNFPA role**: Potential implementing partner for child health and early childhood programming in Singapore. KidSTART connection provides access to government's early childhood infrastructure.
+
+### Other Operational Charities
+
+- **Club Rainbow Singapore**: Supports children and youth with chronic illnesses through holistic medical, educational, psychosocial, and financial services. Limited direct SRHR alignment.
+- **KidSTART Singapore**: Government-linked (MSF) early childhood development programme for low-income families. Partners with DBS Foundation on the Pregnant Mum & Baby Nutrition Programme. Model for government-philanthropic partnership in early life intervention.
+- **Ishk Tolaram Foundation**: Singapore-registered CLG (est. 2017). Funded by Tolaram Family Trust (25% beneficiary). Funds healthcare in Nigeria (1,250+ cataract surgeries) and Indonesia. Both operating and grantmaking. Demonstrates model of Singapore-registered foundations funding healthcare in developing countries.
+- **Octava Foundation**: Established within last decade. Focus on equitable quality education and early mental well-being promotion. Singapore (primary) and Southeast Asia (supporting). Mental well-being focus intersects with maternal mental health — a growing priority in Singapore (KKH's EMPOWER2 targets postnatal depression).
+
+---
+
+## NEGATIVE LIST: PROMINENT SINGAPORE FOUNDATIONS NOT RECOMMENDED FOR UNFPA ENGAGEMENT
+
+The following foundations are significant players in Singapore's philanthropic landscape but are **not recommended for UNFPA SRHR engagement** due to mandate misalignment, domestic-only focus, or structural incompatibility.
+
+### Government-Linked Entities with Incompatible Mandates
+
+**Tote Board (Singapore Totalisator Board)**
+Statutory body distributing S$183.2 million annually (FY2023) from gambling proceeds across arts, community development, education, health, social service, and sports. Despite its health grants (Tote Board Community Health Fund, Tote Board Better Health Fund), Tote Board is **exclusively domestic** — it funds Singapore-based programmes only, with no international grant-making mandate. Not a realistic partner for UNFPA's cross-border resilience work.
+
+**GIC (Government of Singapore Investment Corporation)**
+Singapore's sovereign wealth fund (estimated USD 700 billion+ AUM). GIC has a **purely commercial investment mandate** with some ESG integration. It does not make philanthropic grants and is structurally unable to fund development programmes. Cross-reference UNFPA-R-03 for detailed analysis.
+
+**Singapore International Foundation (SIF)**
+Government-linked foundation supporting Singapore expertise sharing with developing countries. Focus on volunteerism, knowledge exchange, and people-to-people diplomacy — not grant-making for health programmes. Could serve as a soft diplomatic connector but is not a funder.
+
+### Corporate Foundations with Non-Health Mandates
+
+| Foundation | Primary Focus | Why Not UNFPA |
+|---|---|---|
+| **Keppel Care Foundation** | Environment, education, arts, underprivileged (S$4.8M in 2024) | No health or international SRHR mandate; focus on dementia, kidney health, wildlife — none aligned with UNFPA |
+| **OCBC #OCBCCares** | Vulnerable communities, environment (mangrove restoration) | Social uplift and climate focus; no international health programme; "Healthcare With Minds" is domestic mental health only |
+| **UOB Heartbeat / UOB Foundation** | Art, children, education | No health mandate whatsoever; children focus is arts-based, not health-based; new Foundation (operational 2026) will focus on scholarships, digital learning, financial literacy |
+| **Mapletree CSR Programme** | Arts, education, environment, healthcare (S$41.3M lifetime) | Healthcare pillar exists but is domestic and small-scale; primary identity is arts patronage (National Arts Council Patron of the Arts Award since 2012) |
+| **Singtel Touching Lives Fund** | Special education for children with special needs (S$58M+ lifetime) | Highly specialised mandate — SPED schools only; no maternal/reproductive health; no international scope |
+| **CapitaLand Hope Foundation** | Education, health, well-being for children/youth/seniors (S$64M+ lifetime) | Health component exists but focused on community resilience and social inclusion, not SRHR; could be a marginal connector but not a funder |
+
+### Family/Private Foundations with Education-Only Mandates
+
+| Foundation | Primary Focus | Why Not UNFPA |
+|---|---|---|
+| **Kuok Foundation** | Education and poverty alleviation through education (est. 1970, Kuok family) | Purely scholarship and education-focused; no health programme; Singapore activities limited to university scholarships |
+| **Wilmar International CSR** | Education (70+ schools), community welfare, sustainability (NDPE policy) | CSR focused on plantation communities and rural education; ~US$10M annual CSR budget but directed at operational communities, not health programming; palm oil sector reputational considerations |
+
+### Why This List Matters
+
+The LKYSPP team will inevitably encounter these organisations in Singapore's philanthropic networks. Understanding why they are **not** appropriate UNFPA targets prevents wasted engagement effort and avoids the risk of approaching foundations that will either decline or redirect to inappropriate channels. The team's engagement bandwidth should be concentrated on the Tier 1–3 organisations profiled above.
 
 ---
 

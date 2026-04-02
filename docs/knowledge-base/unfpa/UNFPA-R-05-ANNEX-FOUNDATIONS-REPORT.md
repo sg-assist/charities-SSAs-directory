@@ -47,8 +47,9 @@ PARENT: UNFPA-R-05
    - 6.8 Octava Foundation
 7. Cross-Cutting Analysis
 8. The Family Office Layer
-9. Strategic Engagement Recommendations for UNFPA
-10. Conclusion
+9. Negative List — Foundations Not Recommended for UNFPA Engagement
+10. Strategic Engagement Recommendations for UNFPA
+11. Conclusion
 - Appendix A: Foundation Quick-Reference Table
 - Appendix B: Methodology and Data Sources
 
@@ -794,7 +795,152 @@ Expecting family offices to design, structure, or lead SRHR programming. They ar
 
 ---
 
-## CHAPTER 9: STRATEGIC ENGAGEMENT RECOMMENDATIONS FOR UNFPA
+## CHAPTER 9: NEGATIVE LIST — FOUNDATIONS NOT RECOMMENDED FOR UNFPA ENGAGEMENT
+
+This chapter catalogues prominent Singapore-based foundations and philanthropic organisations that the LKYSPP team will encounter in Singapore's networks but that are **not appropriate targets for UNFPA SRHR engagement**. Understanding why these organisations are excluded prevents wasted engagement effort and sharpens the team's focus on the Tier 1–3 targets.
+
+### 9.1 Government-Linked Entities with Structural Incompatibility
+
+#### Tote Board (Singapore Totalisator Board)
+
+**Type**: Statutory body
+**Annual disbursement**: S$183.2 million (FY2023) across 27 programmes and 772 fundraising projects
+**Focus areas**: Arts, community development, education, health, social service, sports
+**Source of funds**: Gambling proceeds (Singapore Pools, Singapore Turf Club)
+
+Tote Board does fund health programmes — the Tote Board Community Health Fund supports innovative community health pilots, the Tote Board Better Health Fund supports ageing-in-place services, and the Our Healthy Singapore Fund (via HPB) targets health behaviour change. However, all Tote Board grants are **exclusively domestic** — they fund Singapore-based programmes for Singaporean beneficiaries only. Tote Board has no international grant-making mandate and no mechanism to fund cross-border health programming. It also primarily funds innovation pilots that, if successful, are mainstreamed by the Singapore government — a model incompatible with UNFPA's developing country programme structure.
+
+**Exclusion reason**: Domestic-only mandate; no international grant-making mechanism.
+
+#### GIC (Government of Singapore Investment Corporation)
+
+**Type**: Sovereign wealth fund
+**AUM**: Estimated USD 700 billion+ (not publicly disclosed)
+**Focus**: Commercial returns
+
+GIC is a commercial investment vehicle for Singapore's reserves. It has begun integrating ESG considerations into investment analysis but has no philanthropic mandate, no grant-making function, and no social investment arm. GIC cannot fund development programmes and would not consider concessional investments in SRHR. See UNFPA-R-03 for a detailed analysis of GIC's potential role in blended finance structures (which would require commercial-return tranches).
+
+**Exclusion reason**: Purely commercial investment mandate; no philanthropy function.
+
+#### Singapore International Foundation (SIF)
+
+**Type**: Government-linked foundation
+**Focus**: Volunteerism, knowledge exchange, people-to-people diplomacy
+
+SIF supports Singaporeans sharing expertise with developing countries through volunteer programmes and exchange fellowships. While it has health-adjacent activities (training health officials), it is not a grant-maker for health programmes. SIF could serve as a soft diplomatic connector (referenced in UNFPA-R-03 as a "soft entry point") but should not be approached as a funder.
+
+**Exclusion reason**: Not a grant-maker; volunteerism and diplomacy platform only.
+
+---
+
+### 9.2 Corporate Foundations with Non-SRHR Mandates
+
+#### Keppel Care Foundation
+
+**Type**: Corporate foundation (Keppel Group)
+**Annual giving**: S$4.8 million (2024)
+**Focus**: Environment, education, arts and culture, underprivileged
+
+Keppel Care Foundation funds dementia support (S$1 million over 3 years to Dementia Singapore), wildlife conservation (S$300,000 to Mandai Nature), digital literacy (S$100,000 to Digital for Life Fund), and kidney health awareness (NKF partnership). Its health-adjacent giving is entirely domestic and targets specific conditions (dementia, kidney disease) unrelated to SRHR. No international health mandate.
+
+**Exclusion reason**: Domestic focus; health giving limited to specific conditions (dementia, kidney); no SRHR or international health alignment.
+
+#### OCBC #OCBCCares Programme
+
+**Type**: Corporate philanthropy programme (OCBC Bank)
+**Focus**: Vulnerable communities (seniors, special needs, low-income families), environment
+
+OCBC's community philanthropy includes the Families100 Programme (social uplift for 100 lower-income families with MSF), Healthcare With Minds (domestic mental health), and the #OCBCCares Environment Fund (mangrove restoration in Singapore and Malaysia). No international health programme. The bank does have private banking philanthropy advisory services that could be relevant as an intermediary (for introducing family office clients to SRHR opportunities) but the corporate philanthropy arm itself has no UNFPA alignment.
+
+**Exclusion reason**: Domestic focus; environment-primary orientation; health component limited to mental health; no SRHR mandate.
+
+#### UOB Heartbeat / UOB Foundation (est. 2026)
+
+**Type**: Corporate philanthropy programme / forthcoming corporate foundation
+**Lifetime fundraising**: S$23.3 million+ (via Heartbeat Run since 2007)
+**Focus**: Art, children, education
+
+UOB's philanthropic identity is built around Southeast Asian art (UOB Painting of the Year, museum partnerships), children's art education, and digital learning. The forthcoming UOB Foundation (operational second half of 2026) will focus on scholarships, digital learning, and financial literacy — not health. The "children" pillar is arts-based, not health-based. No maternal, reproductive, or children's health programmes.
+
+**Exclusion reason**: Arts-first identity; children focus is arts/education, not health; no health mandate in current or planned foundation.
+
+#### Mapletree CSR Programme
+
+**Type**: Corporate CSR programme (Mapletree Investments)
+**Lifetime CSR allocation**: S$41.3 million
+**Focus**: Arts, education, environment, healthcare
+
+Mapletree's four CSR pillars include healthcare, but in practice this pillar is small-scale and domestic — community health initiatives during Mapletree Community Month, endowed bursaries at Singapore universities, and arts patronage (National Arts Council Patron of the Arts Award since 2012). The primary identity is arts and education, not health. Annual CSR is formula-based (S$1 million per S$500 million PATMI), limiting capacity for large health investments.
+
+**Exclusion reason**: Healthcare pillar is marginal and domestic; primary identity is arts patronage; formula-based CSR limits scale.
+
+#### Singtel Touching Lives Fund (STLF)
+
+**Type**: Corporate philanthropy fund (Singtel)
+**Lifetime fundraising**: S$58 million+ (since 2002)
+**Focus**: Special education for children with special needs
+
+STLF is one of Singapore's most successful corporate philanthropy programmes — but its mandate is extremely specific: funding six special education (SPED) schools serving 1,800+ students annually. It has expanded into digital enablement and online safety for vulnerable groups, but its core remains SPED education. No maternal health, reproductive health, or international health component. Singtel's broader community impact includes disability employment and migrant worker support — none aligned with SRHR.
+
+**Exclusion reason**: Hyper-specialised mandate (SPED schools); no health or international dimension.
+
+#### CapitaLand Hope Foundation (CHF)
+
+**Type**: Corporate foundation (CapitaLand Group)
+**Lifetime giving**: S$64 million+ across 150+ initiatives (since 2005)
+**Focus**: Education, health, well-being for children, youth, seniors; community resilience
+
+CHF is the most borderline case on the negative list. In February 2025, it launched a S$3 million Community Resilience Initiative for vulnerable children and youth across China, India, Singapore, and Vietnam — the closest any foundation on this list comes to UNFPA alignment. However, CHF's health component is focused on social inclusion and community resilience (access to education, food security, shelter) rather than clinical maternal or reproductive health. Its geographic scope (CapitaLand's operational markets) does not match UNFPA's priority countries. CHF could potentially be a marginal connector for UNFPA work in Vietnam or India, but should not be a primary engagement target.
+
+**Exclusion reason**: Health focus is social inclusion, not SRHR; geographic scope tied to CapitaLand's markets; too marginal for primary UNFPA engagement.
+
+---
+
+### 9.3 Private/Family Foundations with Education-Only Mandates
+
+#### Kuok Foundation
+
+**Type**: Private family foundation (Kuok family — Robert Kuok, founder of Shangri-La and Wilmar)
+**Established**: 1970 (Malaysia; operates across Malaysia and Singapore)
+**Focus**: Education and poverty alleviation through education
+
+Kuok Foundation's activities since 1970 have been almost entirely focused on scholarships and study awards — full-fee scholarships at Singaporean public universities, Malaysian public and private universities, and UK institutions. The Foundation also provides funding for welfare homes and rehabilitation centres, but has no health programme, no SRHR mandate, and no international health investment. Its Singapore activities are limited to university scholarships.
+
+**Exclusion reason**: Purely education/scholarship-focused; no health mandate; no SRHR alignment.
+
+#### Wilmar International CSR
+
+**Type**: Corporate CSR programme (Wilmar International — world's largest palm oil processor)
+**Annual CSR budget**: ~US$10 million
+**Focus**: Education (70+ schools in China, Indonesia, Malaysia, Africa), community welfare, sustainable agriculture (NDPE policy)
+
+Wilmar's CSR is directed at operational communities — plantation workers, rural families in production regions. It manages 70+ schools and provides healthcare for workers and local communities. While this includes some maternal and child health in plantation settings, it is embedded in corporate operations rather than structured as grantable philanthropy. Additionally, Wilmar's palm oil sector creates **significant reputational risk** for UNFPA partnership — deforestation and labour rights concerns (despite the NDPE policy) would create public relations exposure.
+
+**Exclusion reason**: CSR tied to corporate operations, not grantable; palm oil sector reputational risk; no structured health philanthropy.
+
+---
+
+### 9.4 Summary: Negative List Quick Reference
+
+| Organisation | Annual Giving | Primary Focus | Exclusion Reason |
+|---|---|---|---|
+| Tote Board | S$183.2M | Arts, health, education, sports, social | Domestic-only mandate |
+| GIC | N/A (commercial) | Commercial investment | No philanthropy function |
+| Singapore International Foundation | N/A | Volunteerism, diplomacy | Not a grant-maker |
+| Keppel Care Foundation | S$4.8M | Environment, education, arts | No SRHR; domestic-only health |
+| OCBC #OCBCCares | Not disclosed | Vulnerable communities, environment | Domestic; no SRHR mandate |
+| UOB Heartbeat / Foundation | ~S$2M/yr | Art, children, education | Arts-first; no health mandate |
+| Mapletree CSR | ~S$2M/yr | Arts, education, environment | Healthcare marginal; arts-primary |
+| Singtel Touching Lives | ~S$3M/yr | Special education (SPED) | Hyper-specialised; no health |
+| CapitaLand Hope Foundation | ~S$5M/yr | Education, health, resilience | Social inclusion focus, not SRHR |
+| Kuok Foundation | Not disclosed | Education scholarships | Education-only; no health |
+| Wilmar CSR | ~US$10M | Rural education, community | Operational CSR; reputational risk |
+
+---
+
+## CHAPTER 10: STRATEGIC ENGAGEMENT RECOMMENDATIONS FOR UNFPA
+
+*Note: Chapter numbering updated to accommodate the Negative List (Chapter 9). The original Chapters 9 and 10 are now Chapters 10 and 11.*
 
 ### Priority 1: Integrate with the PAA Health for Human Potential Community (Immediate)
 
@@ -848,7 +994,7 @@ When engaging Singapore-based funders, the LKYSPP team should:
 
 ---
 
-## CHAPTER 10: CONCLUSION
+## CHAPTER 11: CONCLUSION
 
 Singapore's philanthropic landscape offers genuine — but carefully bounded — opportunities for UNFPA's SRHR-resilience agenda. The landscape is characterised by:
 
