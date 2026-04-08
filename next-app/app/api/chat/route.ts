@@ -212,17 +212,14 @@ export async function POST(request: NextRequest) {
             msgs: Array<{ role: string; content: unknown }>,
             includeTools: boolean
           ) {
-            // Thinking budget kept modest so Claude has headroom to emit text
-            // and tool calls within max_tokens. With 16000 max_tokens and a
-            // 4000 thinking budget, Claude still has ~12000 tokens for the
-            // text + tool_use output.
+            // Keep the request simple: no extended thinking, just text + tool
+            // calls. Extended thinking added complexity (signature-preserving
+            // assistant turns, token budgeting against max_tokens, empty-text
+            // responses when budget exhausted) without measurable quality win
+            // for this use case. Claude Sonnet 4 is plenty capable without it.
             const body: Record<string, unknown> = {
               model: 'claude-sonnet-4-20250514',
-              max_tokens: 16000,
-              thinking: {
-                type: 'enabled',
-                budget_tokens: 4000,
-              },
+              max_tokens: 8000,
               system: `${SYSTEM_PROMPT}\n\nToday's date is ${todayDate}.`,
               messages: msgs,
             };
@@ -241,7 +238,7 @@ export async function POST(request: NextRequest) {
                   headers: {
                     'x-api-key': apiKey!,
                     'anthropic-version': '2023-06-01',
-                    'anthropic-beta': 'interleaved-thinking-2025-05-14,web-search-2025-03-05',
+                    'anthropic-beta': 'web-search-2025-03-05',
                     'content-type': 'application/json',
                   },
                   body: JSON.stringify(body),
@@ -285,18 +282,22 @@ export async function POST(request: NextRequest) {
             const blockTypes: string[] = [];
             let text = '';
             for (const block of contentBlocks) {
-              blockTypes.push(block.type as string);
-              if (block.type === 'thinking') {
+              const type = block.type as string;
+              blockTypes.push(type);
+              if (type === 'thinking' || type === 'redacted_thinking') {
                 send('status', { phase: 'thinking', message: 'Thinking deeply...' });
-              } else if (block.type === 'text') {
-                text += block.text as string;
-              } else if (block.type === 'tool_use') {
+              } else if (type === 'text') {
+                text += (block.text as string) || '';
+              } else if (type === 'tool_use') {
                 toolUseBlocks.push({
                   id: block.id as string,
                   name: block.name as string,
                   input: block.input as Record<string, unknown>,
                 });
               }
+              // server_tool_use and web_search_tool_result are handled inline
+              // by Anthropic — we don't need to do anything with them here,
+              // but we still log their presence via blockTypes.
             }
             return { text, toolUseBlocks, blockTypes };
           }
@@ -316,9 +317,10 @@ export async function POST(request: NextRequest) {
           // ── Phase 1: Agentic tool-use loop ──────────────────────────
           let lastStopReason = '';
           let errored = false;
-          // Track text generated during exploration rounds (interleaved thinking
-          // can produce text blocks alongside tool_use). We fall back to this if
-          // the loop exits without Claude completing a final answer.
+          // Track text accumulated across tool-use rounds (Claude may emit
+          // commentary text alongside each tool_use block). Used as a
+          // last-resort fallback if both the loop and the synthesis call
+          // fail to produce a final answer.
           let interimText = '';
 
           while (toolRound < MAX_TOOL_ROUNDS) {
@@ -462,22 +464,17 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          // If the agentic loop exited while Claude was still calling tools
-          // (hit MAX_TOOL_ROUNDS), OR exited with a suspiciously short
-          // preamble-only response, force a synthesis call so the user gets
-          // a real answer instead of an empty bubble or a "Let me search..."
-          // stub. The synthesis call goes WITHOUT tools so Claude must emit
-          // the final answer as text.
+          // If the agentic loop exited without producing a usable finalText
+          // (empty, or a suspicious preamble-only stub), force one more Claude
+          // call WITHOUT tools. Without tool access Claude can't say "let me
+          // search" — it has to emit the actual answer as text.
           const preamblePattern =
             /\b(let me (search|help|look|find|check|start)|i['’]ll (search|help|look|find|check|start)|i will (search|help|look|find|check|start)|allow me to)/i;
           const looksStub =
-            finalText.length < 500 && preamblePattern.test(finalText);
-          const needsSynthesis =
-            !errored &&
-            (
-              (!finalText && lastStopReason === 'tool_use') ||
-              looksStub
-            );
+            finalText.length > 0 &&
+            finalText.length < 500 &&
+            preamblePattern.test(finalText);
+          const needsSynthesis = !errored && (!finalText || looksStub);
           if (needsSynthesis) {
             console.warn(
               '[Chat API] Forcing final synthesis. toolRound:',
@@ -488,6 +485,8 @@ export async function POST(request: NextRequest) {
               finalText.length,
               'looksStub:',
               looksStub,
+              'interimText.length:',
+              interimText.length,
               'sources:',
               allSources.length
             );
@@ -503,29 +502,45 @@ export async function POST(request: NextRequest) {
             if (synthesisData && !synthesisData._error) {
               const synthesisBlocks = synthesisData.content || [];
               lastStopReason = synthesisData.stop_reason || '';
-              const { text: synthesisText } = processBlocks(synthesisBlocks);
+              const { text: synthesisText, blockTypes: synthBlockTypes } =
+                processBlocks(synthesisBlocks);
               console.log(
-                `[Chat API] Synthesis result: stop_reason=${lastStopReason}, text_len=${synthesisText.length}`
+                `[Chat API] Synthesis result: stop_reason=${lastStopReason}, blocks=[${synthBlockTypes.join(',')}], text_len=${synthesisText.length}`
               );
               if (synthesisText && synthesisText.length > finalText.length) {
                 finalText = synthesisText;
-              } else if (!finalText) {
-                finalText = interimText;
               }
-            } else if (!finalText) {
+            } else {
+              console.error(
+                '[Chat API] Synthesis call failed:',
+                synthesisData?.status,
+                synthesisData?.detail
+              );
+            }
+
+            // Still empty? Fall back to whatever interim text we collected
+            // from exploration rounds.
+            if (!finalText && interimText) {
+              console.warn(
+                '[Chat API] Synthesis produced no text — falling back to interimText'
+              );
               finalText = interimText;
             }
           }
 
-          // If we still have nothing to show, surface a real error rather than
-          // streaming an empty response that leaves the user staring at a blank
-          // bubble with no feedback.
+          // If we STILL have nothing after synthesis + interimText fallback,
+          // log the full conversation state so we can diagnose from Vercel
+          // logs, then surface a real error. This should be extremely rare.
           if (!errored && !finalText) {
             console.error(
-              '[Chat API] Empty finalText after agentic loop. toolRound:',
+              '[Chat API] Empty finalText after all fallbacks. toolRound:',
               toolRound,
               'lastStopReason:',
-              lastStopReason
+              lastStopReason,
+              'messages.length:',
+              messages.length,
+              'allSources:',
+              allSources.length
             );
             send('error', {
               message:
