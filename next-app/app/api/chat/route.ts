@@ -341,6 +341,11 @@ export async function POST(request: NextRequest) {
 
           // ── Phase 1: Agentic tool-use loop ──────────────────────────
           let lastStopReason = '';
+          let errored = false;
+          // Track text generated during exploration rounds (interleaved thinking
+          // can produce text blocks alongside tool_use). We fall back to this if
+          // the loop exits without Claude completing a final answer.
+          let interimText = '';
 
           while (toolRound < MAX_TOOL_ROUNDS) {
             toolRound++;
@@ -368,6 +373,7 @@ export async function POST(request: NextRequest) {
               }
               console.error('[Chat API] Final error - status:', status, 'detail:', claudeData?.detail);
               send('error', { message: userMessage });
+              errored = true;
               break;
             }
 
@@ -385,6 +391,12 @@ export async function POST(request: NextRequest) {
             if (lastStopReason === 'max_tokens') {
               finalText = responseText;
               break;
+            }
+
+            // Preserve any text Claude produced during this exploration round so we
+            // don't lose it if we end up exhausting MAX_TOOL_ROUNDS below.
+            if (responseText) {
+              interimText += (interimText ? '\n\n' : '') + responseText;
             }
 
             // Execute tool calls
@@ -437,6 +449,52 @@ export async function POST(request: NextRequest) {
             if (toolResults.length > 0) {
               messages.push({ role: 'user', content: toolResults });
             }
+          }
+
+          // If the agentic loop exited because we hit MAX_TOOL_ROUNDS while Claude
+          // was still calling tools, finalText is still empty — Claude never got
+          // to the drafting step. Force a synthesis call without tools so the
+          // user always gets an answer rather than a silent empty response.
+          if (!errored && !finalText && lastStopReason === 'tool_use') {
+            console.warn(
+              '[Chat API] Tool round cap reached without final answer — forcing synthesis. toolRound:',
+              toolRound
+            );
+            send('status', {
+              phase: 'writing',
+              message: 'Composing final answer...',
+            });
+
+            const synthesisData = await callClaude(messages, false);
+            if (synthesisData && !synthesisData._error) {
+              const synthesisBlocks = synthesisData.content || [];
+              lastStopReason = synthesisData.stop_reason || '';
+              const { text: synthesisText } = processBlocks(synthesisBlocks);
+              finalText = synthesisText || interimText;
+            } else {
+              finalText = interimText;
+            }
+          }
+
+          // If we still have nothing to show, surface a real error rather than
+          // streaming an empty response that leaves the user staring at a blank
+          // bubble with no feedback.
+          if (!errored && !finalText) {
+            console.error(
+              '[Chat API] Empty finalText after agentic loop. toolRound:',
+              toolRound,
+              'lastStopReason:',
+              lastStopReason
+            );
+            send('error', {
+              message:
+                'I had trouble composing a complete response. Please try rephrasing your question or ask something more specific.',
+            });
+            errored = true;
+          }
+
+          if (errored) {
+            return;
           }
 
           // ── Phase 2: Wave generation for complete output ─────────────
