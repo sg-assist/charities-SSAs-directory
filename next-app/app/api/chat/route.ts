@@ -43,7 +43,9 @@ IMPORTANT CAPABILITIES:
 - You HAVE real-time internet access through the web_search tool. USE IT to look up
   current information about funders, organisations, recent news, strategies, and priorities.
 - You have a knowledge_base_search tool to query UNFPA's internal knowledge base with
-  semantic search. Use it multiple times with different queries to find comprehensive info.
+  semantic search. Try 1–2 focused queries. If the knowledge base returns "No relevant
+  results" twice in a row, STOP searching the knowledge base and compose your answer
+  using web search results plus your general expert knowledge.
 - Think step-by-step. When a user asks about a specific funder or partner, ALWAYS search
   the web for their latest priorities, strategy documents, and recent activities BEFORE
   drafting your response.
@@ -56,6 +58,9 @@ RESPONSE PROTOCOL — READ CAREFULLY:
   stop to ask confirmation, and do not produce short interim acknowledgements.
 - Your first output should either be a tool call, or (if no research is needed) the
   complete final answer. Never a "let me do X" preamble with no tool call.
+- NEVER return an empty response. If the knowledge base has no data on the topic and
+  web search is thin, answer from your general knowledge and say so explicitly. A
+  substantive answer from general knowledge is always better than silence.
 
 When preparing materials, adopt a professional, partnership-ready tone suitable for
 external meetings. Tailor content to the audience — a briefing for a family office should
@@ -322,6 +327,15 @@ export async function POST(request: NextRequest) {
           // last-resort fallback if both the loop and the synthesis call
           // fail to produce a final answer.
           let interimText = '';
+          // Track consecutive empty KB results. If the knowledge base has
+          // no relevant data on the topic, Claude will often loop calling
+          // knowledge_base_search with variations of the same query. We
+          // break out of the loop early to stop wasting rounds.
+          let consecutiveEmptyKbResults = 0;
+          // Accumulate non-empty KB findings as plain text so the synthesis
+          // call can use them without needing the raw tool_use/tool_result
+          // block structure (which confuses Claude when tools are disabled).
+          const kbFindings: string[] = [];
 
           while (toolRound < MAX_TOOL_ROUNDS) {
             toolRound++;
@@ -437,17 +451,26 @@ export async function POST(request: NextRequest) {
 
               const result = await executeToolCall(toolCall.name, toolCall.input);
 
-              // Collect sources from KB results
+              // Track consecutive empty KB results for early-exit heuristic,
+              // collect sources for citation, and stash non-empty findings
+              // as plain text for the synthesis fallback.
               if (toolCall.name === 'knowledge_base_search') {
-                const titleMatches = result.matchAll(/From "([^"]+)"/g);
-                for (const match of titleMatches) {
-                  const title = match[1];
-                  if (!allSources.some((s) => s.title === title)) {
-                    const slug = title
-                      .toLowerCase()
-                      .replace(/[^a-z0-9]+/g, '-')
-                      .replace(/^-|-$/g, '');
-                    allSources.push({ title, slug });
+                const isEmpty = result.startsWith('No relevant results');
+                if (isEmpty) {
+                  consecutiveEmptyKbResults++;
+                } else {
+                  consecutiveEmptyKbResults = 0;
+                  kbFindings.push(result);
+                  const titleMatches = result.matchAll(/From "([^"]+)"/g);
+                  for (const match of titleMatches) {
+                    const title = match[1];
+                    if (!allSources.some((s) => s.title === title)) {
+                      const slug = title
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/^-|-$/g, '');
+                      allSources.push({ title, slug });
+                    }
                   }
                 }
               }
@@ -461,6 +484,16 @@ export async function POST(request: NextRequest) {
 
             if (toolResults.length > 0) {
               messages.push({ role: 'user', content: toolResults });
+            }
+
+            // If the KB is clearly dry on this topic, stop looping and go
+            // straight to synthesis. Otherwise Claude keeps generating
+            // variations of the same query and wasting rounds.
+            if (consecutiveEmptyKbResults >= 2) {
+              console.warn(
+                '[Chat API] 2+ consecutive empty KB results — breaking loop early to synthesize'
+              );
+              break;
             }
           }
 
@@ -495,17 +528,48 @@ export async function POST(request: NextRequest) {
               message: 'Composing final answer...',
             });
 
-            // Call without tools — Claude can't preamble "let me search" if
-            // there's nothing to search, so it has to write the actual answer.
-            // We rely on the system prompt to steer tone/structure.
-            const synthesisData = await callClaude(messages, false);
+            // Rebuild the conversation as a CLEAN text-only message history
+            // for the synthesis call. Why: when the original messages array
+            // contains tool_use / tool_result / server_tool_use /
+            // web_search_tool_result blocks from prior rounds AND the current
+            // request has no tools defined, Claude consistently returns an
+            // empty response (stop_reason=end_turn, blocks=[]). Stripping the
+            // tool-block plumbing and inlining any research findings as plain
+            // text gives Claude a clean conversation it can respond to.
+            //
+            // Trade-off: encrypted web_search_tool_result blocks can't be
+            // decoded to plain text outside their original response context,
+            // so the synthesis path loses web search data. The kbFindings
+            // array (populated in the tool-execution loop above) preserves
+            // any non-empty KB results as plain text so they survive the
+            // rebuild. If both KB and web were dry, Claude falls back to
+            // general knowledge per the RESPONSE PROTOCOL in the system
+            // prompt.
+            const researchText =
+              kbFindings.length > 0
+                ? kbFindings
+                    .map((f) => f.slice(0, 3000))
+                    .join('\n\n---\n\n')
+                    .slice(0, 12000)
+                : '';
+
+            const synthesisUserContent = researchText
+              ? `${trimmedMessage}\n\n---\n\nResearch gathered so far from the knowledge base:\n\n${researchText}\n\n---\n\nBased on the research above and your general expert knowledge, compose the full, complete response to my original question now. Use markdown structure (headings, bullets, tables where helpful). Provide substantive content — do not return empty text.`
+              : `${trimmedMessage}\n\n(Note: the knowledge base did not have specific data on this topic. Please answer from your general expert knowledge, structured with markdown headings and bullets. Do not return empty text.)`;
+
+            const synthesisMessages: Array<{ role: string; content: unknown }> = [
+              ...history,
+              { role: 'user', content: synthesisUserContent },
+            ];
+
+            const synthesisData = await callClaude(synthesisMessages, false);
             if (synthesisData && !synthesisData._error) {
               const synthesisBlocks = synthesisData.content || [];
               lastStopReason = synthesisData.stop_reason || '';
               const { text: synthesisText, blockTypes: synthBlockTypes } =
                 processBlocks(synthesisBlocks);
               console.log(
-                `[Chat API] Synthesis result: stop_reason=${lastStopReason}, blocks=[${synthBlockTypes.join(',')}], text_len=${synthesisText.length}`
+                `[Chat API] Synthesis result: stop_reason=${lastStopReason}, blocks=[${synthBlockTypes.join(',')}], text_len=${synthesisText.length}, research_chars=${researchText.length}`
               );
               if (synthesisText && synthesisText.length > finalText.length) {
                 finalText = synthesisText;
@@ -540,8 +604,20 @@ export async function POST(request: NextRequest) {
               'messages.length:',
               messages.length,
               'allSources:',
-              allSources.length
+              allSources.length,
+              'kbFindings:',
+              kbFindings.length
             );
+            // Dump the last two turns of the conversation so future
+            // regressions are easier to diagnose from Vercel logs.
+            try {
+              console.error(
+                '[Chat API] Last 2 turns (truncated):',
+                JSON.stringify(messages.slice(-2)).slice(0, 3000)
+              );
+            } catch {
+              /* non-serialisable content — ignore */
+            }
             send('error', {
               message:
                 'I had trouble composing a complete response. Please try rephrasing your question or ask something more specific.',
