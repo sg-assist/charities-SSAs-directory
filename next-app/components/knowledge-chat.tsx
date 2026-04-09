@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, BookOpen, Globe, Search, Brain, Pencil, Download, FileText, FileDown, Presentation, ChevronDown, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Message {
   role: "user" | "assistant";
@@ -238,6 +239,31 @@ export function KnowledgeChat() {
 
   const hasConversation = messages.length > 0;
 
+  // Restore chat history from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("unfpa-chat-messages");
+      if (stored) setMessages(JSON.parse(stored));
+    } catch { /* ignore */ }
+  }, []);
+
+  // Persist chat history to localStorage whenever messages change
+  useEffect(() => {
+    try {
+      if (messages.length > 0) {
+        localStorage.setItem("unfpa-chat-messages", JSON.stringify(messages));
+      }
+    } catch { /* ignore */ }
+  }, [messages]);
+
+  const handleNewChat = useCallback(() => {
+    setMessages([]);
+    setInput("");
+    setStreamingText("");
+    setCurrentStatus(null);
+    try { localStorage.removeItem("unfpa-chat-messages"); } catch { /* ignore */ }
+  }, []);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading, streamingText]);
@@ -418,9 +444,22 @@ export function KnowledgeChat() {
                 Prepare for funding conversations — pitch UNFPA programmes, draft briefings, and match projects to partners
               </p>
             </div>
-            {hasConversation && !isLoading && (
-              <ExportDropdown messages={messages} disabled={messages.length === 0} />
-            )}
+            <div className="flex items-center gap-2">
+              {hasConversation && (
+                <button
+                  onClick={handleNewChat}
+                  disabled={isLoading}
+                  className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded border border-white/30 text-white/80 hover:bg-white/10 disabled:opacity-40 transition-colors"
+                  title="Start a new conversation"
+                >
+                  <Pencil className="h-3 w-3" />
+                  New Chat
+                </button>
+              )}
+              {hasConversation && !isLoading && (
+                <ExportDropdown messages={messages} disabled={messages.length === 0} />
+              )}
+            </div>
           </div>
         </div>
 
@@ -464,7 +503,7 @@ export function KnowledgeChat() {
               >
                 {message.role === "assistant" ? (
                   <div className="prose prose-slate max-w-none prose-table:border-collapse prose-th:border prose-th:border-slate-300 prose-th:bg-slate-50 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:text-xs prose-th:font-semibold prose-td:border prose-td:border-slate-200 prose-td:px-3 prose-td:py-2 prose-td:text-sm">
-                    <ReactMarkdown>{message.content}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
                   </div>
                 ) : (
                   <p className="text-sm leading-relaxed">{message.content}</p>
@@ -500,7 +539,7 @@ export function KnowledgeChat() {
             <div className="flex justify-start">
               <div className="max-w-[85%] rounded-lg bg-white border border-slate-200 text-slate-900 px-4 py-3">
                 <div className="prose prose-slate max-w-none prose-table:border-collapse prose-th:border prose-th:border-slate-300 prose-th:bg-slate-50 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:text-xs prose-th:font-semibold prose-td:border prose-td:border-slate-200 prose-td:px-3 prose-td:py-2 prose-td:text-sm">
-                  <ReactMarkdown>{streamingText}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{streamingText}</ReactMarkdown>
                 </div>
                 <div className="mt-2 flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />

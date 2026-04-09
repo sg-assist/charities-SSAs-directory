@@ -47,7 +47,7 @@ export async function GET() {
   if (process.env.DATABASE_URL) {
     try {
       const rows = await Promise.race([
-        prisma.$queryRawUnsafe<{ docs: number; chunks: number; chunks_with_embeddings: number }[]>(`
+        prisma.$queryRawUnsafe(`
           SELECT
             (SELECT COUNT(*) FROM knowledge_documents)::int AS docs,
             (SELECT COUNT(*) FROM knowledge_chunks)::int AS chunks,
@@ -56,8 +56,8 @@ export async function GET() {
         new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error('DB query timeout after 5s')), 5000)
         ),
-      ]);
-      const row = (rows as { docs: number; chunks: number; chunks_with_embeddings: number }[])[0];
+      ]) as { docs: number; chunks: number; chunks_with_embeddings: number }[];
+      const row = rows[0];
       results.databaseReachable = true;
       results.knowledgeDocuments = Number(row?.docs ?? 0);
       results.knowledgeChunks = Number(row?.chunks ?? 0);

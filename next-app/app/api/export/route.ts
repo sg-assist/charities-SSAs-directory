@@ -8,6 +8,7 @@ import {
 } from '@/services/exportService';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 export const maxDuration = 30;
 
 const MIME_TYPES: Record<ExportFormat, string> = {
