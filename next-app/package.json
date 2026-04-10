@@ -13,7 +13,9 @@
     "scrape-ncss": "npx tsx scripts/scrape-ncss.ts",
     "scrape-aic": "npx tsx scripts/scrape-aic.ts",
     "scrape-guidelines": "npx tsx scripts/scrape-guidelines.ts",
-    "scrape-all": "npx tsx scripts/scrape-all.ts"
+    "scrape-all": "npx tsx scripts/scrape-all.ts",
+    "verify-kb": "npx tsx scripts/verify-kb.ts",
+    "verify-kb-urls": "npx tsx scripts/verify-kb.ts --urls-only"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.5.0",
