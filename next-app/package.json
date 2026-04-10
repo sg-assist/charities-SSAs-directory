@@ -8,7 +8,12 @@
     "start": "next start",
     "ingest-pdfs": "npx tsx scripts/ingest-pdfs.ts",
     "ingest-pdfs-status": "npx tsx scripts/ingest-pdfs.ts --status",
-    "ingest-all": "npx tsx scripts/ingest-knowledge.ts --all && npx tsx scripts/ingest-pdfs.ts --all"
+    "ingest-all": "npx tsx scripts/ingest-knowledge.ts --all && npx tsx scripts/ingest-pdfs.ts --all",
+    "ingest-clinical": "npx tsx scripts/ingest-clinical.ts",
+    "ingest-clinical:all": "npx tsx scripts/ingest-clinical.ts --all",
+    "ingest-clinical:formulary": "npx tsx scripts/ingest-clinical.ts --formulary",
+    "precompute-android-assets": "npx tsx ../scripts/precompute-android-assets.ts",
+    "precompute-android-assets:dry": "npx tsx ../scripts/precompute-android-assets.ts --dry-run"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.5.0",
