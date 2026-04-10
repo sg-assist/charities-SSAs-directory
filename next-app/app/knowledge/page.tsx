@@ -2,24 +2,25 @@ import Link from 'next/link';
 import { getAllDocs, BLOCK_LABELS, type DocSummary } from '@/lib/docs';
 
 export const metadata = {
-  title: 'Knowledge Base — UNFPA Partnership Catalyst',
-  description: 'Reference documents for UNFPA partnership development. Covers UNFPA\'s mandate, programmes, partnership models, climate-SRHR evidence, and Singapore\'s finance ecosystem.',
+  title: 'Knowledge Base — The Directory',
+  description: 'Reference documents covering Singapore\'s charities, social service agencies, government guidelines, and caregiving resources.',
 };
 
-const BLOCK_ORDER = ['O', 'W', 'D', 'C', 'R'];
+const BLOCK_ORDER = ['G', 'E', 'D', 'M', 'F', 'H', 'C'];
 
 const BLOCK_COLORS: Record<string, { bg: string; text: string; border: string; badge: string }> = {
-  O:     { bg: 'bg-blue-50',   text: 'text-blue-900',  border: 'border-blue-200',  badge: 'bg-blue-100 text-blue-800' },
-  W:     { bg: 'bg-green-50',  text: 'text-green-900', border: 'border-green-200', badge: 'bg-green-100 text-green-800' },
-  D:     { bg: 'bg-purple-50', text: 'text-purple-900',border: 'border-purple-200',badge: 'bg-purple-100 text-purple-800' },
-  C:     { bg: 'bg-amber-50',  text: 'text-amber-900', border: 'border-amber-200', badge: 'bg-amber-100 text-amber-800' },
-  PMNCH: { bg: 'bg-teal-50',   text: 'text-teal-900',  border: 'border-teal-200',  badge: 'bg-teal-100 text-teal-800' },
-  R:     { bg: 'bg-rose-50',  text: 'text-rose-900',  border: 'border-rose-200',  badge: 'bg-rose-100 text-rose-800' },
+  G:  { bg: 'bg-teal-50',    text: 'text-teal-900',   border: 'border-teal-200',   badge: 'bg-teal-100 text-teal-800' },
+  E:  { bg: 'bg-blue-50',    text: 'text-blue-900',   border: 'border-blue-200',   badge: 'bg-blue-100 text-blue-800' },
+  D:  { bg: 'bg-purple-50',  text: 'text-purple-900', border: 'border-purple-200', badge: 'bg-purple-100 text-purple-800' },
+  M:  { bg: 'bg-green-50',   text: 'text-green-900',  border: 'border-green-200',  badge: 'bg-green-100 text-green-800' },
+  F:  { bg: 'bg-amber-50',   text: 'text-amber-900',  border: 'border-amber-200',  badge: 'bg-amber-100 text-amber-800' },
+  H:  { bg: 'bg-rose-50',    text: 'text-rose-900',   border: 'border-rose-200',   badge: 'bg-rose-100 text-rose-800' },
+  C:  { bg: 'bg-sky-50',     text: 'text-sky-900',    border: 'border-sky-200',    badge: 'bg-sky-100 text-sky-800' },
 };
 
 function DocCard({ doc }: { doc: DocSummary }) {
-  const blockKey = doc.frontmatter.org === 'PMNCH' ? 'PMNCH' : doc.frontmatter.block;
-  const colors = BLOCK_COLORS[blockKey] || BLOCK_COLORS['O'];
+  const blockKey = doc.frontmatter.block;
+  const colors = BLOCK_COLORS[blockKey] || BLOCK_COLORS['G'];
 
   return (
     <Link
@@ -54,15 +55,14 @@ function DocCard({ doc }: { doc: DocSummary }) {
 export default function KnowledgePage() {
   const docs = getAllDocs();
 
-  // Group by block: UNFPA docs go into O/W/D/C; PMNCH docs into their own group
-  const grouped: Record<string, DocSummary[]> = { O: [], W: [], D: [], C: [], R: [], PMNCH: [] };
+  // Group by block letter
+  const grouped: Record<string, DocSummary[]> = {};
+  for (const key of BLOCK_ORDER) grouped[key] = [];
   for (const doc of docs) {
-    const key = doc.frontmatter.org === 'PMNCH' ? 'PMNCH' : doc.frontmatter.block;
+    const key = doc.frontmatter.block;
     if (!grouped[key]) grouped[key] = [];
     grouped[key].push(doc);
   }
-
-  const sectionOrder = [...BLOCK_ORDER.filter(k => k !== 'R'), 'PMNCH', 'R'];
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
@@ -70,8 +70,8 @@ export default function KnowledgePage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900 mb-2">Knowledge Base</h1>
         <p className="text-slate-600 max-w-2xl">
-          Reference documents for UNFPA partnership development. Covers UNFPA&apos;s mandate, programmes, partnership models,
-          climate-SRHR evidence, and Singapore&apos;s finance ecosystem.
+          Reference documents covering Singapore&apos;s charities, social service agencies,
+          government guidelines, and caregiving resources.
         </p>
         <p className="text-sm text-slate-400 mt-3">
           Total: {docs.length} documents · {docs.reduce((sum, d) => sum + d.wordCount, 0).toLocaleString()} words
@@ -80,7 +80,7 @@ export default function KnowledgePage() {
 
       {/* Sections */}
       <div className="space-y-10">
-        {sectionOrder.map(blockKey => {
+        {BLOCK_ORDER.map(blockKey => {
           const blockDocs = grouped[blockKey];
           if (!blockDocs || blockDocs.length === 0) return null;
           const meta = BLOCK_LABELS[blockKey];
@@ -114,10 +114,10 @@ export default function KnowledgePage() {
         <p className="text-sm text-slate-400">
           Something wrong or out of date?{' '}
           <a
-            href="mailto:UNFPA@ontheground.agency"
-            className="text-blue-500 hover:underline"
+            href="mailto:admin@sgassist.sg"
+            className="text-teal-600 hover:underline"
           >
-            Send feedback to UNFPA@ontheground.agency
+            Send feedback to admin@sgassist.sg
           </a>
         </p>
       </div>

@@ -1,7 +1,7 @@
 /**
  * Knowledge Document Service
  *
- * Core service for the UNFPA institutional knowledge base.
+ * Core service for The Directory knowledge base.
  * Handles ingestion, chunking, embedding, and semantic search.
  */
 
@@ -395,8 +395,8 @@ function extractMetadata(
   if (frontmatter.CODE) {
     metadata.code = frontmatter.CODE;
     metadata.documentId = frontmatter.CODE;
-    // Extract block letter from CODE (e.g., UNFPA-O-01 → O)
-    const blockMatch = frontmatter.CODE.match(/^(?:UNFPA|PMNCH)-([A-Z])-/);
+    // Extract block letter from CODE (e.g., DIR-G-01 → G)
+    const blockMatch = frontmatter.CODE.match(/^DIR-([A-Z])-/);
     if (blockMatch) metadata.block = blockMatch[1];
   } else {
     const idMatch = filename.match(/^([A-Z]+-[A-Z]+-\d+)/i);

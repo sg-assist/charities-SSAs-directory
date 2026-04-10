@@ -1,8 +1,8 @@
 #!/usr/bin/env npx tsx
 /**
- * UNFPA Knowledge Document Ingestion CLI Script
+ * Knowledge Document Ingestion CLI Script
  *
- * Ingests markdown files from docs/knowledge-base/unfpa/ into the knowledge base.
+ * Ingests markdown files from docs/knowledge-base/directory/ into the knowledge base.
  * Strips YAML frontmatter, chunks documents, generates embeddings, stores in PostgreSQL+pgvector.
  *
  * Usage:
@@ -16,7 +16,7 @@
  *   npx tsx scripts/ingest-knowledge.ts --all --dry-run
  *
  *   # Ingest a single document
- *   npx tsx scripts/ingest-knowledge.ts --file ../docs/knowledge-base/unfpa/UNFPA-O-01.md
+ *   npx tsx scripts/ingest-knowledge.ts --file ../docs/knowledge-base/directory/DIR-G-01.md
  *
  *   # Check current corpus status
  *   npx tsx scripts/ingest-knowledge.ts --status
@@ -56,8 +56,8 @@ function getPrisma(): PrismaClient {
   return _prisma;
 }
 
-const VERTICAL = 'UNFPA';
-const DEFAULT_DIR = path.resolve(__dirname, '../../docs/knowledge-base/unfpa');
+const VERTICAL = 'DIRECTORY';
+const DEFAULT_DIR = path.resolve(__dirname, '../../docs/knowledge-base/directory');
 
 interface CliArgs {
   file?: string;
@@ -89,7 +89,7 @@ function parseArgs(): CliArgs {
 
 function printHelp() {
   console.log(`
-UNFPA Knowledge Document Ingestion Script
+Knowledge Document Ingestion Script
 
 Options:
   --all                Ingest all documents from the default directory
@@ -189,7 +189,7 @@ async function ingestFile(
   }
 
   // Build metadata from frontmatter
-  const blockMatch = (frontmatter.CODE || '').match(/^(?:UNFPA|PMNCH)-([A-Z])-/);
+  const blockMatch = (frontmatter.CODE || '').match(/^DIR-([A-Z])-/);
   const h2Matches = [...content.matchAll(/^##\s+(.+)$/gm)];
   const metadata = {
     sourceFile: filename,
@@ -293,7 +293,7 @@ async function ingestDirectory(
 
 async function showStatus() {
   console.log('='.repeat(60));
-  console.log('UNFPA Knowledge Corpus Status');
+  console.log('Knowledge Corpus Status');
   console.log('='.repeat(60));
 
   // pgvector check
@@ -361,7 +361,7 @@ async function main() {
   }
 
   console.log('='.repeat(60));
-  console.log('UNFPA Knowledge Document Ingestion');
+  console.log('Knowledge Document Ingestion');
   console.log(`Mode:      ${args.dryRun ? 'DRY RUN' : args.force ? 'FORCE UPDATE' : 'NEW ONLY'}`);
   console.log(`Vertical:  ${VERTICAL}`);
   console.log(`Embedding: ${isEmbeddingAvailable() ? 'ENABLED' : 'DISABLED (no OPENAI_API_KEY)'}`);

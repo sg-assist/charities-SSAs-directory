@@ -1,4 +1,4 @@
-// Prisma Schema for UNFPA Knowledge Chat
+// Prisma Schema for The Directory — Singapore Charities & SSAs
 
 generator client {
   provider        = "prisma-client-js"
@@ -10,12 +10,12 @@ datasource db {
   extensions = [pgvector(map: "vector", schema: "public")]
 }
 
-/// Deep research documents — the UNFPA institutional knowledge base.
+/// Knowledge documents — the Singapore charities and SSAs knowledge base.
 model KnowledgeDocument {
   id        String   @id @default(cuid())
-  vertical  String                           // e.g., 'UNFPA'
+  vertical  String                           // e.g., 'DIRECTORY'
   title     String
-  slug      String   @unique                 // e.g., 'unfpa-o-01-unfpa-in-plain-language'
+  slug      String   @unique                 // e.g., 'dir-g-01-social-service-ecosystem'
   content   String   @db.Text               // Full markdown content
   summary   String?  @db.Text
   wordCount Int      @map("word_count")
@@ -67,4 +67,30 @@ model PdfIngestRecord {
 
   @@index([sha256])
   @@map("pdf_ingest_records")
+}
+
+/// Organisations — charities, SSAs, VWOs, government agencies in Singapore.
+model Organisation {
+  id             String    @id @default(cuid())
+  name           String
+  slug           String    @unique
+  type           String                           // charity, ssa, vwo, government, foundation
+  categories     String[]  @default([])           // eldercare, disability, mental_health, family, healthcare, palliative, community
+  description    String    @db.Text               // short paragraph about what they do
+  address        String?   @db.Text
+  postalCode     String?   @map("postal_code")
+  phone          String?
+  email          String?
+  website        String?
+  registrationNo String?   @map("registration_no") // UEN or charity registration number
+  sourceUrl      String?   @map("source_url")      // where the data was scraped from
+  lastVerified   DateTime? @map("last_verified")
+  isActive       Boolean   @default(true) @map("is_active")
+  metadata       Json?                             // extra fields, flexible
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@index([type])
+  @@index([isActive])
+  @@map("organisations")
 }

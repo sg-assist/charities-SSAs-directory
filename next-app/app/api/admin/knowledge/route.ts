@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required field: vertical' }, { status: 400 });
     }
 
-    const defaultDir = '../docs/knowledge-base/unfpa';
+    const defaultDir = '../docs/knowledge-base/directory';
     const dirPath = directory || defaultDir;
 
     const pathModule = await import('path');

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, BookOpen, Globe, Search, Brain, Pencil, Download, FileText, FileDown, Presentation, ChevronDown, Loader2 } from "lucide-react";
+import { Send, BookOpen, Globe, Search, Brain, Pencil, Download, FileText, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -18,34 +18,34 @@ interface StatusUpdate {
 
 const STARTER_PROMPTS: { label: string; icon: string; prompt: string }[] = [
   {
-    label: "Prepare a funder pitch",
-    icon: "🎯",
-    prompt: "Help me prepare a pitch for a Singapore-based family office interested in climate adaptation. How can I position UNFPA's maternal health and resilience work to match their investment thesis?",
+    label: "Find eldercare services",
+    icon: "🏠",
+    prompt: "What eldercare services are available in Singapore? I'm looking for options for my elderly parent who needs daily assistance — nursing homes, day care centres, and home care services.",
   },
   {
-    label: "Draft a briefing note",
-    icon: "📄",
-    prompt: "Draft a one-page briefing note on UNFPA's climate-SRHR work in Asia-Pacific, suitable for sharing with a potential philanthropic partner before a first meeting.",
+    label: "Financial assistance for caregivers",
+    icon: "💰",
+    prompt: "What financial assistance and subsidies are available for caregivers in Singapore? I need help with the costs of caring for my elderly parent.",
   },
   {
-    label: "Prepare meeting talking points",
-    icon: "📝",
-    prompt: "I have a meeting with a development finance institution interested in blended finance for health systems. Draft talking points that connect UNFPA's programmes to their priorities.",
+    label: "Mental health support",
+    icon: "🧠",
+    prompt: "What mental health support organisations are available in Singapore? I'm looking for counselling services and support groups for someone dealing with anxiety and depression.",
   },
   {
-    label: "Match projects to funders",
-    icon: "🔗",
-    prompt: "A corporate foundation focused on gender equity and women's empowerment wants to fund programmes in Southeast Asia. Which UNFPA projects and programme areas would be the best match?",
+    label: "Nursing home subsidies",
+    icon: "📋",
+    prompt: "How do I apply for subsidies for nursing home care in Singapore? What are the eligibility criteria and what government schemes are available?",
   },
   {
-    label: "Frame for climate funding",
-    icon: "🌏",
-    prompt: "How can I frame UNFPA's SRHR mandate to access climate and humanitarian funding streams? What evidence links climate change to sexual and reproductive health outcomes in Asia?",
+    label: "Disability support services",
+    icon: "♿",
+    prompt: "What disability support services are available for children in Singapore? I need information about early intervention, special education, and therapy services.",
   },
   {
-    label: "Compare financing models",
-    icon: "⚖️",
-    prompt: "Compare blended finance vehicles, development impact bonds, and South-South cooperation as mechanisms for funding UNFPA's community resilience work. Which would appeal most to Singapore-based investors?",
+    label: "Palliative care options",
+    icon: "💜",
+    prompt: "What palliative care and hospice options are available in Singapore? I need to understand the different types of end-of-life care and how to access them.",
   },
 ];
 
@@ -61,8 +61,8 @@ function StatusIndicator({ status }: { status: StatusUpdate }) {
   return (
     <div className="flex items-center gap-3 px-4 py-3 bg-white border border-slate-200 rounded-lg">
       <div className="flex items-center gap-2">
-        <Icon className="h-3.5 w-3.5 animate-pulse" style={{ color: "#009EDB" }} />
-        <span className="text-xs font-medium" style={{ color: "#009EDB" }}>
+        <Icon className="h-3.5 w-3.5 animate-pulse" style={{ color: "#0891B2" }} />
+        <span className="text-xs font-medium" style={{ color: "#0891B2" }}>
           {status.message}
         </span>
       </div>
@@ -70,39 +70,17 @@ function StatusIndicator({ status }: { status: StatusUpdate }) {
   );
 }
 
-type ExportFormat = "docx" | "pdf" | "pptx";
-
-const EXPORT_OPTIONS: { format: ExportFormat; label: string; icon: typeof FileText; description: string }[] = [
-  { format: "docx", label: "Word Document", icon: FileText, description: "Editable .docx report" },
-  { format: "pdf", label: "PDF Document", icon: FileDown, description: "Print-ready .pdf report" },
-  { format: "pptx", label: "PowerPoint Slides", icon: Presentation, description: "Slide deck .pptx" },
-];
-
-function ExportDropdown({
+function ExportButton({
   messages,
   disabled,
 }: {
   messages: Message[];
   disabled: boolean;
 }) {
-  const [open, setOpen] = useState(false);
-  const [exporting, setExporting] = useState<ExportFormat | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [exporting, setExporting] = useState(false);
 
-  // Close on outside click
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    if (open) document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [open]);
-
-  const handleExport = async (format: ExportFormat) => {
-    setExporting(format);
-    setOpen(false);
+  const handleExport = async () => {
+    setExporting(true);
 
     try {
       const response = await fetch("/api/export", {
@@ -114,7 +92,7 @@ function ExportDropdown({
             content: m.content,
             sources: m.sources,
           })),
-          format,
+          format: "docx",
         }),
       });
 
@@ -124,18 +102,16 @@ function ExportDropdown({
         return;
       }
 
-      // ── Client-side integrity verification ──
+      // Client-side integrity verification
       const blob = await response.blob();
       const contentLength = response.headers.get("Content-Length");
       const integrity = response.headers.get("X-File-Integrity");
 
-      // 1. Check server confirmed integrity
       if (integrity !== "verified") {
         alert("Export file did not pass server integrity check. Please try again.");
         return;
       }
 
-      // 2. Verify received size matches declared Content-Length
       if (contentLength && blob.size !== Number(contentLength)) {
         alert(
           `Download incomplete: received ${blob.size} bytes but expected ${contentLength}. ` +
@@ -144,22 +120,15 @@ function ExportDropdown({
         return;
       }
 
-      // 3. Verify minimum size (catch empty/stub responses)
-      const MIN_SIZES: Record<string, number> = { docx: 1024, pdf: 256, pptx: 2048 };
-      if (blob.size < (MIN_SIZES[format] || 256)) {
+      if (blob.size < 1024) {
         alert("Export file appears too small and may be incomplete. Please try again.");
         return;
       }
 
-      // 4. Verify magic bytes on the client
+      // Verify magic bytes (DOCX = ZIP archive PK\x03\x04)
       const header = new Uint8Array(await blob.slice(0, 4).arrayBuffer());
-      const MAGIC: Record<string, number[]> = {
-        docx: [0x50, 0x4b, 0x03, 0x04],
-        pdf: [0x25, 0x50, 0x44, 0x46],
-        pptx: [0x50, 0x4b, 0x03, 0x04],
-      };
-      const expected = MAGIC[format];
-      if (expected && !expected.every((b, i) => header[i] === b)) {
+      const expected = [0x50, 0x4b, 0x03, 0x04];
+      if (!expected.every((b, i) => header[i] === b)) {
         alert("Downloaded file has an invalid header and may be corrupted. Please try again.");
         return;
       }
@@ -169,7 +138,7 @@ function ExportDropdown({
       const a = document.createElement("a");
       a.href = url;
       const timestamp = new Date().toISOString().split("T")[0];
-      a.download = `unfpa-report-${timestamp}.${format}`;
+      a.download = `directory-report-${timestamp}.docx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -177,53 +146,29 @@ function ExportDropdown({
     } catch {
       alert("Export failed. Please check your connection and try again.");
     } finally {
-      setExporting(null);
+      setExporting(false);
     }
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      <button
-        onClick={() => setOpen(!open)}
-        disabled={disabled || exporting !== null}
-        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded border transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-        style={{
-          color: "#FFFFFF",
-          borderColor: "rgba(255,255,255,0.4)",
-          backgroundColor: open ? "rgba(255,255,255,0.15)" : "transparent",
-        }}
-        title="Export conversation as report"
-      >
-        {exporting ? (
-          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-        ) : (
-          <Download className="h-3.5 w-3.5" />
-        )}
-        {exporting ? "Exporting…" : "Export"}
-        <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
-
-      {open && (
-        <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1">
-          {EXPORT_OPTIONS.map((opt) => {
-            const Icon = opt.icon;
-            return (
-              <button
-                key={opt.format}
-                onClick={() => handleExport(opt.format)}
-                className="w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-slate-50 transition-colors"
-              >
-                <Icon className="h-4 w-4 flex-shrink-0" style={{ color: "#009EDB" }} />
-                <div>
-                  <p className="text-xs font-medium text-slate-800">{opt.label}</p>
-                  <p className="text-[10px] text-slate-400">{opt.description}</p>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+    <button
+      onClick={handleExport}
+      disabled={disabled || exporting}
+      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded border transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+      style={{
+        color: "#FFFFFF",
+        borderColor: "rgba(255,255,255,0.4)",
+        backgroundColor: exporting ? "rgba(255,255,255,0.15)" : "transparent",
+      }}
+      title="Export conversation as Word document"
+    >
+      {exporting ? (
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+      ) : (
+        <Download className="h-3.5 w-3.5" />
       )}
-    </div>
+      {exporting ? "Exporting..." : "Export Word"}
+    </button>
   );
 }
 
@@ -242,7 +187,7 @@ export function KnowledgeChat() {
   // Restore chat history from localStorage on mount
   useEffect(() => {
     try {
-      const stored = localStorage.getItem("unfpa-chat-messages");
+      const stored = localStorage.getItem("directory-chat-messages");
       if (stored) setMessages(JSON.parse(stored));
     } catch { /* ignore */ }
   }, []);
@@ -251,7 +196,7 @@ export function KnowledgeChat() {
   useEffect(() => {
     try {
       if (messages.length > 0) {
-        localStorage.setItem("unfpa-chat-messages", JSON.stringify(messages));
+        localStorage.setItem("directory-chat-messages", JSON.stringify(messages));
       }
     } catch { /* ignore */ }
   }, [messages]);
@@ -261,7 +206,7 @@ export function KnowledgeChat() {
     setInput("");
     setStreamingText("");
     setCurrentStatus(null);
-    try { localStorage.removeItem("unfpa-chat-messages"); } catch { /* ignore */ }
+    try { localStorage.removeItem("directory-chat-messages"); } catch { /* ignore */ }
   }, []);
 
   useEffect(() => {
@@ -433,15 +378,15 @@ export function KnowledgeChat() {
     >
       <div className="flex flex-col h-[calc(100vh-200px)] min-h-[500px] border border-slate-200 rounded-lg overflow-hidden shadow-sm">
         {/* Header */}
-        <div className="px-5 py-4 border-b border-slate-200" style={{ backgroundColor: "#003366" }}>
+        <div className="px-5 py-4 border-b border-slate-200" style={{ backgroundColor: "#0891B2" }}>
           <div className="flex items-start justify-between">
             <div>
               <h2 className="font-semibold text-white flex items-center gap-2">
                 <BookOpen className="h-4 w-4" />
-                UNFPA Partnership Catalyst
+                The Directory
               </h2>
-              <p className="text-xs mt-0.5" style={{ color: "#a8c8e8" }}>
-                Prepare for funding conversations — pitch UNFPA programmes, draft briefings, and match projects to partners
+              <p className="text-xs mt-0.5" style={{ color: "#ccfbf1" }}>
+                Find charities, SSAs, and caregiving resources in Singapore
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -457,7 +402,7 @@ export function KnowledgeChat() {
                 </button>
               )}
               {hasConversation && !isLoading && (
-                <ExportDropdown messages={messages} disabled={messages.length === 0} />
+                <ExportButton messages={messages} disabled={messages.length === 0} />
               )}
             </div>
           </div>
@@ -468,7 +413,7 @@ export function KnowledgeChat() {
           {!hasConversation && (
             <div className="mt-2">
               <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">
-                How can I help you prepare?
+                How can I help you today?
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {STARTER_PROMPTS.map((p) => (
@@ -499,7 +444,7 @@ export function KnowledgeChat() {
                     ? "px-4 py-3 text-white text-sm"
                     : "bg-white border border-slate-200 text-slate-900 px-4 py-3"
                 }`}
-                style={message.role === "user" ? { backgroundColor: "#003366" } : {}}
+                style={message.role === "user" ? { backgroundColor: "#111827" } : {}}
               >
                 {message.role === "assistant" ? (
                   <div className="prose prose-slate max-w-none prose-table:border-collapse prose-th:border prose-th:border-slate-300 prose-th:bg-slate-50 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:text-xs prose-th:font-semibold prose-td:border prose-td:border-slate-200 prose-td:px-3 prose-td:py-2 prose-td:text-sm">
@@ -520,9 +465,9 @@ export function KnowledgeChat() {
                         <li key={i} className="text-xs text-slate-500 flex items-start gap-1.5">
                           <span
                             className="mt-1.5 h-1 w-1 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: "#009EDB" }}
+                            style={{ backgroundColor: "#0891B2" }}
                           />
-                          <a href={`/knowledge/${source.slug}`} className="hover:underline hover:text-blue-600">
+                          <a href={`/knowledge/${source.slug}`} className="hover:underline hover:text-teal-600">
                             {source.title}
                           </a>
                         </li>
@@ -542,7 +487,7 @@ export function KnowledgeChat() {
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{streamingText}</ReactMarkdown>
                 </div>
                 <div className="mt-2 flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-teal-400 animate-pulse" />
                   <span className="text-[10px] text-slate-400">Writing...</span>
                 </div>
               </div>
@@ -567,9 +512,9 @@ export function KnowledgeChat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Prepare a pitch, draft a briefing, match projects to funders…"
-              className="flex-1 resize-none border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:border-blue-600"
-              style={{ "--tw-ring-color": "#009EDB" } as React.CSSProperties}
+              placeholder="Describe your caregiving needs, search for organisations..."
+              className="flex-1 resize-none border border-slate-300 rounded px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:border-teal-600"
+              style={{ "--tw-ring-color": "#0891B2" } as React.CSSProperties}
               rows={2}
               disabled={isLoading}
             />
@@ -577,7 +522,7 @@ export function KnowledgeChat() {
               onClick={() => sendMessage()}
               disabled={isLoading || !input.trim()}
               className="px-4 text-white rounded hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 text-sm font-medium transition-opacity"
-              style={{ backgroundColor: "#009EDB" }}
+              style={{ backgroundColor: "#0891B2" }}
             >
               <Send className="h-4 w-4" />
             </button>

@@ -4,12 +4,14 @@ export default function Home() {
   return (
     <main className="max-w-4xl mx-auto px-4 py-6">
       <div className="mb-4">
-        <h1 className="text-lg font-semibold text-slate-900">UNFPA Partnership Catalyst</h1>
+        <h1 className="text-lg font-semibold text-slate-900">The Directory</h1>
         <p className="text-sm text-slate-500 mt-0.5">
-          Prepare for conversations with potential funding organisations. Pitch UNFPA programmes, draft briefing notes,
-          match projects to partner interests, and frame UNFPA&apos;s work for climate and humanitarian funding. Grounded in
-          the{" "}
-          <a href="/knowledge" className="text-blue-600 hover:underline">knowledge base</a>.
+          Find charities, social service agencies, and caregiving resources in Singapore.
+          Ask about eldercare, disability support, mental health services, financial assistance,
+          and more. Grounded in the{" "}
+          <a href="/knowledge" className="text-teal-600 hover:underline">knowledge base</a>
+          {" and "}
+          <a href="/directory" className="text-teal-600 hover:underline">organisation directory</a>.
         </p>
       </div>
       <KnowledgeChat />
