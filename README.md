@@ -1,98 +1,60 @@
-# UNFPA Knowledge Base — LKYSPP Policy Innovation Lab
+# The Directory — Singapore Charities & Social Service Agencies
 
-A knowledge base and AI chat interface built to support the **Lee Kuan Yew School of Public Policy Policy Innovation Lab** consulting project for **UNFPA** as the client. Built for the student group's research and made openly available for anyone who works with or studies UNFPA and PMNCH.
+A comprehensive directory and AI-powered knowledge base of Singapore's charities, social service agencies (SSAs), voluntary welfare organisations (VWOs), and caregiving resources. Built by **SG Assist Pte Ltd** x **OTG (On The Ground)**.
 
-**Live site:** [unfpa-lkyspp-otg.vercel.app](https://unfpa-lkyspp-otg.vercel.app) *(after deployment)*
-
----
-
-## About this project
-
-This is a consulting project run through **Professor Mancini's Policy Innovation Lab** course at the Lee Kuan Yew School of Public Policy, National University of Singapore.
-
-- **Client:** UNFPA (United Nations Population Fund)
-- **Challenge:** Project B — PPP for Climate and Humanitarian Resilience
-
-The student group is conducting policy research across UNFPA's mandate, programme areas, evidence base, and contested topics. This repository contains their working knowledge base and the AI-assisted research interface built to support the group.
-
-### The LKYSPP group
-
-| Name | Role |
-|---|---|
-| Rani Opula Rajan | Group member |
-| Prachi Sharma | Group member |
-| Abhishek Tiwari | Group member |
-| Preeti Patil | Group member |
-
-**App built by:** Haojun See (MPP 2021) — designed and built this application to support the group's research and consulting work for UNFPA.
+**Live site:** [charities-ssa-directory.vercel.app](https://charities-ssa-directory.vercel.app)
 
 ---
 
 ## What this is
 
-This repository contains two things:
+The Directory is a single platform for navigating Singapore's social service ecosystem. It serves two audiences:
 
-1. **Deep-research documents** — a structured knowledge base covering UNFPA's mandate, programme areas, data systems, and politically contested topics. Each document is 3,000–8,000 words, researched and written to be accurate, balanced, and genuinely useful for a sophisticated policy audience.
+- **People who need help** — caregivers, families, individuals looking for the right service (eldercare, disability support, mental health, financial assistance, etc.)
+- **People who provide help** — social workers, case managers, volunteers, and organisation staff who need a quick reference to other services
 
-2. **A Next.js web application** — a publicly accessible interface with:
-   - A **chat interface** backed by semantic search (RAG) across all documents
-   - A **browsable knowledge base** where each document is a readable, linkable page
-   - A **feedback mechanism** so readers can flag errors or suggest improvements
+The platform has three components:
 
----
+1. **AI Chat Interface** — describe your situation in plain language, get matched to relevant organisations, services, subsidies, and next steps. Powered by Claude with RAG over the knowledge base.
 
-## Knowledge base structure
+2. **Organisation Directory** — a browsable, filterable, searchable table of Singapore organisations with contact details, service descriptions, and categories. Each entry has a "Report incorrect details" button.
 
-The documents are organised into five blocks:
-
-| Block | Code | Description | Documents |
-|---|---|---|---|
-| **Orientation** | O | What UNFPA and PMNCH are, how they work, key terminology | 8 |
-| **Programme Work** | W | Deep dives into specific programme areas — maternal health, family planning, GBV, fistula, midwifery, contraceptive supply | 10 |
-| **Data & Evidence** | D | How UNFPA collects, reports, and uses population data and programme results | 4 |
-| **Contested Areas** | C | Honest assessments of where UNFPA's work is disputed, controversial, or politically sensitive | 5 |
-| **PMNCH** | PMNCH | The Partnership for Maternal, Newborn & Child Health — mandate, accountability work, relationship to UNFPA | 5 |
-
-### Document naming convention
-
-```
-UNFPA-O-01  →  UNFPA · Orientation block · Document 01
-UNFPA-W-05  →  UNFPA · Programme Work block · Document 05
-PMNCH-C-02  →  PMNCH · Contested block · Document 02
-```
-
-Each document has a frontmatter header:
-```yaml
----
-CODE: UNFPA-O-01
-TITLE: UNFPA in Plain Language: What It Does, How It Works, Who Funds It
-TIER: Orientation
-AUDIENCE: Both
-STATUS: Complete
----
-```
-
-- **TIER**: Orientation (context-setting), Working (operational depth)
-- **AUDIENCE**: Board (governance), Staff (operational), Both
+3. **Knowledge Base** — deep-dive reference documents covering Singapore's social service landscape by sector (eldercare, disability, mental health, family services, healthcare, community).
 
 ---
 
-## Technical setup
+## Coverage
 
-### Requirements
+| Sector | What's covered |
+|--------|---------------|
+| **Government** | MOH, MSF, AIC, NCSS, Commissioner of Charities — policies, subsidies, schemes |
+| **Eldercare** | Nursing homes, senior day care, home care, caregiver support, dementia care |
+| **Disability** | SG Enable, EIPIC, SPED schools, adult services, employment, assistive tech |
+| **Mental Health** | Crisis helplines, counselling, community MH orgs, youth mental health |
+| **Family Services** | Family Service Centres, family violence services, divorce support, children & youth |
+| **Healthcare** | Healthcare foundations, chronic disease orgs, hospice, palliative care |
+| **Community** | Befriending, volunteers, self-help groups, food banks, migrant worker support |
+| **Financial Assistance** | ComCare, MediFund, CDC vouchers, self-help group grants |
 
-- Node.js 18+
-- PostgreSQL database with [pgvector](https://github.com/pgvector/pgvector) extension (for the chat/RAG feature)
-  - [Supabase](https://supabase.com) free tier works out of the box — pgvector is enabled by default
-- OpenAI API key (for generating embeddings)
-- Anthropic API key (for the chat responses)
+---
 
-### Local development
+## Technical stack
+
+- **Frontend:** Next.js 16 (App Router), React 19, Tailwind CSS 4
+- **AI Chat:** Anthropic Claude API (SSE streaming, agentic tool-use with web search)
+- **Embeddings:** OpenAI text-embedding-3-small (1536 dimensions)
+- **Database:** PostgreSQL + pgvector (via Prisma 7, Supabase-compatible)
+- **Export:** Word document (.docx) generation from chat conversations
+- **Deployment:** Vercel
+
+---
+
+## Local development
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/On-The-Ground-AI/unfpa-lkyspp-otg.git
-cd unfpa-lkyspp-otg/next-app
+git clone https://github.com/sg-assist/charities-SSAs-directory.git
+cd charities-SSAs-directory/next-app
 
 # 2. Install dependencies
 npm install
@@ -104,119 +66,134 @@ cp .env.local.example .env.local
 # 4. Generate Prisma client
 npx prisma generate
 
-# 5. Push database schema (creates the tables + pgvector extension)
+# 5. Push database schema
 npx prisma db push
 
 # 6. Ingest the knowledge base documents
 npx tsx scripts/ingest-knowledge.ts --all
 
-# 7. (Optional) Ingest PDF source documents
-npx tsx scripts/ingest-pdfs.ts --all
-
-# 8. Start the dev server
+# 7. Start the dev server
 npm run dev
 ```
 
 The app will be available at `http://localhost:3000`.
 
-The **knowledge base browsing** (`/knowledge`) works without a database — it reads directly from the markdown files. Only the **chat interface** requires the database and API keys.
+The **knowledge base** (`/knowledge`) and **directory** (`/directory`) work without a database — they read from markdown files and the API respectively. The **chat interface** requires the database and API keys.
 
-### Ingestion script options
+---
+
+## Scripts
+
+### Knowledge base ingestion
 
 ```bash
-# Markdown documents
-npx tsx scripts/ingest-knowledge.ts --all           # ingest all
-npx tsx scripts/ingest-knowledge.ts --all --dry-run # preview without writing
-npx tsx scripts/ingest-knowledge.ts --all --force   # force re-ingest
-npx tsx scripts/ingest-knowledge.ts --status        # corpus status
-
-# PDF source documents (hash-based change detection)
-npx tsx scripts/ingest-pdfs.ts --all                # ingest all PDFs
-npx tsx scripts/ingest-pdfs.ts --all --dry-run      # preview
-npx tsx scripts/ingest-pdfs.ts --all --force        # force re-ingest
-npx tsx scripts/ingest-pdfs.ts --status             # status + untracked/changed counts
-npx tsx scripts/ingest-pdfs.ts --file "path/to.pdf" # single file
-
-# Ingest everything at once
-npm run ingest-all
+npx tsx scripts/ingest-knowledge.ts --all           # ingest all markdown docs
+npx tsx scripts/ingest-knowledge.ts --all --force    # force re-ingest
+npx tsx scripts/ingest-knowledge.ts --all --dry-run  # preview
+npx tsx scripts/ingest-knowledge.ts --status         # corpus status
 ```
 
-### Environment variables
+### Data scraping (organisation directory)
 
 ```bash
-# PostgreSQL connection (Supabase, Neon, or any Postgres+pgvector instance)
-DATABASE_URL=postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres
-DATABASE_URL_UNPOOLED=postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres
+npm run scrape-charities    # charities.gov.sg register
+npm run scrape-ncss         # NCSS social service directory
+npm run scrape-aic          # AIC care facilities
+npm run scrape-guidelines   # MOH/MSF/AIC/NCSS guidelines
+npm run scrape-all          # run all scrapers
+```
 
-# OpenAI — generates the embeddings used for semantic search
+### PDF ingestion
+
+```bash
+npm run ingest-pdfs         # ingest PDF documents
+npm run ingest-all          # ingest everything (markdown + PDFs)
+```
+
+---
+
+## Environment variables
+
+```bash
+# PostgreSQL (Supabase, Neon, or any Postgres+pgvector instance)
+DATABASE_URL=postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres
+
+# OpenAI — generates embeddings for semantic search
 OPENAI_API_KEY=sk-...
 
-# Anthropic — powers the chat responses
+# Anthropic — powers chat responses
 ANTHROPIC_API_KEY=sk-ant-...
-
-# Embedding config (defaults match schema, no need to change)
-EMBEDDING_MODEL=text-embedding-3-small
-EMBEDDING_DIMENSIONS=1536
 ```
-
-### Deploying to Vercel
-
-1. Fork this repository
-2. Create a new Vercel project, set **Root Directory** to `next-app`
-3. Add the environment variables above in Vercel's settings
-4. Deploy
-
-Note: The knowledge base browsing pages are statically rendered at build time and do not require a database connection to function. Only the `/api/chat` endpoint requires the database and API keys.
 
 ---
 
 ## Repository structure
 
 ```
-unfpa-lkyspp-otg/
-├── README.md                        ← You are here
+charities-SSAs-directory/
+├── README.md
 ├── docs/
-│   ├── knowledge-base/
-│   │   └── unfpa/
-│   │       ├── INDEX.md             ← Document index
-│   │       ├── UNFPA-O-01.md        ← Orientation documents
-│   │       ├── UNFPA-W-01.md        ← Programme Work documents
-│   │       ├── UNFPA-D-01.md        ← Data & Evidence documents
-│   │       ├── UNFPA-C-01.md        ← Contested Areas documents
-│   │       └── PMNCH-O-01.md        ← PMNCH documents
-│   └── UNFPA key files/             ← PDF source documents (36 reports)
+│   └── knowledge-base/
+│       └── directory/
+│           ├── DIR-G-01.md        ← Government & policy overview
+│           ├── DIR-E-01.md        ← Eldercare services
+│           ├── DIR-D-01.md        ← Disability services
+│           ├── DIR-M-01.md        ← Mental health services
+│           ├── DIR-F-01.md        ← Family services
+│           ├── DIR-H-01.md        ← Healthcare & palliative
+│           └── DIR-C-01.md        ← Community organisations
 └── next-app/
     ├── app/
-    │   ├── page.tsx                 ← Chat interface (/)
-    │   ├── layout.tsx               ← Site-wide layout + nav
-    │   ├── knowledge/
-    │   │   ├── page.tsx             ← Knowledge base index (/knowledge)
-    │   │   └── [slug]/page.tsx      ← Individual document page
+    │   ├── page.tsx               ← Chat interface (/)
+    │   ├── directory/page.tsx     ← Organisation directory (/directory)
+    │   ├── knowledge/             ← Knowledge base pages (/knowledge)
     │   └── api/
-    │       ├── chat/route.ts        ← Chat API (POST /api/chat)
-    │       └── admin/knowledge/
-    │           ├── route.ts         ← List / trigger ingestion
-    │           └── search/route.ts  ← Test semantic search
+    │       ├── chat/route.ts      ← Chat API (SSE streaming)
+    │       ├── directory/route.ts ← Directory API (filtering, search)
+    │       └── export/route.ts    ← Word export API
     ├── components/
-    │   └── knowledge-chat.tsx       ← Chat UI component
+    │   └── knowledge-chat.tsx     ← Chat UI component
     ├── services/
-    │   ├── embeddingService.ts      ← OpenAI embedding wrapper
-    │   ├── chunkingService.ts       ← Markdown + PDF chunker
-    │   └── knowledgeDocumentService.ts ← Ingest + semantic search
+    │   ├── embeddingService.ts    ← OpenAI embeddings
+    │   ├── chunkingService.ts     ← Document chunking
+    │   ├── exportService.ts       ← Word document generation
+    │   └── knowledgeDocumentService.ts
     ├── scripts/
-    │   ├── ingest-knowledge.ts      ← Markdown ingestion CLI
-    │   └── ingest-pdfs.ts           ← PDF ingestion CLI (SHA-256 tracking)
-    ├── types/
-    │   └── corpus.ts                ← Shared TypeScript types
+    │   ├── ingest-knowledge.ts    ← Markdown ingestion
+    │   ├── ingest-pdfs.ts         ← PDF ingestion
+    │   ├── scrape-charities-gov.ts
+    │   ├── scrape-ncss.ts
+    │   ├── scrape-aic.ts
+    │   ├── scrape-guidelines.ts
+    │   ├── scrape-all.ts          ← Master scrape orchestrator
+    │   └── ingest-orgs-to-kb.ts   ← Bridge org data → embedding KB
     └── prisma/
-        └── schema.prisma            ← KnowledgeDocument, KnowledgeChunk, PdfIngestRecord
+        └── schema.prisma          ← KnowledgeDocument, KnowledgeChunk, Organisation
 ```
+
+---
+
+## Knowledge base document format
+
+Documents use YAML frontmatter:
+
+```yaml
+---
+CODE: DIR-E-01
+TITLE: Eldercare Services and Support in Singapore
+TIER: Reference
+AUDIENCE: Public
+STATUS: Complete
+---
+```
+
+Category codes: `G` (Government), `E` (Eldercare), `D` (Disability), `M` (Mental Health), `F` (Family), `H` (Healthcare), `C` (Community)
 
 ---
 
 ## Feedback
 
-If you find an error, have context that would improve a document, or want to flag something that seems out of date, use the feedback button on each document page or email [UNFPA@ontheground.agency](mailto:UNFPA@ontheground.agency).
+Found an error or have information to add? Use the feedback button on any page, or email [admin@sgassist.sg](mailto:admin@sgassist.sg).
 
 ---
 
@@ -224,8 +201,8 @@ If you find an error, have context that would improve a document, or want to fla
 
 The **code** (everything in `next-app/`) is released under the MIT licence.
 
-The **documents** (everything in `docs/knowledge-base/`) are released under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — you may reproduce, adapt, or build on them for any purpose with attribution to the LKYSPP Policy Innovation Lab group.
+The **knowledge base documents** (everything in `docs/knowledge-base/`) are released under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 ---
 
-*LKYSPP Policy Innovation Lab · Professor Mancini · Client: UNFPA · App by Haojun See (MPP 2021)*
+*Built by SG Assist Pte Ltd x OTG*
