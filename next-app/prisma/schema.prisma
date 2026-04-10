@@ -33,19 +33,103 @@ model KnowledgeDocument {
 
 /// Chunked segments for vector search (~800-1200 words each).
 model KnowledgeChunk {
-  id         String   @id @default(cuid())
-  documentId String   @map("document_id")
-  chunkIndex Int      @map("chunk_index")
-  content    String   @db.Text
-  tokenCount Int      @map("token_count")
-  embedding  Unsupported("vector(1536)")?
-  createdAt  DateTime @default(now()) @map("created_at")
+  id               String   @id @default(cuid())
+  documentId       String   @map("document_id")
+  chunkIndex       Int      @map("chunk_index")
+  content          String   @db.Text
+  tokenCount       Int      @map("token_count")
+  embedding        Unsupported("vector(1536)")?
+  createdAt        DateTime @default(now()) @map("created_at")
 
-  document   KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  // ── Citation metadata (populated for clinical content) ────────────────
+  sourceDocument   String?  @map("source_document")   // e.g. "WHO PCPNC 2023"
+  sourceEdition    String?  @map("source_edition")    // e.g. "3rd edition"
+  sourceSection    String?  @map("source_section")    // e.g. "Section 3.2"
+  sourcePage       Int?     @map("source_page")       // Page number in source PDF
+  sourceUrl        String?  @map("source_url")        // URL for online verification
+  contentHash      String?  @map("content_hash")      // SHA-256 of this chunk's content
+  expiryDate       DateTime? @map("expiry_date")      // When to re-verify
+  clinicalSourceId String?  @map("clinical_source_id")
+
+  document         KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  clinicalSource   ClinicalSource?   @relation("ClinicalSourceChunks", fields: [clinicalSourceId], references: [id])
 
   @@unique([documentId, chunkIndex])
   @@index([documentId])
   @@map("knowledge_chunks")
+}
+
+/// Tracks clinical source documents — edition, publication date, review dates, and redistribution rights.
+model ClinicalSource {
+  id               String    @id @default(cuid())
+  slug             String    @unique                // e.g. "who-pcpnc-2023"
+  title            String                           // e.g. "WHO PCPNC 3rd Edition 2023"
+  shortName        String    @map("short_name")     // e.g. "WHO PCPNC 2023"
+  publisher        String                           // e.g. "World Health Organization"
+  edition          String?                          // e.g. "3rd edition"
+  publicationYear  Int       @map("publication_year")
+  sourceUrl        String?   @map("source_url")    // Canonical URL for online verification
+  sha256           String    @map("sha256")         // SHA-256 of source PDF bytes
+  redistributionOk Boolean   @default(false) @map("redistribution_ok")
+  redistributionNote String? @map("redistribution_note") @db.Text
+  expiryDate       DateTime? @map("expiry_date")   // When to re-verify content is current
+  clinicalReviewer String?   @map("clinical_reviewer") // Name of reviewing clinician
+  reviewedAt       DateTime? @map("reviewed_at")
+  ingestedAt       DateTime  @default(now()) @map("ingested_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  chunks           KnowledgeChunk[] @relation("ClinicalSourceChunks")
+
+  @@index([slug])
+  @@map("clinical_sources")
+}
+
+/// Structured drug/medicine formulary entries — human-verified, never LLM-generated.
+model FormularyEntry {
+  id               String    @id @default(cuid())
+  drug             String                           // Generic name (INN)
+  localNames       Json?     @map("local_names")   // { "my": "...", "id": "...", "km": "..." }
+  indication       String    @db.Text
+  dose             String                           // e.g. "10 IU"
+  route            String                           // e.g. "IM"
+  timing           String?   @db.Text
+  contraindications Json?    @map("contraindications")   // String[]
+  warnings         Json?                            // String[]
+  source           String                           // e.g. "WHO PCPNC 2023, Section 3.2, Page 47"
+  sourceChunkSlug  String?   @map("source_chunk_slug")  // Links to KnowledgeChunk via documentSlug-chunkIndex
+  sourceUrl        String?   @map("source_url")
+  whoEmlListed     Boolean   @default(false) @map("who_eml_listed")
+  reviewedBy       String?   @map("reviewed_by")
+  reviewedAt       DateTime? @map("reviewed_at")
+  expiryDate       DateTime? @map("expiry_date")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  @@index([drug])
+  @@map("formulary_entries")
+}
+
+/// Audit log for clinical answers — every response in clinical/community mode is logged.
+/// Used for incident review and clinical governance. Never auto-uploaded; exported on demand.
+model ClinicalDisclaimerLog {
+  id              String   @id @default(cuid())
+  sessionId       String   @map("session_id")       // Anonymous session ID
+  mode            String                             // clinical | community
+  country         String?                            // User's selected country
+  language        String?                            // User's selected language
+  question        String   @db.Text
+  answer          String   @db.Text
+  citationChunkIds Json    @map("citation_chunk_ids")  // String[] — all [SRC:chunk_id] referenced
+  kbVersion       String?  @map("kb_version")        // Knowledge base snapshot version
+  modelVersion    String?  @map("model_version")     // LLM model identifier
+  hasDoseCard     Boolean  @default(false) @map("has_dose_card")
+  validatorPassed Boolean  @default(true) @map("validator_passed")
+  validatorWarnings Json?  @map("validator_warnings") // Any citation warnings raised
+  answeredAt      DateTime @default(now()) @map("answered_at")
+
+  @@index([sessionId])
+  @@index([answeredAt])
+  @@map("clinical_disclaimer_logs")
 }
 
 /// Tracks which PDF files have been ingested — for skip logic and change detection.

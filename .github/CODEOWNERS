@@ -1,0 +1,43 @@
+# CODEOWNERS — UNFPA On-The-Ground Field App
+#
+# These rules ensure that changes to safety-critical files require
+# approval from designated reviewers before they can be merged.
+#
+# IMPORTANT: This file protects life-critical content. Any PR that
+# modifies clinical guidelines, drug formulary data, or security
+# infrastructure requires approval from the appropriate team.
+# See SECURITY.md for the full threat model.
+
+# ── Clinical content (LIFE-CRITICAL) ─────────────────────────────
+# Any change to clinical guidelines, formulary, or CHW content
+# requires sign-off from the clinical review team. This prevents
+# accidental or malicious modification of dosing or protocol data.
+docs/knowledge-base/formulary/         @unfpa-otg/clinical-reviewers
+docs/knowledge-base/clinical/          @unfpa-otg/clinical-reviewers
+docs/knowledge-base/misp/              @unfpa-otg/clinical-reviewers
+docs/knowledge-base/chw/              @unfpa-otg/clinical-reviewers
+docs/knowledge-base/moh/              @unfpa-otg/clinical-reviewers
+
+# ── Cryptographic keys and signing infrastructure ─────────────────
+# OTA manifest signing keys and app bundle verification keys.
+# Modification requires admin approval.
+android/app/src/main/assets/keys/      @unfpa-otg/admins
+ios/Resources/keys/                    @unfpa-otg/admins
+
+# ── CI/CD pipeline ───────────────────────────────────────────────
+# GitHub Actions workflows control the build, signing, and release
+# pipeline. Changes require admin approval to prevent supply chain attacks.
+.github/workflows/                     @unfpa-otg/admins
+.github/CODEOWNERS                     @unfpa-otg/admins
+
+# ── Dependency manifests ─────────────────────────────────────────
+# Pinned dependency files. Changes require admin review to prevent
+# supply chain compromise via malicious dependency updates.
+next-app/package-lock.json             @unfpa-otg/admins
+android/gradle/verification-metadata.xml @unfpa-otg/admins
+
+# ── System prompts ───────────────────────────────────────────────
+# Clinical and community mode system prompts control what the AI
+# is instructed to do. Changes require both clinical and admin review.
+next-app/lib/prompts/clinical.ts       @unfpa-otg/clinical-reviewers @unfpa-otg/admins
+next-app/lib/prompts/community.ts      @unfpa-otg/clinical-reviewers @unfpa-otg/admins
