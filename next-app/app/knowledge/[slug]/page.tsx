@@ -12,17 +12,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const doc = getDoc(slug);
   if (!doc) return {};
   return {
-    title: `${doc.frontmatter.title} — UNFPA Knowledge Base`,
+    title: `${doc.frontmatter.title} — The Directory Knowledge Base`,
     description: `${doc.frontmatter.code} · ${doc.frontmatter.tier} · ${doc.wordCount.toLocaleString()} words`,
   };
 }
 
 const BLOCK_COLORS: Record<string, { badge: string; section: string }> = {
-  O:     { badge: 'bg-blue-100 text-blue-800',   section: 'border-blue-300' },
-  W:     { badge: 'bg-green-100 text-green-800',  section: 'border-green-300' },
-  D:     { badge: 'bg-purple-100 text-purple-800',section: 'border-purple-300' },
-  C:     { badge: 'bg-amber-100 text-amber-800',  section: 'border-amber-300' },
-  PMNCH: { badge: 'bg-teal-100 text-teal-800',    section: 'border-teal-300' },
+  G:  { badge: 'bg-teal-100 text-teal-800',    section: 'border-teal-300' },
+  E:  { badge: 'bg-blue-100 text-blue-800',     section: 'border-blue-300' },
+  D:  { badge: 'bg-purple-100 text-purple-800',  section: 'border-purple-300' },
+  M:  { badge: 'bg-green-100 text-green-800',   section: 'border-green-300' },
+  F:  { badge: 'bg-amber-100 text-amber-800',   section: 'border-amber-300' },
+  H:  { badge: 'bg-rose-100 text-rose-800',     section: 'border-rose-300' },
+  C:  { badge: 'bg-sky-100 text-sky-800',       section: 'border-sky-300' },
 };
 
 export default async function DocPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -30,8 +32,8 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
   const doc = getDoc(slug);
   if (!doc) notFound();
 
-  const blockKey = doc.frontmatter.org === 'PMNCH' ? 'PMNCH' : doc.frontmatter.block;
-  const colors = BLOCK_COLORS[blockKey] || BLOCK_COLORS['O'];
+  const blockKey = doc.frontmatter.block;
+  const colors = BLOCK_COLORS[blockKey] || BLOCK_COLORS['G'];
   const blockMeta = BLOCK_LABELS[blockKey];
 
   // Render markdown to HTML server-side
@@ -41,7 +43,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
   const feedbackBody = encodeURIComponent(
     `Document: ${doc.frontmatter.code}\nTitle: ${doc.frontmatter.title}\n\nFeedback:\n`
   );
-  const mailtoHref = `mailto:UNFPA@ontheground.agency?subject=${feedbackSubject}&body=${feedbackBody}`;
+  const mailtoHref = `mailto:admin@sgassist.sg?subject=${feedbackSubject}&body=${feedbackBody}`;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -85,13 +87,6 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
             {doc.wordCount.toLocaleString()} words
           </span>
         </div>
-
-        {doc.frontmatter.block === 'C' && (
-          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded text-sm text-amber-800">
-            <strong>Contested area:</strong> This document covers topics where UNFPA&apos;s work is disputed,
-            politically sensitive, or where the evidence is genuinely uncertain. Multiple perspectives are presented.
-          </div>
-        )}
       </header>
 
       {/* Document body — markdown rendered to HTML */}
@@ -112,7 +107,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
           <a
             href={mailtoHref}
             className="inline-flex items-center gap-2 px-4 py-2 rounded text-sm font-medium text-white transition-opacity hover:opacity-90 flex-shrink-0"
-            style={{ backgroundColor: '#009EDB' }}
+            style={{ backgroundColor: '#0891B2' }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>

@@ -1,0 +1,58 @@
+name: Security Audit
+
+# Runs npm audit and checks for HIGH/CRITICAL vulnerabilities on every PR.
+# Fails the build if any are found, preventing supply chain compromise.
+
+on:
+  pull_request:
+    paths:
+      - 'next-app/package.json'
+      - 'next-app/package-lock.json'
+  push:
+    branches: [main]
+  schedule:
+    # Run daily at 02:00 UTC even without a PR (catches newly-disclosed CVEs)
+    - cron: '0 2 * * *'
+
+jobs:
+  npm-audit:
+    name: npm audit (Next.js app)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: next-app
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4.1.0
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: next-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Run npm audit
+        run: |
+          # Fail on HIGH or CRITICAL vulnerabilities
+          npm audit --audit-level=high
+        continue-on-error: false
+
+  dependency-review:
+    name: Dependency Review (PR only)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    continue-on-error: true  # dependency-review-action requires GitHub Advanced Security; non-blocking until enabled
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@3b139cfc5fae8b618d3eae3675e383bb1769c019  # v4.5.0
+        with:
+          fail-on-severity: high
+          # Allow known safe licenses only
+          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, CC0-1.0, Unlicense

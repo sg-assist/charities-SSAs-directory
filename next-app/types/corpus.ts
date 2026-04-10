@@ -8,8 +8,8 @@ export interface KnowledgeDocumentMetadata {
   dateRange?: string;
   documentId?: string;
   sourceFile?: string;
-  block?: string;      // O, W, D, C
-  code?: string;       // e.g., UNFPA-O-01
+  block?: string;      // G, E, D, M, F, H, C
+  code?: string;       // e.g., DIR-G-01
   audience?: string;
   tier?: string;
 }

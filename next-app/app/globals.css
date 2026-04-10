@@ -80,11 +80,11 @@ body {
 }
 
 .prose blockquote {
-  border-left: 3px solid #009EDB;
+  border-left: 3px solid #0891B2;
   margin: 1.25em 0;
   padding: 0.5em 1em;
-  background: #f0f9ff;
-  color: #0369a1;
+  background: #F0FDFA;
+  color: #0E7490;
   font-style: italic;
   border-radius: 0 4px 4px 0;
 }

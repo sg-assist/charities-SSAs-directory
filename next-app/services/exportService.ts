@@ -1,9 +1,9 @@
 /**
- * Export Service — generates DOCX, PDF, and PPTX from chat messages.
+ * Export Service — generates DOCX from chat messages.
  *
  * Markdown in assistant responses is parsed into structured blocks
  * (headings, paragraphs, bullets, tables) and rendered natively into
- * each output format.
+ * the output format.
  */
 
 import {
@@ -21,12 +21,8 @@ import {
   ShadingType,
   Footer,
   PageNumber,
-  NumberFormat,
   Header,
-  ImageRun,
 } from 'docx';
-import PDFDocument from 'pdfkit';
-import PptxGenJS from 'pptxgenjs';
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -36,7 +32,7 @@ export interface ExportMessage {
   sources?: Array<{ title: string; slug: string }>;
 }
 
-export type ExportFormat = 'docx' | 'pdf' | 'pptx';
+export type ExportFormat = 'docx';
 
 // ── Markdown → structured blocks ─────────────────────────────────────────
 
@@ -183,10 +179,9 @@ function parseMarkdown(md: string): ContentBlock[] {
       continue;
     }
 
-    // Regular paragraph — collect contiguous non-empty lines
-    let paraText = line.trim();
+    // Regular paragraph
+    const paraText = line.trim();
     i++;
-    // Single-line paragraphs for now (multi-line would need blank line detection)
     blocks.push({ type: 'paragraph', segments: parseInline(paraText) });
   }
 
@@ -194,11 +189,11 @@ function parseMarkdown(md: string): ContentBlock[] {
   return blocks;
 }
 
-// ── UNFPA brand colours ──────────────────────────────────────────────────
+// ── Brand colours ───────────────────────────────────────────────────────
 
-const UNFPA_BLUE = '003366';
-const UNFPA_ACCENT = '009EDB';
-const UNFPA_LIGHT_BLUE = 'E8F4FD';
+const PRIMARY_COLOR = '0891B2';   // teal-600
+const ACCENT_COLOR = '38BDF8';    // sky-400
+const LIGHT_COLOR = 'F0FDFA';     // teal-50
 
 // ── DOCX generation ──────────────────────────────────────────────────────
 
@@ -237,7 +232,7 @@ function blocksToDocxParagraphs(blocks: ContentBlock[]): Paragraph[] {
                   bold: true,
                   size: block.level === 1 ? 32 : block.level === 2 ? 28 : 24,
                   font: 'Calibri',
-                  color: UNFPA_BLUE,
+                  color: PRIMARY_COLOR,
                 })
             ),
             spacing: { before: 240, after: 120 },
@@ -288,7 +283,7 @@ function blocksToDocxParagraphs(blocks: ContentBlock[]): Paragraph[] {
                   }),
                 ],
                 width: { size: colWidth, type: WidthType.DXA },
-                shading: { type: ShadingType.SOLID, color: UNFPA_BLUE },
+                shading: { type: ShadingType.SOLID, color: PRIMARY_COLOR },
               })
           ),
         });
@@ -307,7 +302,7 @@ function blocksToDocxParagraphs(blocks: ContentBlock[]): Paragraph[] {
                     width: { size: colWidth, type: WidthType.DXA },
                     shading:
                       ri % 2 === 1
-                        ? { type: ShadingType.SOLID, color: UNFPA_LIGHT_BLUE }
+                        ? { type: ShadingType.SOLID, color: LIGHT_COLOR }
                         : undefined,
                   })
               ),
@@ -331,7 +326,7 @@ function blocksToDocxParagraphs(blocks: ContentBlock[]): Paragraph[] {
 }
 
 export async function generateDocx(messages: ExportMessage[], title?: string): Promise<Buffer> {
-  const reportTitle = title || 'UNFPA Partnership Catalyst — Report';
+  const reportTitle = title || 'The Directory — Report';
   const children: (Paragraph | Table)[] = [];
 
   // Title
@@ -343,7 +338,7 @@ export async function generateDocx(messages: ExportMessage[], title?: string): P
           bold: true,
           size: 36,
           font: 'Calibri',
-          color: UNFPA_BLUE,
+          color: PRIMARY_COLOR,
         }),
       ],
       spacing: { after: 80 },
@@ -374,7 +369,7 @@ export async function generateDocx(messages: ExportMessage[], title?: string): P
   children.push(
     new Paragraph({
       border: {
-        bottom: { style: BorderStyle.SINGLE, size: 6, color: UNFPA_ACCENT },
+        bottom: { style: BorderStyle.SINGLE, size: 6, color: ACCENT_COLOR },
       },
       spacing: { after: 300 },
     })
@@ -391,7 +386,7 @@ export async function generateDocx(messages: ExportMessage[], title?: string): P
               bold: true,
               size: 22,
               font: 'Calibri',
-              color: UNFPA_BLUE,
+              color: PRIMARY_COLOR,
             }),
             new TextRun({
               text: msg.content,
@@ -401,7 +396,7 @@ export async function generateDocx(messages: ExportMessage[], title?: string): P
             }),
           ],
           spacing: { before: 300, after: 200 },
-          shading: { type: ShadingType.SOLID, color: UNFPA_LIGHT_BLUE },
+          shading: { type: ShadingType.SOLID, color: LIGHT_COLOR },
         })
       );
     } else {
@@ -448,26 +443,14 @@ export async function generateDocx(messages: ExportMessage[], title?: string): P
   // Credits / attribution
   children.push(
     new Paragraph({
-      border: { top: { style: BorderStyle.SINGLE, size: 4, color: UNFPA_ACCENT } },
+      border: { top: { style: BorderStyle.SINGLE, size: 4, color: ACCENT_COLOR } },
       spacing: { before: 400, after: 80 },
     })
   );
   children.push(
     new Paragraph({
       children: [
-        new TextRun({ text: 'Generated by UNFPA Partnership Catalyst  ·  ', size: 18, font: 'Calibri', color: '888888' }),
-        new TextRun({ text: 'https://unfpa-lkyspp-otg.vercel.app', size: 18, font: 'Calibri', color: '888888' }),
-      ],
-      spacing: { after: 40 },
-    })
-  );
-  children.push(
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: 'Questions about this output? Contact Haojun at haojun@ontheground.agency',
-          size: 18, font: 'Calibri', color: '888888', italics: true,
-        }),
+        new TextRun({ text: 'Generated by The Directory  ·  SG Assist Pte Ltd x OTG', size: 18, font: 'Calibri', color: '888888' }),
       ],
       spacing: { after: 40 },
     })
@@ -494,7 +477,7 @@ export async function generateDocx(messages: ExportMessage[], title?: string): P
               new Paragraph({
                 children: [
                   new TextRun({
-                    text: 'UNFPA Partnership Catalyst',
+                    text: 'The Directory',
                     size: 16,
                     font: 'Calibri',
                     color: '999999',
@@ -535,598 +518,4 @@ export async function generateDocx(messages: ExportMessage[], title?: string): P
 
   const buffer = await Packer.toBuffer(doc);
   return Buffer.from(buffer);
-}
-
-// ── PDF generation ───────────────────────────────────────────────────────
-
-export async function generatePdf(messages: ExportMessage[], title?: string): Promise<Buffer> {
-  const reportTitle = title || 'UNFPA Partnership Catalyst — Report';
-
-  return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({
-      size: 'A4',
-      margins: { top: 72, bottom: 72, left: 72, right: 72 },
-      bufferPages: true,
-      info: {
-        Title: reportTitle,
-        Author: 'UNFPA Partnership Catalyst',
-        Creator: 'UNFPA Partnership Catalyst',
-      },
-    });
-
-    const chunks: Buffer[] = [];
-    doc.on('data', (chunk: Buffer) => chunks.push(chunk));
-    doc.on('end', () => resolve(Buffer.concat(chunks)));
-    doc.on('error', reject);
-
-    const PAGE_WIDTH = 595.28 - 144; // A4 minus margins
-
-    // Helper: write inline segments respecting bold/italic
-    function writeSegments(segments: TextSegment[], fontSize = 11, color = '#333333') {
-      for (const seg of segments) {
-        let font = 'Helvetica';
-        if (seg.bold && seg.italic) font = 'Helvetica-BoldOblique';
-        else if (seg.bold) font = 'Helvetica-Bold';
-        else if (seg.italic) font = 'Helvetica-Oblique';
-
-        doc.font(font).fontSize(fontSize).fillColor(color).text(seg.text, {
-          continued: true,
-        });
-      }
-      // End continuation
-      doc.text('', { continued: false });
-    }
-
-    // Title page elements
-    doc
-      .font('Helvetica-Bold')
-      .fontSize(22)
-      .fillColor('#' + UNFPA_BLUE)
-      .text(reportTitle, { align: 'left' });
-
-    doc
-      .font('Helvetica-Oblique')
-      .fontSize(10)
-      .fillColor('#666666')
-      .text(
-        `Generated on ${new Date().toLocaleDateString('en-GB', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        })}`,
-        { align: 'left' }
-      );
-
-    doc.moveDown(0.5);
-    doc
-      .moveTo(72, doc.y)
-      .lineTo(72 + PAGE_WIDTH, doc.y)
-      .strokeColor('#' + UNFPA_ACCENT)
-      .lineWidth(2)
-      .stroke();
-    doc.moveDown(1);
-
-    // Render messages
-    for (const msg of messages) {
-      // Check if we need a new page
-      if (doc.y > 700) doc.addPage();
-
-      if (msg.role === 'user') {
-        // User query box
-        const boxY = doc.y;
-        doc
-          .rect(72, boxY, PAGE_WIDTH, 0.1)
-          .fill('#' + UNFPA_LIGHT_BLUE);
-
-        // Measure text height for background
-        doc
-          .font('Helvetica-Bold')
-          .fontSize(11)
-          .fillColor('#' + UNFPA_BLUE)
-          .text('Query: ', { continued: true });
-        doc
-          .font('Helvetica-Oblique')
-          .fontSize(11)
-          .fillColor('#333333')
-          .text(msg.content);
-        doc.moveDown(0.8);
-      } else {
-        const blocks = parseMarkdown(msg.content);
-
-        for (const block of blocks) {
-          if (doc.y > 720) doc.addPage();
-
-          switch (block.type) {
-            case 'heading': {
-              const sizes: Record<number, number> = { 1: 18, 2: 15, 3: 13, 4: 12 };
-              doc.moveDown(0.4);
-              doc
-                .font('Helvetica-Bold')
-                .fontSize(sizes[block.level] || 12)
-                .fillColor('#' + UNFPA_BLUE);
-              writeSegments(block.segments, sizes[block.level] || 12, '#' + UNFPA_BLUE);
-              doc.moveDown(0.3);
-              break;
-            }
-
-            case 'paragraph':
-              doc.font('Helvetica').fontSize(11).fillColor('#333333');
-              writeSegments(block.segments);
-              doc.moveDown(0.3);
-              break;
-
-            case 'bullet': {
-              const indent = 20 + block.indent * 15;
-              const bulletChar = block.indent === 0 ? '•' : '◦';
-              doc
-                .font('Helvetica')
-                .fontSize(11)
-                .fillColor('#333333')
-                .text(`${bulletChar} `, 72 + indent, doc.y, { continued: true });
-              writeSegments(block.segments);
-              doc.moveDown(0.15);
-              // Reset x position
-              doc.text('', 72, doc.y, { continued: false });
-              break;
-            }
-
-            case 'table': {
-              if (block.headers.length === 0) break;
-              const colCount = block.headers.length;
-              const colWidth = PAGE_WIDTH / colCount;
-              const cellPadding = 6;
-              const rowHeight = 22;
-
-              let tableY = doc.y + 4;
-
-              // Check if table fits — if not, new page
-              const tableHeight = (block.rows.length + 1) * rowHeight + 10;
-              if (tableY + tableHeight > 720) {
-                doc.addPage();
-                tableY = doc.y;
-              }
-
-              // Header row
-              doc
-                .rect(72, tableY, PAGE_WIDTH, rowHeight)
-                .fill('#' + UNFPA_BLUE);
-              for (let c = 0; c < colCount; c++) {
-                doc
-                  .font('Helvetica-Bold')
-                  .fontSize(9)
-                  .fillColor('#FFFFFF')
-                  .text(block.headers[c], 72 + c * colWidth + cellPadding, tableY + 6, {
-                    width: colWidth - cellPadding * 2,
-                    height: rowHeight,
-                    lineBreak: false,
-                  });
-              }
-              tableY += rowHeight;
-
-              // Data rows
-              for (let r = 0; r < block.rows.length; r++) {
-                if (r % 2 === 1) {
-                  doc
-                    .rect(72, tableY, PAGE_WIDTH, rowHeight)
-                    .fill('#' + UNFPA_LIGHT_BLUE);
-                }
-                for (let c = 0; c < block.rows[r].length; c++) {
-                  doc
-                    .font('Helvetica')
-                    .fontSize(9)
-                    .fillColor('#333333')
-                    .text(block.rows[r][c] || '', 72 + c * colWidth + cellPadding, tableY + 6, {
-                      width: colWidth - cellPadding * 2,
-                      height: rowHeight,
-                      lineBreak: false,
-                    });
-                }
-                tableY += rowHeight;
-              }
-
-              // Table border
-              doc
-                .rect(72, doc.y + 4, PAGE_WIDTH, tableY - doc.y - 4)
-                .strokeColor('#CCCCCC')
-                .lineWidth(0.5)
-                .stroke();
-
-              doc.y = tableY + 8;
-              break;
-            }
-          }
-        }
-
-        // Sources
-        if (msg.sources?.length) {
-          doc.moveDown(0.3);
-          doc
-            .font('Helvetica-Bold')
-            .fontSize(9)
-            .fillColor('#888888')
-            .text('Sources:');
-          for (const src of msg.sources) {
-            doc
-              .font('Helvetica-Oblique')
-              .fontSize(9)
-              .fillColor('#888888')
-              .text(`• ${src.title}`);
-          }
-          doc.moveDown(0.5);
-        }
-      }
-    }
-
-    // Credits / attribution
-    if (doc.y > 680) doc.addPage();
-    doc.moveDown(1);
-    doc
-      .moveTo(72, doc.y)
-      .lineTo(72 + PAGE_WIDTH, doc.y)
-      .strokeColor('#CCCCCC')
-      .lineWidth(0.5)
-      .stroke();
-    doc.moveDown(0.4);
-    doc
-      .font('Helvetica')
-      .fontSize(9)
-      .fillColor('#888888')
-      .text('Generated by UNFPA Partnership Catalyst  ·  https://unfpa-lkyspp-otg.vercel.app');
-    doc
-      .font('Helvetica-Oblique')
-      .fontSize(9)
-      .fillColor('#888888')
-      .text('Questions about this output? Contact Haojun at haojun@ontheground.agency');
-
-    // Add page numbers
-    const totalPages = doc.bufferedPageRange().count;
-    for (let i = 0; i < totalPages; i++) {
-      doc.switchToPage(i);
-      doc
-        .font('Helvetica')
-        .fontSize(8)
-        .fillColor('#999999')
-        .text(`Page ${i + 1} of ${totalPages}`, 72, 780, {
-          width: PAGE_WIDTH,
-          align: 'center',
-        });
-    }
-
-    doc.end();
-  });
-}
-
-// ── PPTX generation ──────────────────────────────────────────────────────
-
-/**
- * Generates a PowerPoint slide deck from chat messages.
- *
- * Strategy:
- * - Title slide with report name and date
- * - Each user query becomes a section divider slide
- * - Assistant content is split by H2/H1 headings into separate slides
- * - Bullets, paragraphs, and tables are placed on content slides
- * - Sources slide at the end
- */
-export async function generatePptx(
-  messages: ExportMessage[],
-  title?: string
-): Promise<Buffer> {
-  const reportTitle = title || 'UNFPA Partnership Catalyst';
-  const pptx = new PptxGenJS();
-
-  pptx.author = 'UNFPA Partnership Catalyst';
-  pptx.title = reportTitle;
-  pptx.layout = 'LAYOUT_WIDE'; // 13.33 x 7.5 inches
-
-  // Define slide masters / theme colours
-  const MASTER_BG = '#FFFFFF';
-  const ACCENT_BAR_COLOR = '#' + UNFPA_ACCENT;
-  const TITLE_COLOR = '#' + UNFPA_BLUE;
-
-  // ── Title slide ──
-  const titleSlide = pptx.addSlide();
-  titleSlide.background = { color: UNFPA_BLUE };
-  titleSlide.addText(reportTitle, {
-    x: 0.8,
-    y: 2.0,
-    w: 11.5,
-    h: 1.5,
-    fontSize: 36,
-    fontFace: 'Calibri',
-    color: 'FFFFFF',
-    bold: true,
-  });
-  titleSlide.addText(
-    new Date().toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    }),
-    {
-      x: 0.8,
-      y: 3.6,
-      w: 11.5,
-      h: 0.5,
-      fontSize: 16,
-      fontFace: 'Calibri',
-      color: 'A8C8E8',
-      italic: true,
-    }
-  );
-  // Accent bar
-  titleSlide.addShape('rect' as PptxGenJS.ShapeType, {
-    x: 0.8,
-    y: 3.3,
-    w: 3,
-    h: 0.06,
-    fill: { color: UNFPA_ACCENT },
-  });
-
-  const allSources: Array<{ title: string }> = [];
-
-  // Process each message
-  for (const msg of messages) {
-    if (msg.role === 'user') {
-      // Section divider slide
-      const divider = pptx.addSlide();
-      divider.background = { color: UNFPA_BLUE };
-      divider.addText('Query', {
-        x: 0.8,
-        y: 1.5,
-        w: 11.5,
-        h: 0.6,
-        fontSize: 14,
-        fontFace: 'Calibri',
-        color: 'A8C8E8',
-        bold: true,
-      });
-      divider.addText(msg.content, {
-        x: 0.8,
-        y: 2.2,
-        w: 11.5,
-        h: 3.5,
-        fontSize: 22,
-        fontFace: 'Calibri',
-        color: 'FFFFFF',
-        italic: true,
-        valign: 'top',
-      });
-      // Accent bar
-      divider.addShape('rect' as PptxGenJS.ShapeType, {
-        x: 0.8,
-        y: 2.05,
-        w: 2,
-        h: 0.04,
-        fill: { color: UNFPA_ACCENT },
-      });
-    } else {
-      // Parse assistant content and split into slides at H1/H2 boundaries
-      const blocks = parseMarkdown(msg.content);
-
-      // Collect sources
-      if (msg.sources) {
-        for (const src of msg.sources) {
-          if (!allSources.some((s) => s.title === src.title)) {
-            allSources.push({ title: src.title });
-          }
-        }
-      }
-
-      // Group blocks into slides: split at each H1 or H2
-      const slideGroups: { title: string; blocks: ContentBlock[] }[] = [];
-      let currentGroup: { title: string; blocks: ContentBlock[] } = {
-        title: reportTitle,
-        blocks: [],
-      };
-
-      for (const block of blocks) {
-        if (
-          block.type === 'heading' &&
-          (block.level === 1 || block.level === 2)
-        ) {
-          // Flush previous group if it has content
-          if (currentGroup.blocks.length > 0) {
-            slideGroups.push(currentGroup);
-          }
-          currentGroup = {
-            title: block.segments.map((s) => s.text).join(''),
-            blocks: [],
-          };
-        } else {
-          currentGroup.blocks.push(block);
-        }
-      }
-      if (currentGroup.blocks.length > 0) {
-        slideGroups.push(currentGroup);
-      }
-
-      // ── Render each group — may span multiple slides if content overflows ──
-      const CONTENT_START_Y = 1.2;
-      const CONTENT_MAX_Y  = 6.75;
-
-      /** Estimate the height (inches) a block will occupy on a slide */
-      const estimateH = (block: ContentBlock): number => {
-        if (block.type === 'heading') return 0.58;
-        if (block.type === 'table') {
-          return Math.min((block.rows.length + 1) * 0.42 + 0.25, CONTENT_MAX_Y - CONTENT_START_Y);
-        }
-        // paragraph or bullet
-        const chars = (block as { segments: TextSegment[] }).segments
-          .reduce((n, s) => n + s.text.length, 0);
-        const charsPerLine =
-          block.type === 'bullet' ? Math.max(60, 80 - block.indent * 8) : 90;
-        const lines = Math.max(1, Math.ceil(chars / charsPerLine));
-        return lines * 0.32 + 0.22; // line-height + top/bottom padding
-      };
-
-      /** Create a fresh content slide with title bar */
-      const makeContentSlide = (title: string) => {
-        const s = pptx.addSlide();
-        s.background = { color: MASTER_BG };
-        s.addShape('rect' as PptxGenJS.ShapeType, {
-          x: 0, y: 0, w: 13.33, h: 0.06, fill: { color: UNFPA_ACCENT },
-        });
-        s.addText(title, {
-          x: 0.6, y: 0.3, w: 12, h: 0.75,
-          fontSize: 22, fontFace: 'Calibri',
-          color: TITLE_COLOR.replace('#', ''), bold: true,
-        });
-        return s;
-      };
-
-      const addSlideFooter = (s: PptxGenJS.Slide) =>
-        s.addText('UNFPA Partnership Catalyst', {
-          x: 0.6, y: 7.05, w: 5, h: 0.3,
-          fontSize: 8, fontFace: 'Calibri', color: '999999',
-        });
-
-      for (const group of slideGroups) {
-        let slide = makeContentSlide(group.title);
-        let yPos  = CONTENT_START_Y;
-
-        for (const block of group.blocks) {
-          const blockH = estimateH(block);
-
-          // If this block won't fit, finish current slide and open a continuation
-          if (yPos + blockH > CONTENT_MAX_Y) {
-            addSlideFooter(slide);
-            slide = makeContentSlide(group.title + ' (cont.)');
-            yPos  = CONTENT_START_Y;
-          }
-
-          switch (block.type) {
-            case 'heading': {
-              slide.addText(block.segments.map((s) => s.text).join(''), {
-                x: 0.6, y: yPos, w: 12, h: blockH,
-                fontSize: 16, fontFace: 'Calibri',
-                color: TITLE_COLOR.replace('#', ''), bold: true,
-              });
-              yPos += blockH;
-              break;
-            }
-
-            case 'paragraph': {
-              const textObjs: PptxGenJS.TextProps[] = block.segments.map((s) => ({
-                text: s.text,
-                options: { bold: s.bold, italic: s.italic, fontSize: 13, fontFace: 'Calibri', color: '333333' },
-              }));
-              slide.addText(textObjs, {
-                x: 0.6, y: yPos, w: 12, h: blockH, valign: 'top',
-              });
-              yPos += blockH;
-              break;
-            }
-
-            case 'bullet': {
-              const textObjs: PptxGenJS.TextProps[] = block.segments.map((s) => ({
-                text: s.text,
-                options: {
-                  bold: s.bold, italic: s.italic,
-                  fontSize: 13, fontFace: 'Calibri', color: '333333',
-                  bullet: { indent: 10 + block.indent * 10 },
-                },
-              }));
-              slide.addText(textObjs, {
-                x: 0.6 + block.indent * 0.3,
-                y: yPos,
-                w: 12 - block.indent * 0.3,
-                h: blockH,
-                valign: 'top',
-              });
-              yPos += blockH;
-              break;
-            }
-
-            case 'table': {
-              if (block.headers.length === 0) break;
-              const tableRows: PptxGenJS.TableRow[] = [];
-              tableRows.push(
-                block.headers.map((h) => ({
-                  text: h,
-                  options: {
-                    bold: true, fontSize: 11, fontFace: 'Calibri',
-                    color: 'FFFFFF', fill: { color: UNFPA_BLUE }, valign: 'middle' as const,
-                  },
-                }))
-              );
-              for (let r = 0; r < block.rows.length; r++) {
-                tableRows.push(
-                  block.rows[r].map((cell) => ({
-                    text: cell,
-                    options: {
-                      fontSize: 10, fontFace: 'Calibri', color: '333333',
-                      fill: r % 2 === 1 ? { color: UNFPA_LIGHT_BLUE } : undefined,
-                      valign: 'middle' as const,
-                    },
-                  }))
-                );
-              }
-              const tableH = Math.min(blockH, CONTENT_MAX_Y - yPos - 0.1);
-              slide.addTable(tableRows, {
-                x: 0.6, y: yPos, w: 12, h: tableH,
-                border: { type: 'solid', pt: 0.5, color: 'CCCCCC' },
-                colW: Array(block.headers.length).fill(12 / block.headers.length),
-                autoPage: false,
-              });
-              yPos += tableH + 0.2;
-              break;
-            }
-          }
-        }
-
-        addSlideFooter(slide);
-      }
-    }
-  }
-
-  // Sources slide
-  if (allSources.length > 0) {
-    const srcSlide = pptx.addSlide();
-    srcSlide.background = { color: '#FFFFFF' };
-    srcSlide.addShape('rect' as PptxGenJS.ShapeType, {
-      x: 0, y: 0, w: 13.33, h: 0.06, fill: { color: UNFPA_ACCENT },
-    });
-    srcSlide.addText('Sources', {
-      x: 0.6, y: 0.3, w: 12, h: 0.7,
-      fontSize: 24, fontFace: 'Calibri',
-      color: TITLE_COLOR.replace('#', ''), bold: true,
-    });
-    const srcTextObjs: PptxGenJS.TextProps[] = allSources.map((s) => ({
-      text: `• ${s.title}\n`,
-      options: { fontSize: 12, fontFace: 'Calibri', color: '555555' },
-    }));
-    srcSlide.addText(srcTextObjs, {
-      x: 0.6, y: 1.3, w: 12, h: 5, valign: 'top',
-    });
-    srcSlide.addText('UNFPA Partnership Catalyst', {
-      x: 0.6, y: 7.05, w: 5, h: 0.3,
-      fontSize: 8, fontFace: 'Calibri', color: '999999',
-    });
-  }
-
-  // Credits slide
-  const creditsSlide = pptx.addSlide();
-  creditsSlide.background = { color: UNFPA_BLUE };
-  creditsSlide.addText('Generated by UNFPA Partnership Catalyst', {
-    x: 0.8, y: 2.2, w: 11.5, h: 0.8,
-    fontSize: 26, fontFace: 'Calibri', color: 'FFFFFF', bold: true,
-  });
-  creditsSlide.addShape('rect' as PptxGenJS.ShapeType, {
-    x: 0.8, y: 3.1, w: 3, h: 0.06, fill: { color: UNFPA_ACCENT },
-  });
-  creditsSlide.addText('https://unfpa-lkyspp-otg.vercel.app', {
-    x: 0.8, y: 3.3, w: 11.5, h: 0.5,
-    fontSize: 16, fontFace: 'Calibri', color: 'A8C8E8',
-  });
-  creditsSlide.addText(
-    'Questions about this output? Contact Haojun at haojun@ontheground.agency',
-    {
-      x: 0.8, y: 3.9, w: 11.5, h: 0.5,
-      fontSize: 14, fontFace: 'Calibri', color: 'A8C8E8', italic: true,
-    }
-  );
-
-  const output = await pptx.write({ outputType: 'nodebuffer' });
-  return Buffer.from(output as ArrayBuffer);
 }

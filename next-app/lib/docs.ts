@@ -7,8 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Resolve docs directory relative to the Next.js app root
-// Works locally (docs are at ../docs/knowledge-base/unfpa relative to next-app)
-const DOCS_DIR = path.join(process.cwd(), '..', 'docs', 'knowledge-base', 'unfpa');
+const DOCS_DIR = path.join(process.cwd(), '..', 'docs', 'knowledge-base', 'directory');
 
 export interface DocFrontmatter {
   code: string;
@@ -16,8 +15,8 @@ export interface DocFrontmatter {
   tier: string;
   audience: string;
   status: string;
-  block: string;  // O = Orientation, W = Work/Programme, D = Data, C = Contested
-  org: string;    // UNFPA | PMNCH
+  block: string;  // G = Government, E = Eldercare, D = Disability, M = Mental Health, F = Family, H = Healthcare, C = Community
+  org: string;    // DIR
 }
 
 export interface DocSummary {
@@ -50,12 +49,8 @@ function deriveSlug(filename: string): string {
 }
 
 function getBlock(code: string): string {
-  const m = code.match(/^(?:UNFPA|PMNCH)-([A-Z])-/);
-  return m ? m[1] : 'O';
-}
-
-function getOrg(code: string): string {
-  return code.startsWith('PMNCH') ? 'PMNCH' : 'UNFPA';
+  const m = code.match(/^DIR-([A-Z])-/);
+  return m ? m[1] : 'G';
 }
 
 function buildDocFrontmatter(code: string, fm: Record<string, string>): DocFrontmatter {
@@ -66,7 +61,7 @@ function buildDocFrontmatter(code: string, fm: Record<string, string>): DocFront
     audience: fm.AUDIENCE || '',
     status: fm.STATUS || '',
     block: getBlock(code),
-    org: getOrg(code),
+    org: 'DIR',
   };
 }
 
@@ -121,34 +116,39 @@ export function getAllSlugs(): string[] {
 // ─── Block metadata ──────────────────────────────────────────────────────────
 
 export const BLOCK_LABELS: Record<string, { label: string; description: string; color: string }> = {
-  O: {
-    label: 'Orientation',
-    description: 'What UNFPA and PMNCH are, how they work, key terminology.',
-    color: 'blue',
-  },
-  W: {
-    label: 'Programme Work',
-    description: 'Deep dives into specific programme areas — maternal health, family planning, GBV, and more.',
-    color: 'green',
-  },
-  D: {
-    label: 'Data & Evidence',
-    description: 'How UNFPA collects, reports, and uses population data and programme results.',
-    color: 'purple',
-  },
-  C: {
-    label: 'Contested Areas',
-    description: 'Honest assessments of where UNFPA\'s work is disputed, controversial, or politically sensitive.',
-    color: 'amber',
-  },
-  PMNCH: {
-    label: 'PMNCH',
-    description: 'The Partnership for Maternal, Newborn & Child Health — its mandate, work, and relationship to UNFPA.',
+  G: {
+    label: 'Government & Policy',
+    description: 'Government agencies, guidelines, and policies — MOH, MSF, AIC, NCSS.',
     color: 'teal',
   },
-  R: {
-    label: 'Resilience & Partnerships',
-    description: 'PPP models, climate–SRHR nexus, Singapore\'s finance ecosystem, and community resilience frameworks for the LKYSPP–UNFPA challenge.',
+  E: {
+    label: 'Eldercare',
+    description: 'Nursing homes, day care centres, home care services, and eldercare resources.',
+    color: 'blue',
+  },
+  D: {
+    label: 'Disability',
+    description: 'Disability support organisations, early intervention, special education, and therapy services.',
+    color: 'purple',
+  },
+  M: {
+    label: 'Mental Health',
+    description: 'Mental health organisations, counselling services, support groups, and crisis helplines.',
+    color: 'green',
+  },
+  F: {
+    label: 'Family Services',
+    description: 'Family service centres, counselling, social work, and family support programmes.',
+    color: 'amber',
+  },
+  H: {
+    label: 'Healthcare',
+    description: 'Healthcare charities, foundations, hospitals, and medical assistance programmes.',
     color: 'rose',
+  },
+  C: {
+    label: 'Community',
+    description: 'Community-based organisations, volunteer groups, and grassroots services.',
+    color: 'sky',
   },
 };

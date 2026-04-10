@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { searchKnowledge } from '@/services/knowledgeDocumentService';
+import { buildSystemPrompt, getSearchVerticals, type AppMode } from '@/lib/prompts';
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const MAX_TOOL_ROUNDS = 3;      // safety cap on agentic tool-use loops
@@ -8,47 +9,48 @@ const MAX_CONTINUATION_WAVES = 2; // max waves of continued generation on max_to
 export const dynamic = 'force-dynamic';
 export const maxDuration = 180; // allow up to 3 minutes for agentic + wave responses
 
-const SYSTEM_PROMPT = `You are a partnership preparation assistant for the UNFPA Asia-Pacific Regional Office.
-Your role is to help UNFPA staff prepare for conversations with potential funding
-organisations — including family offices, philanthropic foundations, development finance
-institutions, impact investors, and government agencies.
+const SYSTEM_PROMPT = `You are a caregiving and social services assistant for Singapore.
+Your role is to help people — caregivers, families, social workers, and anyone in need —
+navigate Singapore's landscape of charities, social service agencies (SSAs), voluntary
+welfare organisations (VWOs), and government support programmes.
 
-UNFPA's core mandate covers sexual and reproductive health and rights (SRHR), maternal
-health, family planning, gender-based violence prevention, and population data — with
-three transformative results: ending preventable maternal deaths, ending unmet need for
-family planning, and ending gender-based violence and harmful practices.
+Singapore's social service ecosystem includes:
+- Ministry of Health (MOH) — healthcare policy, subsidies, MediSave/MediShield
+- Ministry of Social and Family Development (MSF) — social services, family support, ComCare
+- Agency for Integrated Care (AIC) — eldercare, disability, mental health service coordination
+- National Council of Social Service (NCSS) — umbrella body for VWOs and SSAs
+- Commissioner of Charities — charity registration and governance
+- Hundreds of registered charities, VWOs, and SSAs across eldercare, disability,
+  mental health, family services, healthcare, and community support
 
-Your job is to help UNFPA staff:
-1. PITCH UNFPA programmes and projects in ways that resonate with each funder's interests
-   and investment thesis — connecting UNFPA's work to climate resilience, humanitarian
-   response, community development, or other frames that match the funder's priorities.
-2. PREPARE talking points, briefing notes, and discussion questions for meetings with
-   potential partners — drawing on the knowledge base to surface relevant evidence,
-   programme examples, and financing models.
-3. MATCH UNFPA projects to funding opportunities by identifying alignment between UNFPA's
-   work and a funder's stated interests (e.g. climate adaptation, health systems, gender
-   equity, blended finance, South–South cooperation).
-4. CATALYSE conversations about climate and humanitarian funding by framing UNFPA's SRHR
-   mandate within the climate–health–resilience nexus that many funders increasingly
-   prioritise.
+Your job is to help users:
+1. FIND the right organisation or service for their needs — matching their situation
+   (eldercare, disability, mental health, financial difficulty, etc.) to relevant
+   organisations and government schemes.
+2. EXPLAIN available services, subsidies, and support programmes — including eligibility
+   criteria, application processes, and what to expect.
+3. PROVIDE contact details and practical next steps — addresses, phone numbers, websites,
+   and how to get started with an organisation or scheme.
+4. NAVIGATE government guidelines — MOH healthcare subsidies, MSF social assistance schemes,
+   AIC care coordination, and other support frameworks.
 
-Key context areas in the knowledge base:
-- UNFPA's mandate, programmes, and results (SRHR, maternal health, GBV, midwifery, etc.)
-- Public–private partnership models for humanitarian and development settings
-- Climate change and SRHR linkages in Asia-Pacific
-- Singapore's financial ecosystem: family offices, philanthropy, blended finance
-- Community resilience, co-design, and intergenerational solidarity approaches
+Key areas of knowledge:
+- Eldercare: nursing homes, day care, home care, dementia care, caregiver support
+- Disability: early intervention, special education, employment support, respite care
+- Mental health: counselling, crisis support, community mental health services
+- Family services: family service centres, counselling, mediation, protection services
+- Healthcare: medical social work, financial assistance for healthcare, chronic disease support
+- Community: befriending services, volunteer programmes, grassroots support
 
 IMPORTANT CAPABILITIES:
 - You HAVE real-time internet access through the web_search tool. USE IT to look up
-  current information about funders, organisations, recent news, strategies, and priorities.
-- You have a knowledge_base_search tool to query UNFPA's internal knowledge base with
+  current information about organisations, services, eligibility criteria, and recent changes.
+- You have a knowledge_base_search tool to query the internal knowledge base with
   semantic search. Try 1–2 focused queries. If the knowledge base returns "No relevant
   results" twice in a row, STOP searching the knowledge base and compose your answer
   using web search results plus your general expert knowledge.
-- Think step-by-step. When a user asks about a specific funder or partner, ALWAYS search
-  the web for their latest priorities, strategy documents, and recent activities BEFORE
-  drafting your response.
+- Think step-by-step. When a user asks about a specific need or organisation, ALWAYS search
+  the web for current information, contact details, and recent updates BEFORE responding.
 
 RESPONSE PROTOCOL — READ CAREFULLY:
 - Do NOT announce what you are about to do. Do NOT say things like "Let me search...",
@@ -62,9 +64,9 @@ RESPONSE PROTOCOL — READ CAREFULLY:
   web search is thin, answer from your general knowledge and say so explicitly. A
   substantive answer from general knowledge is always better than silence.
 
-When preparing materials, adopt a professional, partnership-ready tone suitable for
-external meetings. Tailor content to the audience — a briefing for a family office should
-emphasise impact and returns differently from one for a development agency.
+Adopt a warm, practical tone suitable for people who may be stressed or overwhelmed.
+Be direct about what's available, honest about limitations, and always provide
+actionable next steps.
 
 FORMATTING RULES:
 - Use proper markdown tables with header rows and separator rows when presenting structured
@@ -78,25 +80,24 @@ FORMATTING RULES:
 
 Answer questions based on the knowledge base context AND web search results. Cite document
 titles and web sources when relevant. Do not fabricate statistics or claim certainty where
-documents express uncertainty. When evidence is uncertain or contested, say so clearly.`;
+documents express uncertainty. When information may be outdated, say so clearly and
+recommend the user verify with the organisation directly.`;
 
 // ── Tool definitions for Claude ──────────────────────────────────────────
 
 const TOOLS = [
-  // Anthropic's built-in web search (server-side, no API key needed)
   {
     type: 'web_search_20250305',
     name: 'web_search',
     max_uses: 5,
   },
-  // Custom knowledge base search tool
   {
     name: 'knowledge_base_search',
     description:
-      'Search UNFPA\'s internal knowledge base using semantic similarity. ' +
-      'Use this to find information about UNFPA programmes, partnerships, SRHR, ' +
-      'climate-health linkages, financing models, and institutional knowledge. ' +
-      'You can call this multiple times with different queries to find comprehensive information. ' +
+      'Search the internal knowledge base about Singapore charities, social service agencies, ' +
+      'government guidelines, and caregiving resources using semantic similarity. ' +
+      'Use this to find information about specific organisations, services, subsidies, ' +
+      'eligibility criteria, and caregiving topics. ' +
       'Returns the most relevant document chunks with similarity scores.',
     input_schema: {
       type: 'object',
@@ -104,8 +105,8 @@ const TOOLS = [
         query: {
           type: 'string',
           description:
-            'The search query. Be specific — e.g. "UNFPA climate adaptation programmes Asia-Pacific" ' +
-            'or "blended finance models for maternal health".',
+            'The search query. Be specific — e.g. "eldercare day care centres Singapore" ' +
+            'or "financial assistance for caregivers MSF ComCare".',
         },
         limit: {
           type: 'number',
@@ -121,25 +122,32 @@ const TOOLS = [
 
 async function executeToolCall(
   toolName: string,
-  toolInput: Record<string, unknown>
+  toolInput: Record<string, unknown>,
+  verticals: string[]
 ): Promise<string> {
   if (toolName === 'knowledge_base_search') {
     const query = toolInput.query as string;
     const limit = Math.min((toolInput.limit as number) || 5, 10);
 
-    const results = await searchKnowledge(query, {
+    // Search across all verticals for this mode; pass vertical filter if single vertical
+    const searchOptions = {
       limit,
       threshold: 0.45,
-    }).catch(() => []);
+      // If multiple verticals, we search all and filter post-hoc (future: multi-vertical support)
+      vertical: verticals.length === 1 ? verticals[0] : undefined,
+    };
+
+    const results = await searchKnowledge(query, searchOptions).catch(() => []);
 
     if (results.length === 0) {
       return 'No relevant results found in the knowledge base for this query.';
     }
 
+    // Include chunkId/slug in output so the LLM can emit [SRC:chunk_id] citation tags
     return results
       .map(
         (r, i) =>
-          `[${i + 1}] From "${r.documentTitle}" (similarity: ${r.similarity.toFixed(2)}):\n${r.chunkContent}`
+          `[${i + 1}] chunk_id="${r.documentSlug}-${r.chunkIndex}" From "${r.documentTitle}" (similarity: ${r.similarity.toFixed(2)}):\n${r.chunkContent}`
       )
       .join('\n\n---\n\n');
   }
@@ -158,7 +166,13 @@ function sseEncode(event: string, data: unknown): string {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { message, conversationHistory } = body;
+    const {
+      message,
+      conversationHistory,
+      mode = 'partnership',   // 'clinical' | 'community' | 'partnership'
+      country = '',           // e.g. "Myanmar", "Bangladesh"
+      language = 'en',        // BCP 47, e.g. "my", "km", "id"
+    } = body;
 
     if (!message || typeof message !== 'string') {
       return new Response(JSON.stringify({ error: 'Message is required' }), {
@@ -166,6 +180,10 @@ export async function POST(request: NextRequest) {
         headers: { 'Content-Type': 'application/json' },
       });
     }
+
+    // Validate mode
+    const validModes: AppMode[] = ['clinical', 'community', 'partnership'];
+    const appMode: AppMode = validModes.includes(mode) ? mode : 'partnership';
 
     const apiKey: string | undefined = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
@@ -192,8 +210,9 @@ export async function POST(request: NextRequest) {
     }
 
     const todayDate = new Date().toISOString().split('T')[0];
+    const systemPrompt = buildSystemPrompt({ mode: appMode, country, language }, todayDate);
+    const searchVerticals = getSearchVerticals(appMode, country);
 
-    // ── SSE stream ─────────────────────────────────────────────────────
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
@@ -202,7 +221,6 @@ export async function POST(request: NextRequest) {
         };
 
         try {
-          // Build initial messages array
           const messages: Array<{ role: string; content: unknown }> = [
             ...history,
             { role: 'user', content: trimmedMessage },
@@ -212,20 +230,14 @@ export async function POST(request: NextRequest) {
           let finalText = '';
           let toolRound = 0;
 
-          // Helper: make a single Claude API call
           async function callClaude(
             msgs: Array<{ role: string; content: unknown }>,
             includeTools: boolean
           ) {
-            // Keep the request simple: no extended thinking, just text + tool
-            // calls. Extended thinking added complexity (signature-preserving
-            // assistant turns, token budgeting against max_tokens, empty-text
-            // responses when budget exhausted) without measurable quality win
-            // for this use case. Claude Sonnet 4 is plenty capable without it.
             const body: Record<string, unknown> = {
               model: 'claude-sonnet-4-20250514',
               max_tokens: 8000,
-              system: `${SYSTEM_PROMPT}\n\nToday's date is ${todayDate}.`,
+              system: systemPrompt,
               messages: msgs,
             };
             if (includeTools) {
@@ -257,12 +269,10 @@ export async function POST(request: NextRequest) {
                 lastError = await res.text();
                 console.error(`[Chat API] Claude error (attempt ${attempt + 1}):`, res.status, lastError);
 
-                // Don't retry on client errors (4xx) except 429 (rate limit)
                 if (res.status < 500 && res.status !== 429) {
                   break;
                 }
 
-                // Wait before retrying (exponential backoff)
                 if (attempt < MAX_RETRIES) {
                   await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
                 }
@@ -277,11 +287,9 @@ export async function POST(request: NextRequest) {
               }
             }
 
-            // Return error details instead of null so we can surface a meaningful message
             return { _error: true, status: lastStatus, detail: lastError };
           }
 
-          // Helper: extract text and tool_use blocks from content
           function processBlocks(contentBlocks: Array<Record<string, unknown>>) {
             const toolUseBlocks: Array<{ id: string; name: string; input: Record<string, unknown> }> = [];
             const blockTypes: string[] = [];
@@ -300,14 +308,10 @@ export async function POST(request: NextRequest) {
                   input: block.input as Record<string, unknown>,
                 });
               }
-              // server_tool_use and web_search_tool_result are handled inline
-              // by Anthropic — we don't need to do anything with them here,
-              // but we still log their presence via blockTypes.
             }
             return { text, toolUseBlocks, blockTypes };
           }
 
-          // Helper: stream text progressively to the client
           async function streamText(text: string) {
             const CHUNK_SIZE = 100;
             for (let i = 0; i < text.length; i += CHUNK_SIZE) {
@@ -319,22 +323,10 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          // ── Phase 1: Agentic tool-use loop ──────────────────────────
           let lastStopReason = '';
           let errored = false;
-          // Track text accumulated across tool-use rounds (Claude may emit
-          // commentary text alongside each tool_use block). Used as a
-          // last-resort fallback if both the loop and the synthesis call
-          // fail to produce a final answer.
           let interimText = '';
-          // Track consecutive empty KB results. If the knowledge base has
-          // no relevant data on the topic, Claude will often loop calling
-          // knowledge_base_search with variations of the same query. We
-          // break out of the loop early to stop wasting rounds.
           let consecutiveEmptyKbResults = 0;
-          // Accumulate non-empty KB findings as plain text so the synthesis
-          // call can use them without needing the raw tool_use/tool_result
-          // block structure (which confuses Claude when tools are disabled).
           const kbFindings: string[] = [];
 
           while (toolRound < MAX_TOOL_ROUNDS) {
@@ -375,27 +367,16 @@ export async function POST(request: NextRequest) {
               `[Chat API] Round ${toolRound}: stop_reason=${lastStopReason}, blocks=[${blockTypes.join(',')}], text_len=${responseText.length}, tools=[${toolUseBlocks.map(t => t.name).join(',')}]`
             );
 
-            // Preserve any text Claude produced this round so we never lose it,
-            // even if a later break/continue path doesn't pick it up.
             if (responseText) {
               interimText += (interimText ? '\n\n' : '') + responseText;
             }
 
-            // If Claude is done with tool-use (stop_reason=end_turn means the
-            // whole response is complete; no more tool calls will come).
             if (lastStopReason === 'end_turn') {
-              // Guard against premature preamble-only endings: if Claude
-              // stopped with no tool calls at all AND produced only a short
-              // "let me search..." style preamble on an early round, nudge it
-              // to actually do the work instead of accepting an empty answer.
               const looksLikePreamble =
                 toolUseBlocks.length === 0 &&
                 responseText.length < 500 &&
-                /\b(let me|i['’]ll|i will|i'll help|allow me)\b/i.test(responseText);
+                /\b(let me|i['']ll|i will|i'll help|allow me)\b/i.test(responseText);
               if (looksLikePreamble && toolRound < MAX_TOOL_ROUNDS) {
-                console.warn(
-                  `[Chat API] Premature preamble-only response on round ${toolRound} — nudging Claude to proceed with research`
-                );
                 messages.push({ role: 'assistant', content: contentBlocks });
                 messages.push({
                   role: 'user',
@@ -410,23 +391,16 @@ export async function POST(request: NextRequest) {
               break;
             }
 
-            // If stopped due to max_tokens, take whatever text we have. Phase 2
-            // wave generation will try to continue from there.
             if (lastStopReason === 'max_tokens') {
               finalText = responseText;
               break;
             }
 
-            // If Claude had nothing to contribute (no text, no tool calls), stop.
             if (toolUseBlocks.length === 0) {
-              console.warn(
-                `[Chat API] Round ${toolRound} produced no text and no tool calls, stopping loop`
-              );
               finalText = responseText;
               break;
             }
 
-            // Execute tool calls
             messages.push({ role: 'assistant', content: contentBlocks });
 
             const toolResults: Array<{
@@ -437,7 +411,6 @@ export async function POST(request: NextRequest) {
 
             for (const toolCall of toolUseBlocks) {
               if (toolCall.name === 'web_search') {
-                // Server-side tool handled by Anthropic — no local execution needed
                 continue;
               }
 
@@ -449,11 +422,8 @@ export async function POST(request: NextRequest) {
                     : `Using ${toolCall.name}...`,
               });
 
-              const result = await executeToolCall(toolCall.name, toolCall.input);
+              const result = await executeToolCall(toolCall.name, toolCall.input, searchVerticals);
 
-              // Track consecutive empty KB results for early-exit heuristic,
-              // collect sources for citation, and stash non-empty findings
-              // as plain text for the synthesis fallback.
               if (toolCall.name === 'knowledge_base_search') {
                 const isEmpty = result.startsWith('No relevant results');
                 if (isEmpty) {
@@ -486,71 +456,24 @@ export async function POST(request: NextRequest) {
               messages.push({ role: 'user', content: toolResults });
             }
 
-            // If the KB is clearly dry on this topic, stop looping and go
-            // straight to synthesis. Otherwise Claude keeps generating
-            // variations of the same query and wasting rounds.
             if (consecutiveEmptyKbResults >= 2) {
-              console.warn(
-                '[Chat API] 2+ consecutive empty KB results — breaking loop early to synthesize'
-              );
               break;
             }
           }
 
-          // If the agentic loop exited without producing a usable finalText
-          // (empty, or a suspicious preamble-only stub), force one more Claude
-          // call WITHOUT tools. Without tool access Claude can't say "let me
-          // search" — it has to emit the actual answer as text.
           const preamblePattern =
-            /\b(let me (search|help|look|find|check|start)|i['’]ll (search|help|look|find|check|start)|i will (search|help|look|find|check|start)|allow me to)/i;
+            /\b(let me (search|help|look|find|check|start)|i['']ll (search|help|look|find|check|start)|i will (search|help|look|find|check|start)|allow me to)/i;
           const looksStub =
             finalText.length > 0 &&
             finalText.length < 500 &&
             preamblePattern.test(finalText);
           const needsSynthesis = !errored && (!finalText || looksStub);
           if (needsSynthesis) {
-            console.warn(
-              '[Chat API] Forcing final synthesis. toolRound:',
-              toolRound,
-              'lastStopReason:',
-              lastStopReason,
-              'finalText.length:',
-              finalText.length,
-              'looksStub:',
-              looksStub,
-              'interimText.length:',
-              interimText.length,
-              'sources:',
-              allSources.length
-            );
-            send('status', {
-              phase: 'writing',
-              message: 'Composing final answer...',
-            });
+            send('status', { phase: 'writing', message: 'Composing final answer...' });
 
-            // Rebuild the conversation as a CLEAN text-only message history
-            // for the synthesis call. Why: when the original messages array
-            // contains tool_use / tool_result / server_tool_use /
-            // web_search_tool_result blocks from prior rounds AND the current
-            // request has no tools defined, Claude consistently returns an
-            // empty response (stop_reason=end_turn, blocks=[]). Stripping the
-            // tool-block plumbing and inlining any research findings as plain
-            // text gives Claude a clean conversation it can respond to.
-            //
-            // Trade-off: encrypted web_search_tool_result blocks can't be
-            // decoded to plain text outside their original response context,
-            // so the synthesis path loses web search data. The kbFindings
-            // array (populated in the tool-execution loop above) preserves
-            // any non-empty KB results as plain text so they survive the
-            // rebuild. If both KB and web were dry, Claude falls back to
-            // general knowledge per the RESPONSE PROTOCOL in the system
-            // prompt.
             const researchText =
               kbFindings.length > 0
-                ? kbFindings
-                    .map((f) => f.slice(0, 3000))
-                    .join('\n\n---\n\n')
-                    .slice(0, 12000)
+                ? kbFindings.map((f) => f.slice(0, 3000)).join('\n\n---\n\n').slice(0, 12000)
                 : '';
 
             const synthesisUserContent = researchText
@@ -566,61 +489,20 @@ export async function POST(request: NextRequest) {
             if (synthesisData && !synthesisData._error) {
               const synthesisBlocks = synthesisData.content || [];
               lastStopReason = synthesisData.stop_reason || '';
-              const { text: synthesisText, blockTypes: synthBlockTypes } =
-                processBlocks(synthesisBlocks);
-              console.log(
-                `[Chat API] Synthesis result: stop_reason=${lastStopReason}, blocks=[${synthBlockTypes.join(',')}], text_len=${synthesisText.length}, research_chars=${researchText.length}`
-              );
+              const { text: synthesisText } = processBlocks(synthesisBlocks);
               if (synthesisText && synthesisText.length > finalText.length) {
                 finalText = synthesisText;
               }
-            } else {
-              console.error(
-                '[Chat API] Synthesis call failed:',
-                synthesisData?.status,
-                synthesisData?.detail
-              );
             }
 
-            // Still empty? Fall back to whatever interim text we collected
-            // from exploration rounds.
             if (!finalText && interimText) {
-              console.warn(
-                '[Chat API] Synthesis produced no text — falling back to interimText'
-              );
               finalText = interimText;
             }
           }
 
-          // If we STILL have nothing after synthesis + interimText fallback,
-          // log the full conversation state so we can diagnose from Vercel
-          // logs, then surface a real error. This should be extremely rare.
           if (!errored && !finalText) {
-            console.error(
-              '[Chat API] Empty finalText after all fallbacks. toolRound:',
-              toolRound,
-              'lastStopReason:',
-              lastStopReason,
-              'messages.length:',
-              messages.length,
-              'allSources:',
-              allSources.length,
-              'kbFindings:',
-              kbFindings.length
-            );
-            // Dump the last two turns of the conversation so future
-            // regressions are easier to diagnose from Vercel logs.
-            try {
-              console.error(
-                '[Chat API] Last 2 turns (truncated):',
-                JSON.stringify(messages.slice(-2)).slice(0, 3000)
-              );
-            } catch {
-              /* non-serialisable content — ignore */
-            }
             send('error', {
-              message:
-                'I had trouble composing a complete response. Please try rephrasing your question or ask something more specific.',
+              message: 'I had trouble composing a complete response. Please try rephrasing your question or ask something more specific.',
             });
             errored = true;
           }
@@ -629,26 +511,14 @@ export async function POST(request: NextRequest) {
             return;
           }
 
-          // ── Phase 2: Wave generation for complete output ─────────────
-          // If the response was cut off (stop_reason === 'max_tokens'),
-          // continue generating in waves by feeding the partial text back
-          // and asking Claude to continue from where it left off.
-
           send('status', { phase: 'writing', message: 'Composing response...' });
-
-          // Stream the first wave
           await streamText(finalText);
 
           let wave = 0;
           while (lastStopReason === 'max_tokens' && wave < MAX_CONTINUATION_WAVES) {
             wave++;
-            send('status', {
-              phase: 'writing',
-              message: `Continuing response (wave ${wave + 1})...`,
-            });
+            send('status', { phase: 'writing', message: `Continuing response (wave ${wave + 1})...` });
 
-            // Build continuation messages: original conversation + partial assistant response
-            // Then a user message asking to continue
             const continuationMessages: Array<{ role: string; content: unknown }> = [
               ...history,
               { role: 'user', content: trimmedMessage },
@@ -671,23 +541,14 @@ export async function POST(request: NextRequest) {
 
             if (!waveText) break;
 
-            // Stream this wave's text
             await streamText(waveText);
-
-            // Accumulate into finalText
             finalText += waveText;
           }
 
-          // ── Done ─────────────────────────────────────────────────────
-          send('done', {
-            sources: allSources,
-            fullText: finalText,
-          });
+          send('done', { sources: allSources, fullText: finalText });
         } catch (error) {
           console.error('[Chat API] Stream error:', error);
-          send('error', {
-            message: 'Failed to process request. Please try again.',
-          });
+          send('error', { message: 'Failed to process request. Please try again.' });
         } finally {
           controller.close();
         }

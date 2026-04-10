@@ -1,8 +1,8 @@
 #!/usr/bin/env npx tsx
 /**
- * UNFPA PDF Document Ingestion CLI Script
+ * PDF Document Ingestion CLI Script
  *
- * Ingests PDF files from docs/UNFPA key files/ into the knowledge base.
+ * Ingests PDF files from docs/pdf-files/ into the knowledge base.
  * Uses SHA-256 hash-based change detection to skip unchanged files.
  * Extracts text via pdf-parse, cleans it, chunks it, generates embeddings.
  *
@@ -48,8 +48,8 @@ function getPrisma(): PrismaClient {
   return _prisma;
 }
 
-const VERTICAL = 'UNFPA';
-const DEFAULT_DIR = path.resolve(__dirname, '../../docs/UNFPA key files');
+const VERTICAL = 'DIRECTORY';
+const DEFAULT_DIR = path.resolve(__dirname, '../../docs/pdf-files');
 
 interface CliArgs {
   file?: string;
@@ -81,7 +81,7 @@ function parseArgs(): CliArgs {
 
 function printHelp() {
   console.log(`
-UNFPA PDF Document Ingestion Script
+PDF Document Ingestion Script
 
 Options:
   --all                Ingest all PDFs from the default directory
@@ -330,7 +330,7 @@ async function ingestDirectory(
 
 async function showStatus() {
   console.log('='.repeat(60));
-  console.log('UNFPA PDF Ingestion Status');
+  console.log('PDF Ingestion Status');
   console.log('='.repeat(60));
 
   // pgvector check
@@ -405,7 +405,7 @@ async function main() {
   }
 
   console.log('='.repeat(60));
-  console.log('UNFPA PDF Document Ingestion');
+  console.log('PDF Document Ingestion');
   console.log(`Mode:      ${args.dryRun ? 'DRY RUN' : args.force ? 'FORCE UPDATE' : 'NEW / CHANGED ONLY'}`);
   console.log(`Vertical:  ${VERTICAL}`);
   console.log(`Embedding: ${isEmbeddingAvailable() ? 'ENABLED' : 'DISABLED (no OPENAI_API_KEY)'}`);

@@ -1,0 +1,186 @@
+{
+  "_meta": {
+    "version": "0.1.0-scaffold",
+    "description": "UNFPA OTG Field App Drug Formulary — reproductive health essential medicines",
+    "note": "SCAFFOLD ONLY. All entries below must be verified by a qualified clinician and approved by the Clinical Advisory Panel before deployment. Source citations must reference exact page numbers.",
+    "lastReviewedBy": null,
+    "lastReviewedAt": null,
+    "nextReviewDue": null,
+    "totalDrugs": 5,
+    "sources": [
+      "WHO Model List of Essential Medicines 23rd edition (2023)",
+      "WHO PCPNC — Pregnancy, Childbirth, Postpartum and Newborn Care: A guide for essential practice (3rd ed, 2023)",
+      "WHO IMPAC/MCPC — Managing Complications in Pregnancy and Childbirth (2nd ed, 2017)",
+      "WHO Medical Eligibility Criteria for Contraceptive Use (MEC) 5th edition (2015)"
+    ]
+  },
+  "drugs": [
+    {
+      "drug": "oxytocin",
+      "genericName": "oxytocin",
+      "localNames": {
+        "my": "အောက်စီတိုစင်",
+        "id": "oksitosin",
+        "km": "អុកស៊ីតូស៊ីន",
+        "ne": "अक्सिटोसिन",
+        "bn": "অক্সিটোসিন"
+      },
+      "indication": "Active management of third stage of labour (AMTSL); prevention and treatment of postpartum haemorrhage (PPH)",
+      "dose": "10 IU",
+      "route": "IM",
+      "timing": "Within 1 minute of delivery of the baby, before delivery of the placenta",
+      "alternativeDose": "For PPH treatment: 20–40 IU in 1 litre IV fluids at 40 drops/min; or 10 IU IM if IV access not available",
+      "contraindications": [
+        "Known hypersensitivity to oxytocin",
+        "Situations where vaginal delivery is inadvisable"
+      ],
+      "warnings": [
+        "Do not give as rapid IV bolus — may cause hypotension and cardiac arrhythmia",
+        "Has antidiuretic effect — risk of water intoxication with prolonged use in large volumes",
+        "Store at 2–8°C; loses potency above 25°C — in hot climates, prefer misoprostol if cold chain unreliable"
+      ],
+      "whoEmlListed": true,
+      "source": "WHO PCPNC 3rd ed. 2023, Section C3 (Preventing postpartum haemorrhage), Page 89",
+      "sourceChunkId": "PLACEHOLDER-verify-before-use",
+      "sourceUrl": "https://www.who.int/publications/i/item/9789240091672",
+      "_clinicalStatus": "UNVERIFIED-SCAFFOLD",
+      "reviewedBy": null,
+      "reviewedAt": null,
+      "expiryDate": "2026-12-31"
+    },
+    {
+      "drug": "misoprostol",
+      "genericName": "misoprostol",
+      "localNames": {
+        "my": "မိုင်ဆိုပရိုစ်တောဲ",
+        "id": "misoprostol",
+        "km": "មីស្សូប្រូស្តូល",
+        "ne": "मिसोप्रोस्टोल",
+        "bn": "মিসোপ্রোস্টল"
+      },
+      "indication": "Prevention of PPH where oxytocin unavailable or cold chain unreliable; cervical ripening; early pregnancy failure; incomplete abortion",
+      "dose": "600 mcg",
+      "route": "Oral (for PPH prevention)",
+      "timing": "Immediately after delivery of the baby",
+      "alternativeDose": "PPH treatment (when oxytocin unavailable): 800 mcg sublingually. Cervical priming: 25 mcg vaginally q6h (hospital setting only).",
+      "contraindications": [
+        "Known hypersensitivity to prostaglandins",
+        "Previous uterine scar with >1 prior caesarean (for cervical ripening doses)"
+      ],
+      "warnings": [
+        "Side effects: fever, shivering, nausea, diarrhoea — inform patient before use",
+        "Higher doses (800 mcg SL) for PPH treatment have more side effects — clinical supervision required",
+        "Do not use sublingual doses for PPH prevention in facility settings when oxytocin is available",
+        "Legal context varies by country — verify local regulations before use for abortion indications"
+      ],
+      "whoEmlListed": true,
+      "source": "WHO PCPNC 3rd ed. 2023, Section C3; WHO IMPAC/MCPC 2nd ed. 2017",
+      "sourceChunkId": "PLACEHOLDER-verify-before-use",
+      "sourceUrl": "https://www.who.int/publications/i/item/9789240091672",
+      "_clinicalStatus": "UNVERIFIED-SCAFFOLD",
+      "reviewedBy": null,
+      "reviewedAt": null,
+      "expiryDate": "2026-12-31"
+    },
+    {
+      "drug": "magnesium-sulphate",
+      "genericName": "magnesium sulphate (MgSO4)",
+      "localNames": {
+        "my": "မဂ္ဂနီဆီယမ် ဆာလဖိတ်",
+        "id": "magnesium sulfat",
+        "km": "ម៉ាញ៉េស្យូម ស៊ុលហ្វាត",
+        "ne": "म्याग्नेशियम सल्फेट",
+        "bn": "ম্যাগনেশিয়াম সালফেট"
+      },
+      "indication": "Prevention and treatment of eclamptic seizures; severe pre-eclampsia",
+      "dose": "Loading: 4 g IV over 5–10 minutes, then 1 g/hour IV maintenance",
+      "route": "IV (or IM if IV access unavailable — see alternative)",
+      "timing": "Start immediately on diagnosis of severe pre-eclampsia or eclampsia",
+      "alternativeDose": "IM loading (if no IV): 5 g IM each buttock (= 10 g total) + 2.5 g IM q4h. Continue for 24 hours after last seizure or delivery.",
+      "contraindications": [
+        "Myasthenia gravis",
+        "Respiratory rate < 12/min",
+        "Urine output < 25 mL/hour in preceding 4 hours",
+        "Absent patellar reflex"
+      ],
+      "warnings": [
+        "Have calcium gluconate 1 g IV ready as antidote for magnesium toxicity",
+        "Monitor: respiratory rate, patellar reflexes, and urine output every 30 minutes",
+        "Signs of toxicity: absent patellar reflex, respiratory rate < 12/min — STOP infusion immediately",
+        "Antidote: calcium gluconate 1 g IV (10 mL of 10% solution) over 10 minutes"
+      ],
+      "whoEmlListed": true,
+      "source": "WHO IMPAC/MCPC 2nd ed. 2017, Section S-55 (Eclampsia)",
+      "sourceChunkId": "PLACEHOLDER-verify-before-use",
+      "sourceUrl": "https://www.who.int/reproductivehealth/publications/maternal_perinatal_health/9789241548205/en/",
+      "_clinicalStatus": "UNVERIFIED-SCAFFOLD",
+      "reviewedBy": null,
+      "reviewedAt": null,
+      "expiryDate": "2026-12-31"
+    },
+    {
+      "drug": "amoxicillin",
+      "genericName": "amoxicillin",
+      "localNames": {
+        "my": "အာမောဇဆလင်",
+        "id": "amoksisilin",
+        "km": "អាម៉ុកស៊ីស៊ីលីន",
+        "ne": "अमोक्सिसिलिन",
+        "bn": "অ্যামোক্সিসিলিন"
+      },
+      "indication": "Group B streptococcal prophylaxis in labour; treatment of urinary tract infection in pregnancy; postpartum infection (in combination)",
+      "dose": "500 mg",
+      "route": "Oral",
+      "timing": "Every 8 hours; duration depends on indication",
+      "alternativeDose": "IV: 500 mg–1 g q6–8h for severe infection. For GBS prophylaxis in labour: 2 g IV initial dose, then 1 g IV q4h until delivery.",
+      "contraindications": [
+        "Known penicillin allergy (anaphylaxis) — use erythromycin or clindamycin",
+        "History of amoxicillin-associated cholestatic jaundice"
+      ],
+      "warnings": [
+        "Check for penicillin allergy history before prescribing",
+        "For women with penicillin allergy: use local antibiogram-guided alternative"
+      ],
+      "whoEmlListed": true,
+      "source": "WHO PCPNC 3rd ed. 2023; WHO EML 23rd edition (2023)",
+      "sourceChunkId": "PLACEHOLDER-verify-before-use",
+      "sourceUrl": "https://www.who.int/publications/i/item/9789240093485",
+      "_clinicalStatus": "UNVERIFIED-SCAFFOLD",
+      "reviewedBy": null,
+      "reviewedAt": null,
+      "expiryDate": "2026-12-31"
+    },
+    {
+      "drug": "ferrous-sulphate",
+      "genericName": "ferrous sulphate + folic acid",
+      "localNames": {
+        "my": "သံဓာတ်တံဆိပ်",
+        "id": "zat besi + asam folat",
+        "km": "ជាតិដែក និងអាស៊ីតហ្វូលិក",
+        "ne": "फलाम र फोलिक एसिड",
+        "bn": "আয়রন ও ফলিক অ্যাসিড"
+      },
+      "indication": "Prevention and treatment of iron-deficiency anaemia in pregnancy and postpartum",
+      "dose": "60 mg elemental iron + 400 mcg folic acid",
+      "route": "Oral",
+      "timing": "Once daily throughout pregnancy and 3 months postpartum (prevention). Twice daily for treatment of anaemia.",
+      "contraindications": [
+        "Known iron overload conditions (haemochromatosis)",
+        "Anaemia not due to iron deficiency (investigate cause)"
+      ],
+      "warnings": [
+        "Take on empty stomach for best absorption; may cause nausea — take with food if not tolerated",
+        "Stools will turn dark — inform the patient this is expected and harmless",
+        "For severe anaemia (Hb < 7 g/dL in pregnancy): refer for further assessment"
+      ],
+      "whoEmlListed": true,
+      "source": "WHO ANC Recommendations 2016, Recommendation A2 (Iron and folic acid supplementation)",
+      "sourceChunkId": "PLACEHOLDER-verify-before-use",
+      "sourceUrl": "https://www.who.int/publications/i/item/9789241549912",
+      "_clinicalStatus": "UNVERIFIED-SCAFFOLD",
+      "reviewedBy": null,
+      "reviewedAt": null,
+      "expiryDate": "2026-12-31"
+    }
+  ]
+}

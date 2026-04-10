@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
   // Vercel's serverless function bundle (needed when docs/ sits at repo root)
   outputFileTracingRoot: path.join(__dirname, "../"),
   outputFileTracingIncludes: {
-    "/knowledge": ["../docs/knowledge-base/unfpa/**/*.md"],
-    "/knowledge/[slug]": ["../docs/knowledge-base/unfpa/**/*.md"],
+    "/knowledge": ["../docs/knowledge-base/directory/**/*.md"],
+    "/knowledge/[slug]": ["../docs/knowledge-base/directory/**/*.md"],
   },
 };
 

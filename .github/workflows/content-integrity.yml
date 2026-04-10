@@ -1,0 +1,72 @@
+name: Content Integrity Check
+
+# Runs on every PR that touches docs/knowledge-base/ to verify that
+# no clinical content has been modified without explicit clinical-review
+# approval. This is a hard gate — PRs fail if checksums change without
+# the required label.
+
+on:
+  pull_request:
+    paths:
+      - 'docs/knowledge-base/**'
+
+jobs:
+  verify-checksums:
+    name: Verify knowledge base checksums
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2 pinned to SHA
+
+      - name: Recompute checksums
+        id: compute
+        run: |
+          # Exclude README.md files — they are directory scaffolding, not clinical content.
+          # Only actual clinical guideline documents require clinical-review sign-off.
+          find docs/knowledge-base -name "*.md" ! -name "README.md" | sort | xargs sha256sum > /tmp/checksums_new.txt
+          echo "Computed $(wc -l < /tmp/checksums_new.txt) checksums"
+
+      - name: Compare against committed checksums
+        id: compare
+        run: |
+          if diff -q docs/knowledge-base/.checksums /tmp/checksums_new.txt > /dev/null 2>&1; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "✅ All checksums match — no clinical content was modified."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "⚠️  Checksum differences detected:"
+            diff docs/knowledge-base/.checksums /tmp/checksums_new.txt || true
+          fi
+
+      - name: Check for clinical-review label (if content changed)
+        if: steps.compare.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LABELS=$(gh pr view ${{ github.event.pull_request.number }} --json labels --jq '.labels[].name')
+          echo "PR labels: $LABELS"
+          if echo "$LABELS" | grep -q "clinical-review"; then
+            echo "✅ clinical-review label present — clinical content change is approved."
+          else
+            echo "❌ BLOCKED: Clinical content was modified but the 'clinical-review' label is missing."
+            echo ""
+            echo "Changes to docs/knowledge-base/clinical/, docs/knowledge-base/formulary/,"
+            echo "docs/knowledge-base/misp/, docs/knowledge-base/chw/, or docs/knowledge-base/moh/"
+            echo "require a clinical reviewer to apply the 'clinical-review' label before this"
+            echo "PR can be merged."
+            echo ""
+            echo "This is a safety gate. Clinical content affects patient care."
+            exit 1
+          fi
+
+      - name: Show diff summary (informational)
+        if: steps.compare.outputs.changed == 'true'
+        run: |
+          echo "## Modified files:"
+          diff docs/knowledge-base/.checksums /tmp/checksums_new.txt \
+            | grep "^[<>]" \
+            | awk '{print $NF}' \
+            | sed 's|/home/runner/work/[^/]*/[^/]*/||' \
+            | sort -u \
+            || true
