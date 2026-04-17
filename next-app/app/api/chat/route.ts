@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server';
 import { searchKnowledge } from '@/services/knowledgeDocumentService';
-import { buildSystemPrompt, getSearchVerticals, type AppMode } from '@/lib/prompts';
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
+const KNOWLEDGE_VERTICAL = 'DIRECTORY';
 const MAX_TOOL_ROUNDS = 3;      // safety cap on agentic tool-use loops
 const MAX_CONTINUATION_WAVES = 2; // max waves of continued generation on max_tokens cutoff
 
@@ -122,19 +122,16 @@ const TOOLS = [
 
 async function executeToolCall(
   toolName: string,
-  toolInput: Record<string, unknown>,
-  verticals: string[]
+  toolInput: Record<string, unknown>
 ): Promise<string> {
   if (toolName === 'knowledge_base_search') {
     const query = toolInput.query as string;
     const limit = Math.min((toolInput.limit as number) || 5, 10);
 
-    // Search across all verticals for this mode; pass vertical filter if single vertical
     const searchOptions = {
       limit,
       threshold: 0.45,
-      // If multiple verticals, we search all and filter post-hoc (future: multi-vertical support)
-      vertical: verticals.length === 1 ? verticals[0] : undefined,
+      vertical: KNOWLEDGE_VERTICAL,
     };
 
     const results = await searchKnowledge(query, searchOptions).catch(() => []);
@@ -166,13 +163,7 @@ function sseEncode(event: string, data: unknown): string {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const {
-      message,
-      conversationHistory,
-      mode = 'partnership',   // 'clinical' | 'community' | 'partnership'
-      country = '',           // e.g. "Myanmar", "Bangladesh"
-      language = 'en',        // BCP 47, e.g. "my", "km", "id"
-    } = body;
+    const { message, conversationHistory } = body;
 
     if (!message || typeof message !== 'string') {
       return new Response(JSON.stringify({ error: 'Message is required' }), {
@@ -180,10 +171,6 @@ export async function POST(request: NextRequest) {
         headers: { 'Content-Type': 'application/json' },
       });
     }
-
-    // Validate mode
-    const validModes: AppMode[] = ['clinical', 'community', 'partnership'];
-    const appMode: AppMode = validModes.includes(mode) ? mode : 'partnership';
 
     const apiKey: string | undefined = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
@@ -210,8 +197,7 @@ export async function POST(request: NextRequest) {
     }
 
     const todayDate = new Date().toISOString().split('T')[0];
-    const systemPrompt = buildSystemPrompt({ mode: appMode, country, language }, todayDate);
-    const searchVerticals = getSearchVerticals(appMode, country);
+    const systemPrompt = `${SYSTEM_PROMPT}\n\nToday's date is ${todayDate}.`;
 
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
@@ -422,7 +408,7 @@ export async function POST(request: NextRequest) {
                     : `Using ${toolCall.name}...`,
               });
 
-              const result = await executeToolCall(toolCall.name, toolCall.input, searchVerticals);
+              const result = await executeToolCall(toolCall.name, toolCall.input);
 
               if (toolCall.name === 'knowledge_base_search') {
                 const isEmpty = result.startsWith('No relevant results');
