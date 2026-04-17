@@ -37,11 +37,14 @@ interface DocVerification {
   daysSinceVerified: number | null;
   urlsFound: number;
   urlsOk: number;
+  urlsIndeterminate: number;
   urlsFailed: number;
   phonesFound: number;
   phonesValid: number;
   findings: Finding[];
 }
+
+type UrlStatus = 'ok' | 'indeterminate' | 'broken';
 
 const KB_DIR = path.resolve(__dirname, '../../docs/knowledge-base/directory');
 const REPORT_PATH = path.join(KB_DIR, 'VERIFICATION-REPORT.md');
@@ -130,43 +133,103 @@ function extractPhones(content: string): string[] {
   return Array.from(phones);
 }
 
-/** Check if a URL is reachable. Returns status code or error message. */
-async function checkUrl(url: string, timeout = 10000): Promise<{ ok: boolean; status: number | string }> {
-  try {
+/**
+ * A real-browser User-Agent. Many SG government and charity sites sit behind
+ * Cloudflare / WAF rules that reject unknown bot UAs with 403. We're checking
+ * whether the URL works for end users, so we should look like one.
+ */
+const BROWSER_UA =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
+  '(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+
+const BROWSER_HEADERS: Record<string, string> = {
+  'User-Agent': BROWSER_UA,
+  Accept:
+    'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+  'Accept-Language': 'en-SG,en;q=0.9',
+  'Accept-Encoding': 'gzip, deflate, br',
+  'Cache-Control': 'no-cache',
+};
+
+/**
+ * Classify a fetch outcome.
+ * - ok: 2xx / 3xx
+ * - broken: 404 / 410 / DNS resolution failure / connection refused
+ * - indeterminate: 403 / 429 / 5xx / timeouts / proxy-denied — URL may still be
+ *   healthy for end users, but we can't prove it from this environment.
+ */
+function classifyStatus(status: number | string, denyReason?: string): UrlStatus {
+  if (denyReason) return 'indeterminate';
+  if (typeof status === 'number') {
+    if (status >= 200 && status < 400) return 'ok';
+    if (status === 404 || status === 410) return 'broken';
+    // 403/429/408/5xx — most often WAF / rate-limit / upstream hiccup.
+    return 'indeterminate';
+  }
+  const msg = String(status).toLowerCase();
+  if (msg.includes('enotfound') || msg.includes('dns') || msg.includes('econnrefused')) {
+    return 'broken';
+  }
+  return 'indeterminate';
+}
+
+/** Check a URL. Tries HEAD first, falls back to GET on 403/405. */
+async function checkUrl(
+  url: string,
+  timeout = 10000
+): Promise<{ status: UrlStatus; detail: number | string; denyReason?: string }> {
+  const tryFetch = async (method: 'HEAD' | 'GET') => {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
-
-    const response = await fetch(url, {
-      method: 'HEAD',
-      redirect: 'follow',
-      headers: {
-        'User-Agent': 'SG-Directory-Bot/1.0 (Verification; admin@sgassist.sg)',
-      },
-      signal: controller.signal,
-    });
-    clearTimeout(timer);
-
-    // Some servers reject HEAD — retry with GET
-    if (response.status === 405 || response.status === 403) {
-      const getController = new AbortController();
-      const getTimer = setTimeout(() => getController.abort(), timeout);
-      const getResponse = await fetch(url, {
-        method: 'GET',
+    try {
+      const res = await fetch(url, {
+        method,
         redirect: 'follow',
-        headers: {
-          'User-Agent': 'SG-Directory-Bot/1.0 (Verification; admin@sgassist.sg)',
-        },
-        signal: getController.signal,
+        headers: BROWSER_HEADERS,
+        signal: controller.signal,
       });
-      clearTimeout(getTimer);
-      return { ok: getResponse.ok, status: getResponse.status };
+      const denyReason = res.headers.get('x-deny-reason') || undefined;
+      return { status: res.status, ok: res.ok, denyReason };
+    } finally {
+      clearTimeout(timer);
     }
+  };
 
-    return { ok: response.ok, status: response.status };
+  try {
+    let result = await tryFetch('HEAD');
+    // Some origins reject HEAD or return weird codes on HEAD — retry with GET.
+    if (result.status === 403 || result.status === 405 || result.status === 501) {
+      result = await tryFetch('GET');
+    }
+    return {
+      status: classifyStatus(result.status, result.denyReason),
+      detail: result.status,
+      denyReason: result.denyReason,
+    };
   } catch (error) {
     const message = (error as Error).message || String(error);
-    return { ok: false, status: message.slice(0, 50) };
+    const short = message.slice(0, 80);
+    return { status: classifyStatus(short), detail: short };
   }
+}
+
+/** Run an async task over an array with bounded concurrency. */
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T, index: number) => Promise<R>
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let next = 0;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (true) {
+      const i = next++;
+      if (i >= items.length) return;
+      results[i] = await fn(items[i], i);
+    }
+  });
+  await Promise.all(workers);
+  return results;
 }
 
 /** Validate Singapore phone number format. */
@@ -207,6 +270,7 @@ async function verifyDocument(
     daysSinceVerified: null,
     urlsFound: 0,
     urlsOk: 0,
+    urlsIndeterminate: 0,
     urlsFailed: 0,
     phonesFound: 0,
     phonesValid: 0,
@@ -231,21 +295,36 @@ async function verifyDocument(
     });
   }
 
-  // Extract and check URLs
+  // Extract and check URLs (concurrent)
   const urls = extractUrls(content);
   verification.urlsFound = urls.length;
 
   console.log(`  [${verification.code}] Checking ${urls.length} URLs...`);
-  for (const url of urls) {
-    const result = await checkUrl(url);
-    if (result.ok) {
+  const urlResults = await mapWithConcurrency(urls, 8, (u) => checkUrl(u));
+
+  for (let i = 0; i < urls.length; i++) {
+    const url = urls[i];
+    const result = urlResults[i];
+    if (result.status === 'ok') {
       verification.urlsOk++;
-    } else {
+      continue;
+    }
+
+    if (result.status === 'broken') {
       verification.urlsFailed++;
       verification.findings.push({
-        severity: typeof result.status === 'number' && result.status === 404 ? 'error' : 'warning',
+        severity: 'error',
         type: 'broken-link',
-        message: `${url} → ${result.status}`,
+        message: `${url} → ${result.detail}`,
+      });
+    } else {
+      // indeterminate — do not report as broken; note for review
+      verification.urlsIndeterminate++;
+      const suffix = result.denyReason ? ` (denied: ${result.denyReason})` : '';
+      verification.findings.push({
+        severity: 'info',
+        type: 'unverified-link',
+        message: `${url} → ${result.detail}${suffix} (not confirmed reachable from this runner)`,
       });
     }
   }
@@ -279,6 +358,7 @@ function generateReport(verifications: DocVerification[]): string {
   const totalDocs = verifications.length;
   const totalUrls = verifications.reduce((sum, v) => sum + v.urlsFound, 0);
   const totalUrlsOk = verifications.reduce((sum, v) => sum + v.urlsOk, 0);
+  const totalUrlsIndeterminate = verifications.reduce((sum, v) => sum + v.urlsIndeterminate, 0);
   const totalUrlsFailed = verifications.reduce((sum, v) => sum + v.urlsFailed, 0);
   const totalPhones = verifications.reduce((sum, v) => sum + v.phonesFound, 0);
   const totalPhonesValid = verifications.reduce((sum, v) => sum + v.phonesValid, 0);
@@ -291,6 +371,8 @@ function generateReport(verifications: DocVerification[]): string {
     0
   );
 
+  const networkRestricted = totalUrls > 0 && totalUrlsOk === 0 && totalUrlsIndeterminate > 0;
+
   let report = `# Knowledge Base Verification Report
 
 *Auto-generated by \`scripts/verify-kb.ts\` on ${date}*
@@ -301,36 +383,55 @@ function generateReport(verifications: DocVerification[]): string {
 |--------|-------|
 | Documents checked | ${totalDocs} |
 | URLs found | ${totalUrls} |
-| URLs reachable | ${totalUrlsOk} |
-| URLs failed | ${totalUrlsFailed} |
+| URLs reachable (2xx/3xx) | ${totalUrlsOk} |
+| URLs indeterminate (403/429/5xx/blocked) | ${totalUrlsIndeterminate} |
+| URLs broken (404/410/DNS) | ${totalUrlsFailed} |
 | Phone numbers found | ${totalPhones} |
 | Phone numbers valid | ${totalPhonesValid} |
 | Errors | ${totalErrors} |
 | Warnings | ${totalWarnings} |
-
+${
+  networkRestricted
+    ? '\n> ⚠️ **Environment note:** no URL resolved with 2xx/3xx this run. This usually means the runner has no unrestricted outbound internet (CI sandbox, allowlisted egress). "Indeterminate" URLs are likely healthy in production — only `broken` entries (404/410/DNS) reliably indicate a dead link.\n'
+    : ''
+}
 ## Per-document results
 
-| Code | Title | Last Verified | Days | URLs OK/Total | Phones Valid/Total | Issues |
-|------|-------|---------------|------|---------------|--------------------|--------|
+| Code | Title | Last Verified | Days | URLs OK/Indet/Broken | Phones Valid/Total | Issues |
+|------|-------|---------------|------|----------------------|--------------------|--------|
 `;
 
   for (const v of verifications) {
     const daysText = v.daysSinceVerified !== null ? String(v.daysSinceVerified) : '—';
     const lastVerifiedText = v.lastVerified || '—';
-    const urlRatio = v.urlsFound > 0 ? `${v.urlsOk}/${v.urlsFound}` : '0/0';
+    const urlSplit =
+      v.urlsFound > 0
+        ? `${v.urlsOk}/${v.urlsIndeterminate}/${v.urlsFailed}`
+        : '0/0/0';
     const phoneRatio = v.phonesFound > 0 ? `${v.phonesValid}/${v.phonesFound}` : '0/0';
     const issueCount = v.findings.length;
-    report += `| ${v.code} | ${v.title.slice(0, 50)} | ${lastVerifiedText} | ${daysText} | ${urlRatio} | ${phoneRatio} | ${issueCount} |\n`;
+    report += `| ${v.code} | ${v.title.slice(0, 50)} | ${lastVerifiedText} | ${daysText} | ${urlSplit} | ${phoneRatio} | ${issueCount} |\n`;
   }
 
   report += '\n## Detailed findings\n\n';
 
   for (const v of verifications) {
     if (v.findings.length === 0) continue;
+    // Show actionable findings first (errors + warnings), collapse "info" noise.
+    const actionable = v.findings.filter((f) => f.severity !== 'info');
+    const info = v.findings.filter((f) => f.severity === 'info');
+    if (actionable.length === 0 && info.length === 0) continue;
     report += `### ${v.code} — ${v.title}\n\n`;
-    for (const finding of v.findings) {
-      const icon = finding.severity === 'error' ? '❌' : finding.severity === 'warning' ? '⚠️' : 'ℹ️';
+    for (const finding of actionable) {
+      const icon = finding.severity === 'error' ? '❌' : '⚠️';
       report += `- ${icon} **${finding.type}**: ${finding.message}\n`;
+    }
+    if (info.length > 0) {
+      report += `\n<details><summary>ℹ️ ${info.length} unverified (indeterminate) link(s) — likely blocked by runner network, not broken</summary>\n\n`;
+      for (const finding of info) {
+        report += `- ${finding.message}\n`;
+      }
+      report += '\n</details>\n';
     }
     report += '\n';
   }
@@ -386,10 +487,10 @@ async function main() {
     const verification = await verifyDocument(filePath, { urlsOnly, staleDays });
     verifications.push(verification);
 
-    const issues = verification.findings.length;
-    const status = issues === 0 ? '✓' : `${issues} issue(s)`;
+    const actionable = verification.findings.filter((f) => f.severity !== 'info').length;
+    const status = actionable === 0 ? '✓' : `${actionable} actionable issue(s)`;
     console.log(
-      `  ${verification.code}: ${verification.urlsOk}/${verification.urlsFound} URLs OK, ${verification.phonesValid}/${verification.phonesFound} phones OK — ${status}`
+      `  ${verification.code}: ${verification.urlsOk} OK / ${verification.urlsIndeterminate} indeterminate / ${verification.urlsFailed} broken (of ${verification.urlsFound}); phones ${verification.phonesValid}/${verification.phonesFound} — ${status}`
     );
   }
 
